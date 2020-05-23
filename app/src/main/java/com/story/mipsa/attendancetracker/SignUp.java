@@ -139,10 +139,9 @@ public class SignUp extends AppCompatActivity {
                         //Adding data to database
                         user = firebaseAuth.getCurrentUser();
                         DatabaseReference userRef = ref.child("Users");
-                        UserData userData = new UserData(email,password);
+                        UserData userData = new UserData(email);
                         String id = user.getUid();
                         userRef.child(user.getUid()).setValue(userData);
-
                         Intent intent = new Intent(getApplicationContext(), FirstPage.class);
                         startActivity(intent);
 

@@ -1,12 +1,10 @@
 package com.story.mipsa.attendancetracker;
 
 public class UserData {
-    public String username,password;
+    public String username;
 
-    public UserData(String username, String password){
+    public UserData(String username){
         this.username = username;
-        this.password = password;
-//        this.nam = nam;
     }
 
     public UserData() {
