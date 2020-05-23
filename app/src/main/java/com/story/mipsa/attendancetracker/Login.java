@@ -37,6 +37,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         email = (EditText)findViewById(R.id.email_sign_in);
         password = (EditText)findViewById(R.id.password_sign_in);
         button = (Button)findViewById(R.id.Signin);
@@ -47,13 +48,13 @@ public class Login extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         if(firebaseAuth.getCurrentUser()!= null){
             finish();
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
             startActivity(intent);
         }
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+//                finish();
                 Intent intent = new Intent(getApplicationContext(), SignUp.class);
                 startActivity(intent);
             }
@@ -67,7 +68,7 @@ public class Login extends AppCompatActivity {
         resetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+//                finish();
                 Intent intent = new Intent(getApplicationContext(), passwordReset.class);
                 startActivity(intent);
             }

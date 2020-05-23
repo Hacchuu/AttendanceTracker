@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements subjectDialog.onI
     TextView textView;
     TextView textView2;
     public static String minimumAttendance;
+    AttendanceTarget target;
     private Button insertButton;
     private RecyclerView recyclerView;
     private  RecyclerView.Adapter adapter;
@@ -52,9 +53,6 @@ public class MainActivity extends AppCompatActivity implements subjectDialog.onI
 //            Intent intent = new Intent(getApplicationContext(), FirstPage.class);
 //            startActivity(intent);
 //        }
-
-
-
 
         createExampleList();
         buildRecyclerView();
@@ -86,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements subjectDialog.onI
 
             }
         });
+
+        minimumAttendance = AttendanceTarget.minimumAttendance;
+        textView2.setText(minimumAttendance);
 
 //        Cursor cursor = dbManager.viewData();
 //        while (cursor.moveToNext()){
@@ -126,10 +127,7 @@ public class MainActivity extends AppCompatActivity implements subjectDialog.onI
     }
 
     public void logout(View view){
-        Log.v("uid check",uid);
-        Log.v("inside logout button","logging out");
         firebaseAuth.signOut();
-        Log.v("button pressed","logging successful");
         finish();
         startActivity(new Intent(this, Login.class));
     }

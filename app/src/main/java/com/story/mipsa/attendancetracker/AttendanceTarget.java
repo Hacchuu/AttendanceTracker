@@ -6,12 +6,21 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class AttendanceTarget extends AppCompatActivity {
@@ -20,12 +29,20 @@ public class AttendanceTarget extends AppCompatActivity {
     SeekBar seekBar;
     public static String minimumAttendance;
     FirstPage firstPage;
+    FirebaseUser user;
+    FirebaseDatabase database;
+    DatabaseReference ref;
+    FirebaseAuth firebaseAuth;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendance_target);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference().getRoot();
 
         textView = (TextView) findViewById(R.id.number);
         button = (Button)findViewById(R.id.save);
@@ -57,6 +74,10 @@ public class AttendanceTarget extends AppCompatActivity {
 
                 minimumAttendance = textView.getText().toString().trim();
 
+                user = firebaseAuth.getCurrentUser();
+                DatabaseReference userRef = ref.child("Users");
+                userRef.child(user.getUid()).child("Target").setValue(minimumAttendance);
+
                 Toast message = Toast.makeText(getApplicationContext(),"Minimum Attendance set to "+minimumAttendance+"%",Toast.LENGTH_SHORT);
                 View toastView = message.getView();
                 toastView.setBackgroundResource(R.drawable.toast_color);
@@ -64,6 +85,8 @@ public class AttendanceTarget extends AppCompatActivity {
                 v.setTextColor(Color.BLACK);
                 message.show();
 
+
+//
 
 
 //                DbManager dbManager = new DbManager(getApplicationContext());

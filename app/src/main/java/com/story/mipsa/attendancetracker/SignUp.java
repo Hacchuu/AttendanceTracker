@@ -1,10 +1,12 @@
 package com.story.mipsa.attendancetracker;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,6 +22,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SignUp extends AppCompatActivity {
 
@@ -28,17 +37,24 @@ public class SignUp extends AppCompatActivity {
     private View mProgressView;
     private ProgressDialog progressDialog;
     private View mLoginFormView;
+    public String username;
     private FirebaseAuth firebaseAuth;
+    FirebaseUser user;
+    FirebaseDatabase database;
+    DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference().getRoot();
+
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
 //            finish();
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
             startActivity(intent);
         }
         mEmailView = (EditText) findViewById(R.id.email_sign_up);
@@ -117,16 +133,44 @@ public class SignUp extends AppCompatActivity {
                 @Override
                 public void onComplete(Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-//                        finish();
+                        finish();
                         Log.d("......", " Main Activity activity should start");
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                        //Adding data to database
+                        user = firebaseAuth.getCurrentUser();
+                        DatabaseReference userRef = ref.child("Users");
+                        UserData userData = new UserData(email,password);
+                        String id = user.getUid();
+                        userRef.child(user.getUid()).setValue(userData);
+
+                        Intent intent = new Intent(getApplicationContext(), FirstPage.class);
                         startActivity(intent);
+
+
+
+
+                        //Save values inside database
+
+//
+
+//                        rootReference.child(user.getUid()).setValue(insertUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                if(task.isSuccessful()){
+//                                    Log.v("success", "added to database");
+
+//                                }
+//                                else{
+//                                    Log.v("failure", "not added");
+//                                }
+//                            }
+//                        });
                     } else
                         Toast.makeText(SignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                 }
             });
-            progressDialog.setMessage("Registering Account");
-            progressDialog.show();
+//            progressDialog.setMessage("Registering Account");
+//            progressDialog.show();
         }
     }
     private boolean isEmailValid(String email) {
