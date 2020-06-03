@@ -8,19 +8,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".passwordReset"></activity>
+        android:theme="@style/AppTheme"
+        android:name="com.story.mipsa.attendancetracker.myFirebaseApp">
+        <activity android:name=".passwordReset" />
         <activity android:name=".SignUp" />
-        <activity android:name=".Login">
+        <activity android:name=".Login" />
+        <activity android:name=".AttendanceTarget" />
+        <activity android:name=".MainActivity" android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AttendanceTarget" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".FirstPage">
-        </activity>
+        <activity android:name=".FirstPage"></activity>
     </application>
 
 </manifest>

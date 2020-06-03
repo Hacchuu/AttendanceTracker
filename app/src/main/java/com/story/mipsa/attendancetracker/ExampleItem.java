@@ -1,9 +1,16 @@
 package com.story.mipsa.attendancetracker;
 
 public class ExampleItem {
-    public String subjectName;
-    public int present,absent,total,bunk,attend;
-    float percentage;
+    private String subjectName;
+    private int present;
+    private int absent;
+    private int total;
+    private int bunk;
+    private int attend;
+    private float percentage;
+
+    public ExampleItem(){
+    }
 
     public ExampleItem( String subjectName, int present, int absent, int total, float percentage, int bunk, int attend) {
         this.subjectName = subjectName;

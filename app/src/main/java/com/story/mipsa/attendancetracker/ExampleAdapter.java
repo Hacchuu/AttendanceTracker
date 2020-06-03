@@ -3,17 +3,29 @@ package com.story.mipsa.attendancetracker;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+
 public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> {
     private ArrayList<ExampleItem> exampleItems;
-
+    FirebaseUser user;
+    FirebaseAuth firebaseAuth;
+    FirebaseDatabase database;
+    DatabaseReference ref;
 
 
 
@@ -28,7 +40,6 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
         public float avg=0,temp;
 
 
-
         public ExampleViewHolder(View itemView) {
             super(itemView);
             present = itemView.findViewById(R.id.item_present);
@@ -39,6 +50,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
             Percentage = itemView.findViewById(R.id.item_displayPercentage);
             optionDigit = itemView.findViewById(R.id.txtOptionDigit);
             String target2 = "";
+
             String target = mainActivity.minimumAttendance;
             for(int i=0;i<3;i++){
                 if(target.charAt(i) == '%') {
@@ -70,6 +82,13 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     public void onBindViewHolder(@NonNull  final ExampleViewHolder holder, int position) {
         final ExampleItem currentItem = exampleItems.get(position);
 
+
+
+
+        database = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        ref = database.getReference().getRoot();
+
         holder.subjectName.setText(currentItem.getSubjectName());
         holder.Attendance.setText(currentItem.getPresent()+"/"+currentItem.getTotal());
         holder.Percentage.setText(String.format("%.1f%%",currentItem.getPercentage()));
@@ -78,12 +97,25 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
             @Override
             public void onClick(View view) {
                 Present( currentItem, holder);
+
+                user = firebaseAuth.getCurrentUser();
+                DatabaseReference userRef = ref.child("Users");
+                String sub = currentItem.getSubjectName();
+                userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
+
+
+
             }
         });
         holder.absent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Absent( currentItem, holder);
+
+                user = firebaseAuth.getCurrentUser();
+                DatabaseReference userRef = ref.child("Users");
+                String sub = currentItem.getSubjectName();
+                userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
             }
         });
     }
@@ -92,6 +124,10 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     public int getItemCount() {
         return exampleItems.size();
     }
+
+
+
+
 
     public void Present(ExampleItem currentItem,ExampleAdapter.ExampleViewHolder holder){
         holder.presentS = currentItem.getPresent();
@@ -181,6 +217,8 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
         currentItem.setAttend(holder.attend);
         currentItem.setBunk(holder.bunk);
     }
+
+
 }
 
 

@@ -38,17 +38,17 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-        email = (EditText)findViewById(R.id.email_sign_in);
-        password = (EditText)findViewById(R.id.password_sign_in);
-        button = (Button)findViewById(R.id.Signin);
-        resetPassword = (TextView)findViewById(R.id.resetPassword);
+        email = findViewById(R.id.email_sign_in);
+        password = findViewById(R.id.password_sign_in);
+        button = findViewById(R.id.Signin);
+        resetPassword = findViewById(R.id.resetPassword);
 
         progressDialog = new ProgressDialog(this);
-        signup = (TextView)findViewById(R.id.signUp);
+        signup = findViewById(R.id.signUp);
         firebaseAuth = FirebaseAuth.getInstance();
         if(firebaseAuth.getCurrentUser()!= null){
             finish();
-            Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
         }
         signup.setOnClickListener(new View.OnClickListener() {

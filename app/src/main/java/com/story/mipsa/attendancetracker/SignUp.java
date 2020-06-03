@@ -43,6 +43,7 @@ public class SignUp extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference ref;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +58,9 @@ public class SignUp extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
             startActivity(intent);
         }
-        mEmailView = (EditText) findViewById(R.id.email_sign_up);
+        mEmailView =  findViewById(R.id.email_sign_up);
         progressDialog = new ProgressDialog(this);
-        mPasswordView = (EditText) findViewById(R.id.password_sign_up);
+        mPasswordView =  findViewById(R.id.password_sign_up);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -72,7 +73,7 @@ public class SignUp extends AppCompatActivity {
         });
 
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton =  findViewById(R.id.email_sign_in_button);
 
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override

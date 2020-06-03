@@ -33,6 +33,7 @@ public class AttendanceTarget extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference ref;
     FirebaseAuth firebaseAuth;
+    static boolean calledAlready = false;
 
 
     @Override
@@ -44,9 +45,9 @@ public class AttendanceTarget extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
 
-        textView = (TextView) findViewById(R.id.number);
-        button = (Button)findViewById(R.id.save);
-        seekBar = (SeekBar)findViewById(R.id.seekBar);
+        textView = findViewById(R.id.number);
+        button = findViewById(R.id.save);
+        seekBar = findViewById(R.id.seekBar);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int x;
@@ -81,29 +82,10 @@ public class AttendanceTarget extends AppCompatActivity {
                 Toast message = Toast.makeText(getApplicationContext(),"Minimum Attendance set to "+minimumAttendance+"%",Toast.LENGTH_SHORT);
                 View toastView = message.getView();
                 toastView.setBackgroundResource(R.drawable.toast_color);
-                TextView v = (TextView) message.getView().findViewById(android.R.id.message);
+                TextView v = message.getView().findViewById(android.R.id.message);
                 v.setTextColor(Color.BLACK);
                 message.show();
 
-
-//
-
-
-//                DbManager dbManager = new DbManager(getApplicationContext());
-//                int count = dbManager.getCount();
-//
-//                if(count == 0) {
-//                    String res = dbManager.addRecord(firstPage.name, minimumAttendance, 1);
-//                    Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
-//
-//                                    }
-//                else {
-//                    String res2 = dbManager.updateRecordTarget( minimumAttendance, 1);
-//                    if (res2 == "Success")
-//                        Toast.makeText(getApplicationContext(), res2, Toast.LENGTH_LONG).show();
-//                    else
-//                        Toast.makeText(getApplicationContext(), res2, Toast.LENGTH_LONG).show();
-//                }
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
