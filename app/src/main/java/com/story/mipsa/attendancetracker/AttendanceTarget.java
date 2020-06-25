@@ -32,6 +32,11 @@ public class AttendanceTarget extends AppCompatActivity {
     FirebaseUser user;
     FirebaseDatabase database;
     DatabaseReference ref;
+
+    public static String getMinimumAttendance() {
+        return minimumAttendance;
+    }
+
     FirebaseAuth firebaseAuth;
     static boolean calledAlready = false;
 
@@ -75,19 +80,32 @@ public class AttendanceTarget extends AppCompatActivity {
 
                 minimumAttendance = textView.getText().toString().trim();
 
-                user = firebaseAuth.getCurrentUser();
-                DatabaseReference userRef = ref.child("Users");
-                userRef.child(user.getUid()).child("Target").setValue(minimumAttendance);
 
-                Toast message = Toast.makeText(getApplicationContext(),"Minimum Attendance set to "+minimumAttendance+"%",Toast.LENGTH_SHORT);
-                View toastView = message.getView();
-                toastView.setBackgroundResource(R.drawable.toast_color);
-                TextView v = message.getView().findViewById(android.R.id.message);
-                v.setTextColor(Color.BLACK);
-                message.show();
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+
+                if(!minimumAttendance.equalsIgnoreCase("%")){
+
+                    user = firebaseAuth.getCurrentUser();
+                    DatabaseReference userRef = ref.child("Users");
+                    userRef.child(user.getUid()).child("Target").setValue(minimumAttendance);
+
+                    Toast message = Toast.makeText(getApplicationContext(),"Minimum Attendance set to "+minimumAttendance+"%",Toast.LENGTH_SHORT);
+                    View toastView = message.getView();
+                    toastView.setBackgroundResource(R.drawable.toast_color);
+                    TextView v = message.getView().findViewById(android.R.id.message);
+                    v.setTextColor(Color.BLACK);
+                    message.show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+                else{
+                    Toast message = Toast.makeText(getApplicationContext(),"Minimum Attendance can't be null",Toast.LENGTH_SHORT);
+                    View toastView = message.getView();
+                    toastView.setBackgroundResource(R.drawable.toast_color);
+                    TextView v = message.getView().findViewById(android.R.id.message);
+                    v.setTextColor(Color.RED);
+                    message.show();
+                }
             }
         });
     }

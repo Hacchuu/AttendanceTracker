@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class subjectDialog extends AppCompatDialogFragment {
@@ -22,7 +24,7 @@ public class subjectDialog extends AppCompatDialogFragment {
     public interface onInput{
         void sendInput(String input);
     }
-    public onInput onInput;
+    public subjectDialog.onInput onInput;
 
     private EditText editText;
     private Button cancel,Add;
@@ -32,6 +34,7 @@ public class subjectDialog extends AppCompatDialogFragment {
     FirebaseAuth firebaseAuth;
     AttendanceTarget attendanceTarget;
     String email;
+
 
 
     @Override
@@ -45,6 +48,8 @@ public class subjectDialog extends AppCompatDialogFragment {
         editText = view.findViewById(R.id.enterSubject);
         cancel = view.findViewById(R.id.cancel);
         Add = view.findViewById(R.id.add);
+
+
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,11 +82,12 @@ public class subjectDialog extends AppCompatDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-    try {
-            onInput = (onInput)getActivity();
-    }catch (ClassCastException e){
+        try {
+            onInput = (subjectDialog.onInput)getActivity();
+        }catch (ClassCastException e){
 
+        }
     }
-    }
+
 
 }
