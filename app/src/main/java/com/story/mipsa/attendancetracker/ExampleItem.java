@@ -16,7 +16,7 @@ public class ExampleItem implements Parcelable {
     private float percentage;
     private ArrayList<AttendanceDetails> attendanceDetails;
 
-    public ExampleItem(){
+    public ExampleItem() {
     }
 
     public ExampleItem(String subjectName, int present, int absent, int total, float percentage, int bunk, int attend, ArrayList<AttendanceDetails> attendanceDet) {
@@ -27,7 +27,7 @@ public class ExampleItem implements Parcelable {
         this.percentage = percentage;
         this.bunk = bunk;
         this.attend = attend;
-        if(attendanceDet == null)
+        if (attendanceDet == null)
             this.attendanceDetails = new ArrayList<AttendanceDetails>();
         else
             this.attendanceDetails = attendanceDet;
@@ -69,7 +69,7 @@ public class ExampleItem implements Parcelable {
 
     public void setAttendanceDetails(AttendanceDetails attendanceDetails) {
 //        this.attendanceDetails = attendanceDetails;
-        if(this.attendanceDetails != null)
+        if (this.attendanceDetails != null)
             this.attendanceDetails.add(attendanceDetails);
     }
 

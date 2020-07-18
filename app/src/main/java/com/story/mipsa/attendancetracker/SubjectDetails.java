@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,7 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editDetails.onInput{
+public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editDetails.onInput {
     TextView subjectName;
     TextView total;
     TextView present;
@@ -28,8 +29,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     TextView outcome;
     ExampleItem currentSubjectItem;
     private RecyclerView recyclerView;
-    private  RecyclerView.Adapter adapter;
-    private  RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
     private ArrayList<AttendanceDetails> attendanceDetailsList;
     private FirebaseAuth firebaseAuth;
     FirebaseDatabase database;
@@ -46,7 +47,10 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 
     @Override
     public void onBackPressed() {
+        finish();
         Intent intent = new Intent(this, MainActivity.class);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        intent.putExtra("splash_disable", 1);
         startActivity(intent);
     }
 
@@ -67,7 +71,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 //        attendanceDetailsList = mainActivity.getDet();
 
 
-        if(getIntent().hasExtra("Selected Subject Item")){
+        if (getIntent().hasExtra("Selected Subject Item")) {
             currentSubjectItem = getIntent().getParcelableExtra("Selected Subject Item");
         }
 
@@ -87,7 +91,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.v("temp", "raj inside ondatachange " + dataSnapshot);
                 attendanceDetailsList.clear();
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AttendanceDetails data = postSnapshot.getValue(AttendanceDetails.class);
 //                    item.setAttendanceDetails(data);
                     attendanceDetailsList.add(data);
@@ -95,9 +99,10 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                     recyclerView.scheduleLayoutAnimation();
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("temp",   "raj read failed" + databaseError);
+                Log.v("temp", "raj read failed" + databaseError);
             }
         });
         createAttendanceList();
@@ -113,7 +118,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         recyclerView = findViewById(R.id.detailsRecycler);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-        adapter = new AttendanceItemAdapter(attendanceDetailsList,this);
+        adapter = new AttendanceItemAdapter(attendanceDetailsList, this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
@@ -122,41 +127,40 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     public void onTimelineClick(int position) {
         this.position = position;
         editDetails dialog = new editDetails();
-        dialog.show(getSupportFragmentManager(),"editDetails");
+        dialog.show(getSupportFragmentManager(), "editDetails");
     }
 
     @Override
     public void sendDetailsInput(String status, String date) {
-        Log.d("harsh edited info", status+"----"+date+"----"+position);
-        updateDetails(status,date,position);
+        Log.d("harsh edited info", status + "----" + date + "----" + position);
+        updateDetails(status, date, position);
     }
 
-    public void addClass(){
+    public void addClass() {
         editDetails dialog = new editDetails();
-        dialog.show(getSupportFragmentManager(),"editDetails");
+        dialog.show(getSupportFragmentManager(), "editDetails");
     }
 
-     private void updateDetails(String status, String date, int position) {
-        Log.d("inside update", status+date+" - "+position);
-        AttendanceDetails updateItem = new AttendanceDetails(status,date);
+    private void updateDetails(String status, String date, int position) {
+        Log.d("inside update", status + date + " - " + position);
+        AttendanceDetails updateItem = new AttendanceDetails(status, date);
 
-         if(status.equalsIgnoreCase("present") && !attendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)){
-             attendanceDetailsList.get(position).setStatus(status);
-             currentSubjectItem.setPresent(currentSubjectItem.getPresent()+1);
-             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent()-1);
-             Recalculate();
+        if (status.equalsIgnoreCase("present") && !attendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
+            attendanceDetailsList.get(position).setStatus(status);
+            currentSubjectItem.setPresent(currentSubjectItem.getPresent() + 1);
+            currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() - 1);
+            Recalculate();
 
-         }
-         else if(status.equalsIgnoreCase("absent") && !attendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)){
-             attendanceDetailsList.get(position).setStatus(status);
-             currentSubjectItem.setPresent(currentSubjectItem.getPresent()-1);
-             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent()+1);
-             Recalculate();
+        } else if (status.equalsIgnoreCase("absent") && !attendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
+            attendanceDetailsList.get(position).setStatus(status);
+            currentSubjectItem.setPresent(currentSubjectItem.getPresent() - 1);
+            currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() + 1);
+            Recalculate();
 
-         }
+        }
 
-        attendanceDetailsList.set(position,updateItem);
-        Log.d("updated list", ""+updateItem+"========"+attendanceDetailsList);
+        attendanceDetailsList.set(position, updateItem);
+        Log.d("updated list", "" + updateItem + "========" + attendanceDetailsList);
         buildRecyclerView();
         adapter.notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
@@ -170,25 +174,22 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 
     }
 
-    private void setViews(){
+    private void setViews() {
         subjectName.setText(currentSubjectItem.getSubjectName());
-        attendance.setText(String.format(java.util.Locale.US,"%.1f",currentSubjectItem.getPercentage())+"%");
+        attendance.setText(String.format(java.util.Locale.US, "%.1f", currentSubjectItem.getPercentage()) + "%");
         total.setText(String.valueOf(currentSubjectItem.getTotal()));
         present.setText(String.valueOf(currentSubjectItem.getPresent()));
         absent.setText(String.valueOf(currentSubjectItem.getAbsent()));
-        if(currentSubjectItem.getAttend()!= 0){
-            if(currentSubjectItem.getAttend() == 1){
+        if (currentSubjectItem.getAttend() != 0) {
+            if (currentSubjectItem.getAttend() == 1) {
                 outcome.setText("You have to attend the next class");
-            }
-            else {
+            } else {
                 outcome.setText("You have to attend the next " + currentSubjectItem.getAttend() + " classes");
             }
-        }
-        else if(currentSubjectItem.getBunk() != 0){
-            if(currentSubjectItem.getBunk() == 1){
+        } else if (currentSubjectItem.getBunk() != 0) {
+            if (currentSubjectItem.getBunk() == 1) {
                 outcome.setText("You can bunk the next class");
-            }
-            else {
+            } else {
                 outcome.setText("You can bunk the next " + currentSubjectItem.getBunk() + " classes");
             }
         }
@@ -202,25 +203,24 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         int attend = 0;
         int bunk = 0;
         float avg = 0;
-        if(totalS != 0){
-            avg = ((float)presentS/(float)totalS)*100;
+        if (totalS != 0) {
+            avg = ((float) presentS / (float) totalS) * 100;
             currentSubjectItem.setPercentage(avg);
         }
         float temp = avg;
         String target = mainActivity.minimumAttendance;
         String target2 = "";
         int min;
-        for(int i=0;i<3;i++){
-            if(target.charAt(i) == '%') {
+        for (int i = 0; i < 3; i++) {
+            if (target.charAt(i) == '%') {
                 break;
-            }
-            else{
+            } else {
                 target2 = target2 + target.charAt(i);
             }
         }
         min = Integer.parseInt(target2);
 
-        if(temp >= min) {
+        if (temp >= min) {
             do {
                 totalS += 1;
                 temp = ((float) presentS / (float) totalS) * 100;
@@ -229,12 +229,11 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                 } else if (temp >= min && attend == 0)
                     bunk++;
             } while (temp > min);
-        }
-        else{
+        } else {
             int presentTemp = presentS;
             do {
                 totalS += 1;
-                presentTemp+=1;
+                presentTemp += 1;
                 temp = ((float) presentTemp / (float) totalS) * 100;
                 if (temp <= min && bunk == 0) {
                     attend++;
@@ -245,4 +244,5 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         currentSubjectItem.setAttend(attend);
         currentSubjectItem.setBunk(bunk);
     }
+
 }

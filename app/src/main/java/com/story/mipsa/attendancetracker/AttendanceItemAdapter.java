@@ -24,7 +24,6 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
     }
 
 
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         OnTimelimeListener onTimelimeListener;
@@ -45,7 +44,6 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             onTimelimeListener.onTimelineClick(getAdapterPosition());
         }
     }
-
 
 
     @NonNull
@@ -73,7 +71,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
         return TimelineView.getTimeLineViewType(position, getItemCount());
     }
 
-    public interface OnTimelimeListener{
+    public interface OnTimelimeListener {
         void onTimelineClick(int position);
     }
 

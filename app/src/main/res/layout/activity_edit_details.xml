@@ -1,94 +1,76 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/myLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_height="match_parent"
+    android:paddingBottom="15dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/editAttendance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Edit Attendance"
         android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:padding="10dp"
         android:textSize="30sp"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="@color/colorPrimaryDark" />
+
 
     <CalendarView
         android:id="@+id/calendarID"
         android:layout_width="match_parent"
+        android:padding="5dp"
         android:layout_height="wrap_content"
         android:minDate="09/01/2019"
+        android:layout_below="@id/editAttendance"
         android:showWeekNumber="false" />
 
-
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <RadioButton
-                    android:id="@+id/radioPresent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Present"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.21"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <RadioButton
-                    android:id="@+id/radioAbsent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Absent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/radioPresent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </RadioGroup>
-
-
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:layout_below="@+id/calendarID"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal">
 
-        <Button
-            android:id="@+id/cancelDetails"
+        <RadioButton
+            android:id="@+id/radioPresent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/add"
-            android:layout_alignBottom="@+id/add"
-            android:layout_alignParentStart="true"
-            android:background="@drawable/rounded_corner_cyan"
-            android:text="Cancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.011"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="Present"
+             />
 
-        <Button
-            android:id="@+id/saveDetails"
+        <RadioButton
+            android:id="@+id/radioAbsent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/enterSubject"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/rounded_corner_black"
-            android:text="Add"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.979"
-            app:layout_constraintStart_toEndOf="@+id/cancel"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="Absent"
+             />
+    </RadioGroup>
+    <Button
+        android:id="@+id/saveDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radioGroup"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/rounded_corner_black"
+        android:text="Add"
+        android:textColor="@color/colorPrimary" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</LinearLayout>
+    <Button
+        android:id="@+id/cancelDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/add"
+        android:layout_alignBottom="@+id/add"
+        android:layout_below="@+id/radioGroup"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/rounded_corner_cyan"
+        android:text="Cancel" />
+</RelativeLayout>

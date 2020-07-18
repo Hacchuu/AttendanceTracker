@@ -38,7 +38,6 @@ public class AttendanceTarget extends AppCompatActivity {
     }
 
     FirebaseAuth firebaseAuth;
-    static boolean calledAlready = false;
 
 
     @Override
@@ -56,10 +55,11 @@ public class AttendanceTarget extends AppCompatActivity {
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int x;
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 x = i;
-                textView.setText(x+"%");
+                textView.setText(x + "%");
             }
 
             @Override
@@ -79,17 +79,11 @@ public class AttendanceTarget extends AppCompatActivity {
             public void onClick(View view) {
 
                 minimumAttendance = textView.getText().toString().trim();
-
-
-
-
-                if(!minimumAttendance.equalsIgnoreCase("%")){
-
+                if (!minimumAttendance.equalsIgnoreCase("%")) {
                     user = firebaseAuth.getCurrentUser();
                     DatabaseReference userRef = ref.child("Users");
                     userRef.child(user.getUid()).child("Target").setValue(minimumAttendance);
-
-                    Toast message = Toast.makeText(getApplicationContext(),"Minimum Attendance set to "+minimumAttendance+"%",Toast.LENGTH_SHORT);
+                    Toast message = Toast.makeText(getApplicationContext(), "Minimum Attendance set to " + minimumAttendance + "%", Toast.LENGTH_SHORT);
                     View toastView = message.getView();
                     toastView.setBackgroundResource(R.drawable.toast_color);
                     TextView v = message.getView().findViewById(android.R.id.message);
@@ -97,9 +91,8 @@ public class AttendanceTarget extends AppCompatActivity {
                     message.show();
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
-                }
-                else{
-                    Toast message = Toast.makeText(getApplicationContext(),"Minimum Attendance can't be null",Toast.LENGTH_SHORT);
+                } else {
+                    Toast message = Toast.makeText(getApplicationContext(), "Minimum Attendance can't be null", Toast.LENGTH_SHORT);
                     View toastView = message.getView();
                     toastView.setBackgroundResource(R.drawable.toast_color);
                     TextView v = message.getView().findViewById(android.R.id.message);

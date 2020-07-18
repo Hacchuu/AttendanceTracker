@@ -17,7 +17,7 @@
         android:layout_marginLeft="20dp"
         app:startLineColor="@color/colorPrimaryDark"
         app:endLineColor="@color/colorPrimaryDark"
-        app:linePadding="5dp"/>
+        app:linePadding="5dp" />
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/timeline_date"
                 android:textSize="12sp"
-                tools:text="24 JAN"/>
+                tools:text="24 JAN" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                 android:layout_marginTop="5dp"
                 android:id="@+id/timeline_title"
                 android:textColor="@android:color/black"
-                tools:text="Order Successfully Completed"/>
+                tools:text="Order Successfully Completed" />
 
         </LinearLayout>
 

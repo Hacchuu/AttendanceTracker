@@ -58,9 +58,9 @@ public class SignUp extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
             startActivity(intent);
         }
-        mEmailView =  findViewById(R.id.email_sign_up);
+        mEmailView = findViewById(R.id.email_sign_up);
         progressDialog = new ProgressDialog(this);
-        mPasswordView =  findViewById(R.id.password_sign_up);
+        mPasswordView = findViewById(R.id.password_sign_up);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -73,7 +73,7 @@ public class SignUp extends AppCompatActivity {
         });
 
 
-        Button mEmailSignInButton =  findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
 
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,17 +136,8 @@ public class SignUp extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         finish();
                         Log.d("......", " Main Activity activity should start");
-
-                        //Adding data to database
-                        user = firebaseAuth.getCurrentUser();
-                        DatabaseReference userRef = ref.child("Users");
-                        UserData userData = new UserData(email);
-                        String id = user.getUid();
-                        userRef.child(user.getUid()).setValue(userData);
                         Intent intent = new Intent(getApplicationContext(), FirstPage.class);
                         startActivity(intent);
-
-
 
 
                         //Save values inside database
@@ -173,6 +164,7 @@ public class SignUp extends AppCompatActivity {
 //            progressDialog.show();
         }
     }
+
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");

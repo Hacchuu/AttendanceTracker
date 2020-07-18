@@ -24,26 +24,25 @@ public class passwordReset extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password_reset);
 
-        email = (EditText)findViewById(R.id.ResetEmail);
-        button = (Button)findViewById(R.id.Confirmation);
+        email = (EditText) findViewById(R.id.ResetEmail);
+        button = (Button) findViewById(R.id.Confirmation);
         firebaseAuth = FirebaseAuth.getInstance();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String rEmail = email.getText().toString().trim();
-                if(TextUtils.isEmpty(rEmail)){
+                if (TextUtils.isEmpty(rEmail)) {
                     email.setError("Enter email!");
                 }
 
                 firebaseAuth.sendPasswordResetEmail(rEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onComplete( Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(getApplicationContext(),"Password Reset Email sent!",Toast.LENGTH_LONG).show();
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(),"Failed to send Email!",Toast.LENGTH_LONG).show();
+                    public void onComplete(Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "Password Reset Email sent!", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Failed to send Email!", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

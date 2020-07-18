@@ -21,13 +21,14 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class subjectDialog extends AppCompatDialogFragment {
 
-    public interface onInput{
+    public interface onInput {
         void sendInput(String input);
     }
+
     public subjectDialog.onInput onInput;
 
     private EditText editText;
-    private Button cancel,Add;
+    private Button cancel, Add;
     FirebaseUser user;
     FirebaseDatabase database;
     DatabaseReference ref;
@@ -36,19 +37,17 @@ public class subjectDialog extends AppCompatDialogFragment {
     String email;
 
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
 
-        View view = inflater.inflate(R.layout.subject_dialog, container,false);
+        View view = inflater.inflate(R.layout.subject_dialog, container, false);
         editText = view.findViewById(R.id.enterSubject);
         cancel = view.findViewById(R.id.cancel);
         Add = view.findViewById(R.id.add);
-
 
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +62,7 @@ public class subjectDialog extends AppCompatDialogFragment {
             public void onClick(View view) {
 
                 String subject = editText.getText().toString().trim();
-                if(!subject.equals("")){
+                if (!subject.equals("")) {
 
                     user = firebaseAuth.getCurrentUser();
                     DatabaseReference userRef = ref.child("Users");
@@ -83,8 +82,8 @@ public class subjectDialog extends AppCompatDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onInput = (subjectDialog.onInput)getActivity();
-        }catch (ClassCastException e){
+            onInput = (subjectDialog.onInput) getActivity();
+        } catch (ClassCastException e) {
 
         }
     }

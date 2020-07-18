@@ -22,14 +22,15 @@ import java.util.Date;
 
 public class editDetails extends AppCompatDialogFragment {
 
-    public interface onInput{
+    public interface onInput {
         void sendDetailsInput(String status, String date);
     }
+
     public editDetails.onInput onInput;
 
     CalendarView calendarView;
-    Button button,cancel;
-    RadioButton radioPresent,radioAbsent;
+    Button button, cancel;
+    RadioButton radioPresent, radioAbsent;
     String status;
     public String date;
     SubjectDetails subjectDetails;
@@ -48,22 +49,21 @@ public class editDetails extends AppCompatDialogFragment {
 
         subjectDetails = new SubjectDetails();
         attendanceDetails = subjectDetails.getAttendanceDetailsList();
-        Log.d("harsh subject array",""+attendanceDetails);
+        Log.d("harsh subject array", "" + attendanceDetails);
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
-                Log.d("harsh check", i+"/"+i1+"/"+i2);
+                Log.d("harsh check", i + "/" + i1 + "/" + i2);
 
-                String day="",mon="";
+                String day = "", mon = "";
 
                 Calendar calendar = Calendar.getInstance();
-                calendar.set(i,i1,i2);
+                calendar.set(i, i1, i2);
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                Log.d("day check",""+dayOfWeek);
+                Log.d("day check", "" + dayOfWeek);
 
-                switch(i1)
-                {
+                switch (i1) {
                     case 1:
                         mon = "Jan";
                         break;
@@ -102,7 +102,7 @@ public class editDetails extends AppCompatDialogFragment {
                         break;
                 }
 
-                switch(dayOfWeek){
+                switch (dayOfWeek) {
                     case 1:
                         day = "Sun";
                         break;
@@ -125,9 +125,8 @@ public class editDetails extends AppCompatDialogFragment {
                         day = "Sat";
                         break;
                 }
-                date = day+", "+i2+" "+mon+" "+i;
+                date = day + ", " + i2 + " " + mon + " " + i;
                 Log.d("date check", date);
-//                String currentDate = sdf.format(calendarView.getDate());
             }
         });
 
@@ -141,20 +140,18 @@ public class editDetails extends AppCompatDialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(date == null){
+                if (date == null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
                     date = sdf.format(new Date());
                 }
 
-                if(radioPresent.isChecked()){
+                if (radioPresent.isChecked()) {
                     status = "Present";
-                    onInput.sendDetailsInput(status,date);
-                }
-                else if(radioAbsent.isChecked()){
+                    onInput.sendDetailsInput(status, date);
+                } else if (radioAbsent.isChecked()) {
                     status = "Absent";
-                    onInput.sendDetailsInput(status,date);
-                }
-                else{
+                    onInput.sendDetailsInput(status, date);
+                } else {
                     Toast.makeText(getActivity(), "Select an entry", Toast.LENGTH_SHORT);
                 }
                 getDialog().dismiss();
@@ -168,8 +165,8 @@ public class editDetails extends AppCompatDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onInput = (editDetails.onInput)getActivity();
-        }catch (ClassCastException e){
+            onInput = (editDetails.onInput) getActivity();
+        } catch (ClassCastException e) {
 
         }
     }

@@ -18,13 +18,7 @@
         android:text="SUBJECT NAME"
         android:textStyle="bold"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.052"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.051" />
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/enterSubject"
@@ -34,13 +28,7 @@
         android:layout_below="@+id/textview1"
         android:textColor="@color/colorPrimaryDark"
         android:layout_marginTop="27dp"
-        android:hint="Subject"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.235"
-        app:layout_constraintStart_toEndOf="@+id/textview1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        android:hint="Subject" />
 
     <Button
         android:id="@+id/cancel"
@@ -52,12 +40,7 @@
         android:layout_marginStart="13dp"
         android:text="Cancel"
         android:background="@drawable/rounded_corner_cyan"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/add"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textview1"
-        app:layout_constraintVertical_bias="0.985" />
+         />
 
     <Button
         android:id="@+id/add"
@@ -69,11 +52,6 @@
         android:layout_marginTop="6dp"
         android:text="Add"
         android:textColor="@color/colorPrimary"
-        android:background="@drawable/rounded_corner_black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/cancel"
-        app:layout_constraintTop_toBottomOf="@+id/enterSubject"
-        app:layout_constraintVertical_bias="0.985" />
+        android:background="@drawable/rounded_corner_black" />
 
 </RelativeLayout>

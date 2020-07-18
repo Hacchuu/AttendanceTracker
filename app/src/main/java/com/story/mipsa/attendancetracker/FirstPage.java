@@ -49,8 +49,7 @@ public class FirstPage extends AppCompatActivity {
         //If exists, go to next activity
 
 
-
-        editText =findViewById(R.id.Name);
+        editText = findViewById(R.id.Name);
         button = findViewById(R.id.next);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

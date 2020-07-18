@@ -9,9 +9,10 @@ public class AttendanceDetails implements Parcelable {
     private String status;
     private String dateOfEntry;
 
-    public AttendanceDetails(){}
+    public AttendanceDetails() {
+    }
 
-    public AttendanceDetails(String status,String dateOfEntry){
+    public AttendanceDetails(String status, String dateOfEntry) {
         this.status = status;
         this.dateOfEntry = dateOfEntry;
     }
