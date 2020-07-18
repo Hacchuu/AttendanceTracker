@@ -3,13 +3,10 @@ package com.story.mipsa.attendancetracker;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,16 +16,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class AttendanceTarget extends AppCompatActivity {
     TextView textView;
     Button button;
     SeekBar seekBar;
     public static String minimumAttendance;
-    FirstPage firstPage;
+    NamePage namePage;
     FirebaseUser user;
     FirebaseDatabase database;
     DatabaseReference ref;

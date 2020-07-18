@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,14 +19,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editDetails.onInput {
+public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editSubjectDetails.onInput {
     TextView subjectName;
     TextView total;
     TextView present;
     TextView absent;
     TextView attendance;
     TextView outcome;
-    ExampleItem currentSubjectItem;
+    SubjectItem currentSubjectItem;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -39,12 +38,12 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     private int position;
     MainActivity mainActivity;
     AttendanceTarget attendanceTarget;
-//    ExampleItem item;
 
     public ArrayList<AttendanceDetails> getAttendanceDetailsList() {
         return attendanceDetailsList;
     }
 
+    //Functions to perform when back is pressed form subject details page
     @Override
     public void onBackPressed() {
         finish();
@@ -66,11 +65,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         database = FirebaseDatabase.getInstance();
         user = firebaseAuth.getCurrentUser();
         ref = database.getReference().getRoot();
-//        item = new ExampleItem();
 
-//        attendanceDetailsList = mainActivity.getDet();
-
-
+        //retrieve the details of the subject that is clicked in main Activity from adaptor class
         if (getIntent().hasExtra("Selected Subject Item")) {
             currentSubjectItem = getIntent().getParcelableExtra("Selected Subject Item");
         }
@@ -81,11 +77,10 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         present = findViewById(R.id.presentFill);
         absent = findViewById(R.id.absentFill);
         outcome = findViewById(R.id.outcome);
-
         setViews();
 
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
-
+        //Retriece the attendance details and store in its appropriate list
         checkRef.child("Subjects").child(currentSubjectItem.getSubjectName()).child("attendanceDetails").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -93,7 +88,6 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                 attendanceDetailsList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AttendanceDetails data = postSnapshot.getValue(AttendanceDetails.class);
-//                    item.setAttendanceDetails(data);
                     attendanceDetailsList.add(data);
                     adapter.notifyDataSetChanged();
                     recyclerView.scheduleLayoutAnimation();
@@ -123,11 +117,12 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         recyclerView.setAdapter(adapter);
     }
 
+    //When the timeline is clicked for updation of data
     @Override
     public void onTimelineClick(int position) {
         this.position = position;
-        editDetails dialog = new editDetails();
-        dialog.show(getSupportFragmentManager(), "editDetails");
+        editSubjectDetails dialog = new editSubjectDetails();
+        dialog.show(getSupportFragmentManager(), "editSubjectDetails");
     }
 
     @Override
@@ -137,8 +132,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     }
 
     public void addClass() {
-        editDetails dialog = new editDetails();
-        dialog.show(getSupportFragmentManager(), "editDetails");
+        editSubjectDetails dialog = new editSubjectDetails();
+        dialog.show(getSupportFragmentManager(), "editSubjectDetails");
     }
 
     private void updateDetails(String status, String date, int position) {
@@ -158,22 +153,18 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             Recalculate();
 
         }
-
         attendanceDetailsList.set(position, updateItem);
         Log.d("updated list", "" + updateItem + "========" + attendanceDetailsList);
         buildRecyclerView();
         adapter.notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
-
         DatabaseReference detailsRef = ref.child("Users").child(user.getUid()).child("Subjects").child(currentSubjectItem.getSubjectName());
         detailsRef.setValue(currentSubjectItem);
-
         detailsRef.child("attendanceDetails").setValue(attendanceDetailsList);
         setViews();
-
-
     }
 
+    //Updates the views of all the required fields after any changes.
     private void setViews() {
         subjectName.setText(currentSubjectItem.getSubjectName());
         attendance.setText(String.format(java.util.Locale.US, "%.1f", currentSubjectItem.getPercentage()) + "%");
@@ -195,6 +186,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         }
     }
 
+    //Recalculates the algorithm if there are any changes during updation of timeline.
     private void Recalculate() {
         int absentS = currentSubjectItem.getAbsent();
         int presentS = currentSubjectItem.getPresent();

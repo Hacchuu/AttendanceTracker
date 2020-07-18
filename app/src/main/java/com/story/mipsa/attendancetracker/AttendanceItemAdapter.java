@@ -12,9 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAdapter.ViewHolder> {
-    public TimelineView timelineView;
-    TextView date;
-    TextView title;
+    private TimelineView timelineView;
+    private TextView date;
+    private TextView title;
     private ArrayList<AttendanceDetails> attendanceDetailsList;
     private OnTimelimeListener onTimelimeListener;
 
@@ -35,7 +35,6 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             date = itemView.findViewById(R.id.timeline_date);
             title = itemView.findViewById(R.id.timeline_title);
             this.onTimelimeListener = onTimelimeListener;
-
             itemView.setOnClickListener(this);
         }
 

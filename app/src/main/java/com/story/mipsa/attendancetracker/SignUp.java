@@ -1,17 +1,14 @@
 package com.story.mipsa.attendancetracker;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,24 +19,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SignUp extends AppCompatActivity {
 
     private EditText mEmailView;
     private EditText mPasswordView;
-    private View mProgressView;
     private ProgressDialog progressDialog;
-    private View mLoginFormView;
-    public String username;
     private FirebaseAuth firebaseAuth;
-    FirebaseUser user;
     FirebaseDatabase database;
     DatabaseReference ref;
 
@@ -51,10 +39,8 @@ public class SignUp extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
-
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
-//            finish();
             Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
             startActivity(intent);
         }
@@ -84,7 +70,6 @@ public class SignUp extends AppCompatActivity {
     }
 
     public void SignIn(View view) {
-        //showProgress(true);
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
@@ -127,41 +112,18 @@ public class SignUp extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            //showProgress(true);
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         finish();
                         Log.d("......", " Main Activity activity should start");
-                        Intent intent = new Intent(getApplicationContext(), FirstPage.class);
+                        Intent intent = new Intent(getApplicationContext(), NamePage.class);
                         startActivity(intent);
-
-
-                        //Save values inside database
-
-//
-
-//                        rootReference.child(user.getUid()).setValue(insertUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<Void> task) {
-//                                if(task.isSuccessful()){
-//                                    Log.v("success", "added to database");
-
-//                                }
-//                                else{
-//                                    Log.v("failure", "not added");
-//                                }
-//                            }
-//                        });
                     } else
                         Toast.makeText(SignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                 }
             });
-//            progressDialog.setMessage("Registering Account");
-//            progressDialog.show();
         }
     }
 

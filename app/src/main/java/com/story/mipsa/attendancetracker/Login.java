@@ -7,9 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,10 +19,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,11 +29,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class Login extends AppCompatActivity {
 
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
     private TextView resetPassword;
     private ProgressDialog progressDialog;
-    private View mLoginFormView;
     private FirebaseAuth firebaseAuth;
     private Button button;
     SignInButton signInButton;
@@ -66,20 +59,17 @@ public class Login extends AppCompatActivity {
                 }
             }
         });
-
+        //Building a google sign in
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
         email = findViewById(R.id.email_sign_in);
         password = findViewById(R.id.password_sign_in);
         button = findViewById(R.id.Signin);
         resetPassword = findViewById(R.id.resetPassword);
-
-
         progressDialog = new ProgressDialog(this);
         signup = findViewById(R.id.signUp);
         if (firebaseAuth.getCurrentUser() != null) {
@@ -90,27 +80,22 @@ public class Login extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                finish();
                 Intent intent = new Intent(getApplicationContext(), SignUp.class);
                 startActivity(intent);
             }
         });
 
-
-//        email.setOnClickListener(new View.OnClickListener());
-
         resetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                finish();
                 Intent intent = new Intent(getApplicationContext(), passwordReset.class);
                 startActivity(intent);
             }
         });
 
-//        button.setOnClickListener(this);
     }
 
+    //Sign in fucntion to call google sign in intent
     private void signIn() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -126,11 +111,10 @@ public class Login extends AppCompatActivity {
             try {
                 //Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-
                 //authenticating with firebase
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-//                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -139,7 +123,6 @@ public class Login extends AppCompatActivity {
     public void userLogin(View view) {
         String Email = email.getText().toString().trim();
         String Password = password.getText().toString().trim();
-
         boolean cancel = false;
         View focusView = null;
 
@@ -169,15 +152,11 @@ public class Login extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            //showProgress(true);
+            //firebase function that register the email and password
             firebaseAuth.signInWithEmailAndPassword(Email, Password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(Task<AuthResult> task) {
-                    //progressDialog.dismiss();
                     if (task.isSuccessful()) {
-                        //finish();
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         progressDialog.setMessage("Logging in.");
                         progressDialog.show();
@@ -185,7 +164,6 @@ public class Login extends AppCompatActivity {
                     } else {
                         Toast.makeText(Login.this, "Unable to Log In!", Toast.LENGTH_LONG).show();
                     }
-
                 }
             });
         }
@@ -202,7 +180,6 @@ public class Login extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-//        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         //getting the auth credential
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -216,7 +193,7 @@ public class Login extends AppCompatActivity {
 //                            Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             Toast.makeText(getApplicationContext(), "User Signed In", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), FirstPage.class);
+                            Intent intent = new Intent(getApplicationContext(), NamePage.class);
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.

@@ -10,8 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".editDetails"></activity>
-        <activity android:name=".test" />
+        <activity android:name=".editSubjectDetails"></activity>
         <activity android:name=".SubjectDetails" />
         <activity android:name=".passwordReset" />
         <activity android:name=".SignUp" />
@@ -26,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FirstPage" />
+        <activity android:name=".NamePage" />
     </application>
 
 </manifest>

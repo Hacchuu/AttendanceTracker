@@ -1,15 +1,11 @@
 package com.story.mipsa.attendancetracker;
 
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,8 +21,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> {
-    private ArrayList<ExampleItem> exampleItems;
+public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.ExampleViewHolder> {
+    private ArrayList<SubjectItem> subjectItems;
     private FragmentActivity context;
     FirebaseUser user;
     FirebaseAuth firebaseAuth;
@@ -34,8 +30,8 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     DatabaseReference ref;
     private OnItemListener onItemListener;
 
-    public ExampleAdapter(ArrayList<ExampleItem> exampleList, FragmentActivity context, OnItemListener onItemListener) {
-        exampleItems = exampleList;
+    public SubjectItemAdapter(ArrayList<SubjectItem> exampleList, FragmentActivity context, OnItemListener onItemListener) {
+        subjectItems = exampleList;
         this.context = context;
         this.onItemListener = onItemListener;
     }
@@ -51,6 +47,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
         public float avg = 0, temp;
         private OnItemListener onItemListener;
 
+        //Custom view Holder that describes the items in the recycler view element
         public ExampleViewHolder(View itemView, OnItemListener onItemListener) {
             super(itemView);
             this.onItemListener = onItemListener;
@@ -63,7 +60,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
             optionDigit = itemView.findViewById(R.id.txtOptionDigit);
             String target2 = "";
 
-            String target = mainActivity.minimumAttendance;
+            String target = mainActivity.getMinimumAttendance();
             for (int i = 0; i < 3; i++) {
                 if (target.charAt(i) == '%') {
                     break;
@@ -95,16 +92,15 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     //This function determines which item in the list we are currently looking at
     @Override
     public void onBindViewHolder(@NonNull final ExampleViewHolder holder, int position) {
-        final ExampleItem currentItem = exampleItems.get(position);
-//           currentItem.setAttendanceDetails(d);
+        final SubjectItem currentItem = subjectItems.get(position);
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();
 
+        //holder holds the pointer to the current item in the recycler view
         holder.subjectName.setText(currentItem.getSubjectName());
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         holder.Percentage.setText(String.format("%.1f%%", currentItem.getPercentage()));
-
 
         if (currentItem.getAttend() > 0) {
             if (currentItem.getAttend() > 1)
@@ -145,11 +141,11 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
 
     @Override
     public int getItemCount() {
-        return exampleItems.size();
+        return subjectItems.size();
     }
 
     //Function to calculate all variables when present is enetered
-    public void Present(ExampleItem currentItem, ExampleAdapter.ExampleViewHolder holder) {
+    public void Present(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
         holder.presentS = currentItem.getPresent();
         holder.total = currentItem.getTotal();
         holder.presentS++;
@@ -180,7 +176,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     }
 
     //Function to calculate all variables when absent is entered
-    public void Absent(ExampleItem currentItem, ExampleAdapter.ExampleViewHolder holder) {
+    public void Absent(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
         holder.absentS = currentItem.getAbsent();
         holder.total = currentItem.getTotal();
         holder.absentS++;
@@ -212,7 +208,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     }
 
     //Calculate the prediction of number of classes to bunk or attend
-    public void Calculate(ExampleItem currentItem, ExampleAdapter.ExampleViewHolder holder) {
+    public void Calculate(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
         holder.absentS = currentItem.getAbsent();
         holder.presentS = currentItem.getPresent();
         holder.total = currentItem.getTotal();

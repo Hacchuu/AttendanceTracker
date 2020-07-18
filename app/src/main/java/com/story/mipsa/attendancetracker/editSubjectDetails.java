@@ -1,7 +1,6 @@
 package com.story.mipsa.attendancetracker;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import android.content.Context;
@@ -20,13 +19,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class editDetails extends AppCompatDialogFragment {
+public class editSubjectDetails extends AppCompatDialogFragment {
 
     public interface onInput {
         void sendDetailsInput(String status, String date);
     }
 
-    public editDetails.onInput onInput;
+    public editSubjectDetails.onInput onInput;
 
     CalendarView calendarView;
     Button button, cancel;
@@ -165,7 +164,7 @@ public class editDetails extends AppCompatDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onInput = (editDetails.onInput) getActivity();
+            onInput = (editSubjectDetails.onInput) getActivity();
         } catch (ClassCastException e) {
 
         }

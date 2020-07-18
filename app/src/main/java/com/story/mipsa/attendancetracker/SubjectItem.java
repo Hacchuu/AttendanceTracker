@@ -3,10 +3,10 @@ package com.story.mipsa.attendancetracker;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ExampleItem implements Parcelable {
+//Custom class created to store details of attendance for each subject
+public class SubjectItem implements Parcelable {
     private String subjectName;
     private int present;
     private int absent;
@@ -16,10 +16,10 @@ public class ExampleItem implements Parcelable {
     private float percentage;
     private ArrayList<AttendanceDetails> attendanceDetails;
 
-    public ExampleItem() {
+    public SubjectItem() {
     }
 
-    public ExampleItem(String subjectName, int present, int absent, int total, float percentage, int bunk, int attend, ArrayList<AttendanceDetails> attendanceDet) {
+    public SubjectItem(String subjectName, int present, int absent, int total, float percentage, int bunk, int attend, ArrayList<AttendanceDetails> attendanceDet) {
         this.subjectName = subjectName;
         this.present = present;
         this.absent = absent;
@@ -33,7 +33,7 @@ public class ExampleItem implements Parcelable {
             this.attendanceDetails = attendanceDet;
     }
 
-    protected ExampleItem(Parcel in) {
+    protected SubjectItem(Parcel in) {
         subjectName = in.readString();
         present = in.readInt();
         absent = in.readInt();
@@ -43,15 +43,15 @@ public class ExampleItem implements Parcelable {
         percentage = in.readFloat();
     }
 
-    public static final Creator<ExampleItem> CREATOR = new Creator<ExampleItem>() {
+    public static final Creator<SubjectItem> CREATOR = new Creator<SubjectItem>() {
         @Override
-        public ExampleItem createFromParcel(Parcel in) {
-            return new ExampleItem(in);
+        public SubjectItem createFromParcel(Parcel in) {
+            return new SubjectItem(in);
         }
 
         @Override
-        public ExampleItem[] newArray(int size) {
-            return new ExampleItem[size];
+        public SubjectItem[] newArray(int size) {
+            return new SubjectItem[size];
         }
     };
 
@@ -68,7 +68,6 @@ public class ExampleItem implements Parcelable {
     }
 
     public void setAttendanceDetails(AttendanceDetails attendanceDetails) {
-//        this.attendanceDetails = attendanceDetails;
         if (this.attendanceDetails != null)
             this.attendanceDetails.add(attendanceDetails);
     }

@@ -24,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FirstPage extends AppCompatActivity {
+public class NamePage extends AppCompatActivity {
     public static String name;
     EditText editText;
     Button button;
@@ -33,22 +33,19 @@ public class FirstPage extends AppCompatActivity {
     FirebaseUser user;
     FirebaseDatabase database;
     DatabaseReference ref;
-    static boolean calledAlready = false;
+    MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_page);
 
+        final String minAttendance = mainActivity.getMinimumAttendance();
+
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
         user = firebaseAuth.getCurrentUser();
-
-        //Check whether name already exists in database or not
-        //If exists, go to next activity
-
-
         editText = findViewById(R.id.Name);
         button = findViewById(R.id.next);
         button.setOnClickListener(new View.OnClickListener() {
@@ -59,10 +56,16 @@ public class FirstPage extends AppCompatActivity {
                 user = firebaseAuth.getCurrentUser();
                 DatabaseReference userRef = ref.child("Users");
                 userRef.child(user.getUid()).child("Name").setValue(name);
-
-
-                Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
-                startActivity(intent);
+                if(minAttendance != null){
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    startActivity(intent);
+                }
+                else{
+                    Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    startActivity(intent);
+                }
             }
         });
     }

@@ -33,9 +33,6 @@ public class subjectDialog extends AppCompatDialogFragment {
     FirebaseDatabase database;
     DatabaseReference ref;
     FirebaseAuth firebaseAuth;
-    AttendanceTarget attendanceTarget;
-    String email;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +46,6 @@ public class subjectDialog extends AppCompatDialogFragment {
         cancel = view.findViewById(R.id.cancel);
         Add = view.findViewById(R.id.add);
 
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,15 +56,12 @@ public class subjectDialog extends AppCompatDialogFragment {
         Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String subject = editText.getText().toString().trim();
                 if (!subject.equals("")) {
-
                     user = firebaseAuth.getCurrentUser();
                     DatabaseReference userRef = ref.child("Users");
                     String sName = subject;
                     userRef.child(user.getUid()).child("Subjects").child(sName).setValue(subject);
-
                     onInput.sendInput(subject);
                 }
                 getDialog().dismiss();
