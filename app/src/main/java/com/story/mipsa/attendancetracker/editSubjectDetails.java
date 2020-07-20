@@ -33,7 +33,7 @@ public class editSubjectDetails extends AppCompatDialogFragment {
     String status;
     public String date;
     SubjectDetails subjectDetails;
-    ArrayList<AttendanceDetails> attendanceDetails;
+    ArrayList<SubjectAttendanceDetails> subjectAttendanceDetails;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,8 +47,9 @@ public class editSubjectDetails extends AppCompatDialogFragment {
         cancel = view.findViewById(R.id.cancelDetails);
 
         subjectDetails = new SubjectDetails();
-        attendanceDetails = subjectDetails.getAttendanceDetailsList();
-        Log.d("harsh subject array", "" + attendanceDetails);
+        subjectAttendanceDetails = subjectDetails.getSubjectAttendanceDetailsList();
+        Log.d("harsh subject array", "" + subjectAttendanceDetails);
+
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override

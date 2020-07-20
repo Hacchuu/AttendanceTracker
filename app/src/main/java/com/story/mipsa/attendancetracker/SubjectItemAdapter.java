@@ -101,7 +101,9 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         holder.subjectName.setText(currentItem.getSubjectName());
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         holder.Percentage.setText(String.format("%.1f%%", currentItem.getPercentage()));
-
+        if(currentItem.getTotal() != 0)
+            Calculate(currentItem, holder);
+        Log.d("check", ""+currentItem.getAttend()+"---"+currentItem.getBunk());
         if (currentItem.getAttend() > 0) {
             if (currentItem.getAttend() > 1)
                 holder.Status.setText("You can't bunk the next " + currentItem.getAttend() + " classes ⚆_⚆");
@@ -109,10 +111,12 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                 holder.Status.setText("You can't bunk the next class ◉_◉");
         } else if (currentItem.getBunk() > 0) {
             if (currentItem.getBunk() > 1)
-                holder.Status.setText("You can bunk " + currentItem.getBunk() + " classes ♥‿♥");
+                holder.Status.setText("You can bunk " + currentItem.getBunk() + " classes (¬‿¬)");
             else
-                holder.Status.setText("You can bunk 1 class (ᵔᴥᵔ)");
+                holder.Status.setText("You can bunk 1 class ^.^");
         }
+
+
 
         //When present button is pressed
         holder.present.setOnClickListener(new View.OnClickListener() {
@@ -156,9 +160,8 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setPresent(holder.presentS);
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
         String currentDate = sdf.format(new Date());
-        Log.d("harsh AD check", "" + new AttendanceDetails("Present", currentDate));
-        currentItem.setAttendanceDetails(new AttendanceDetails("Present", currentDate));
-
+        Log.d("harsh AD check", "" + new SubjectAttendanceDetails("Present", currentDate));
+        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate));
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         holder.Percentage.setText(String.format("%.1f%%", currentItem.getPercentage()));
         Calculate(currentItem, holder);
@@ -170,14 +173,16 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         } else if (holder.bunk > 0) {
             if (holder.bunk > 1)
                 holder.Status.setText("You can bunk " + holder.bunk + " classes ♥‿♥");
-            else
+            else if(holder.bunk == 1)
                 holder.Status.setText("You can bunk 1 class (ᵔᴥᵔ)");
+
         }
     }
 
     //Function to calculate all variables when absent is entered
     public void Absent(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
         holder.absentS = currentItem.getAbsent();
+        holder.presentS = currentItem.getPresent();
         holder.total = currentItem.getTotal();
         holder.absentS++;
         holder.total++;
@@ -187,12 +192,9 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setAbsent(holder.absentS);
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         holder.Percentage.setText(String.format("%.1f%%", currentItem.getPercentage()));
-
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
         String currentDate = sdf.format(new Date());
-
-        currentItem.setAttendanceDetails(new AttendanceDetails("Absent", currentDate));
-
+        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate));
         Calculate(currentItem, holder);
         if (holder.attend > 0) {
             if (holder.attend > 1)
@@ -202,7 +204,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         } else if (holder.bunk > 0) {
             if (holder.bunk > 1)
                 holder.Status.setText("You can bunk " + holder.bunk + " classes ♥‿♥");
-            else
+            else if(holder.bunk == 1)
                 holder.Status.setText("You can bunk your next class (ᵔᴥᵔ)");
         }
     }

@@ -8,14 +8,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:953632050290:android:c43e4a42d36761d843c6eb",
+        "mobilesdk_app_id": "1:953632050290:android:ce2d94c476b086e543c6eb",
         "android_client_info": {
           "package_name": "com.story.mipsa.attendancetracker"
         }
       },
       "oauth_client": [
         {
-          "client_id": "953632050290-gpets9kbri9953hkvq4l3tbsvt8gv5ga.apps.googleusercontent.com",
+          "client_id": "953632050290-uochick0c4ql19h1s708m6f73bs700di.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.story.mipsa.attendancetracker",

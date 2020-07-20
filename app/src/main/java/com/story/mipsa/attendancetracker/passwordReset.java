@@ -1,12 +1,16 @@
 package com.story.mipsa.attendancetracker;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,6 +27,20 @@ public class passwordReset extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password_reset);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+        this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        View view=getSupportActionBar().getCustomView();
+        ColorDrawable colorDrawable
+                = new ColorDrawable(Color.parseColor("#556e5f"));
+        ActionBar actionBar = getSupportActionBar();
+        getSupportActionBar().setElevation(0);
+        actionBar.setBackgroundDrawable(colorDrawable);
+        TextView display = view.findViewById(R.id.name);
+//        TextView options = view.findViewById(R.id.options);
+//        options.setVisibility(View.INVISIBLE);
+        display.setText("Attendance Tracker");
 
         email =  findViewById(R.id.ResetEmail);
         button =  findViewById(R.id.Confirmation);

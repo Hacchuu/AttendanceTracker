@@ -1,6 +1,7 @@
 package com.story.mipsa.attendancetracker;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,11 +9,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -48,12 +54,16 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     FirebaseDatabase database;
     DatabaseReference ref;
     private RecyclerView.LayoutManager layoutManager;
-    ArrayList<AttendanceDetails> det;
+    ArrayList<SubjectAttendanceDetails> det;
     GoogleSignInClient googleSignInClient;
     int subject_count;
 
     public ArrayList<SubjectItem> getSubjectItems() {
         return subjectItems;
+    }
+
+    public String getDataName() {
+        return dataName;
     }
 
     public void setSubjectItems(ArrayList<SubjectItem> subjectItems) {
@@ -72,8 +82,17 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        View view=getSupportActionBar().getCustomView();
+        ColorDrawable colorDrawable
+                = new ColorDrawable(Color.parseColor("#556e5f"));
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(colorDrawable);
+        TextView display = view.findViewById(R.id.name);
+        display.setText("Attendance Tracker");
         Log.d("Mipsa name", "Here 9");
+
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -84,14 +103,21 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
+
         user = firebaseAuth.getCurrentUser();
+
+//        boolean check = user.delete().isSuccessful();
+//        Log.d("Checking deletion", "Deletion done");
+//
+//        Log.d("deleting exception",""+user.delete().getException());
+
 
         //current date to display in main activity
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
         String currentDate = sdf.format(new Date());
 
-        dateText = findViewById(R.id.date);
-        dateText.setText(currentDate);
+//        dateText = findViewById(R.id.date);
+//        dateText.setText(currentDate);
 
         if (user == null) {
             finish();
@@ -108,20 +134,22 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             buildRecyclerView();
         }
         countView = findViewById(R.id.subjectCount);
-        textView = findViewById(R.id.Name);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), NamePage.class);
-                startActivity(intent);
-            }
-        });
+//        textView = findViewById(R.id.Name);
+//        textView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getApplicationContext(), NamePage.class);
+//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                startActivity(intent);
+//            }
+//        });
         textView2 = findViewById(R.id.TargetFill);
         textView2.setText(minimumAttendance);
         textView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
             }
         });
@@ -135,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         });
     }
 
+
+
     //Function that retrieves the name and target attendance in the database
     private void name_target_callDB() {
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
@@ -145,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.v("temp", "harsh inside ondatachange " + dataSnapshot);
                 dataName = (String) dataSnapshot.getValue();
-                textView.setText(dataName);
+//                textView.setText(dataName);
 //                Log.v("check",dataName);
             }
 
@@ -171,6 +201,29 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         });
     }
 
+    //To create options menu in action bar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.options_menu_card, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) { switch(item.getItemId()) {
+        case R.id.instructions:
+            Toast.makeText(getApplicationContext(), "You clicked instructions", Toast.LENGTH_SHORT).show();
+            return(true);
+        case R.id.support:
+            Toast.makeText(getApplicationContext(), "You clicked support", Toast.LENGTH_SHORT).show();
+            return(true);
+        case R.id.logout:
+            logout();
+            return(true);
+        }
+        return(super.onOptionsItemSelected(item));
+    }
+
     //Function to retrieve the subject details in the Firebase DB
     private void subjectCallDb() {
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
@@ -188,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                     int tot = postSnapshot.child("total").getValue(Integer.class);
                     float percent = postSnapshot.child("percentage").getValue(Float.class);
                     det = new ArrayList<>();
-                    for (DataSnapshot snapshot : postSnapshot.child("attendanceDetails").getChildren()) {
-                        det.add(snapshot.getValue(AttendanceDetails.class));
+                    for (DataSnapshot snapshot : postSnapshot.child("subjectAttendanceDetails").getChildren()) {
+                        det.add(snapshot.getValue(SubjectAttendanceDetails.class));
                     }
                     ;
                     SubjectItem data = new SubjectItem(sName, pre, ab, tot, percent, bun, att, det);
@@ -250,19 +303,17 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     }
 
     //To log out of google account or custom account.
-    public void logout(View view) {
-        switch (view.getId()) {
-            case R.id.logout:
-                signOut();
-                break;
-        }
+    public void logout() {
+        signOut();
         firebaseAuth.signOut();
         finish();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(new Intent(this, Login.class));
     }
 
     public void Target() {
         Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(intent);
     }
 

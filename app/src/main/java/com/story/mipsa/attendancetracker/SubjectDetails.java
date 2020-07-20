@@ -1,12 +1,16 @@
 package com.story.mipsa.attendancetracker;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +34,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<AttendanceDetails> attendanceDetailsList;
+    private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList;
     private FirebaseAuth firebaseAuth;
     FirebaseDatabase database;
     DatabaseReference ref;
@@ -39,8 +43,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     MainActivity mainActivity;
     AttendanceTarget attendanceTarget;
 
-    public ArrayList<AttendanceDetails> getAttendanceDetailsList() {
-        return attendanceDetailsList;
+    public ArrayList<SubjectAttendanceDetails> getSubjectAttendanceDetailsList() {
+        return subjectAttendanceDetailsList;
     }
 
     //Functions to perform when back is pressed form subject details page
@@ -58,6 +62,16 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subject_details);
+        this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        View view=getSupportActionBar().getCustomView();
+        ColorDrawable colorDrawable
+                = new ColorDrawable(Color.parseColor("#556e5f"));
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(colorDrawable);
+        TextView display = view.findViewById(R.id.name);
+        display.setText("Subject Details");
+
 
         mainActivity = new MainActivity();
         attendanceTarget = new AttendanceTarget();
@@ -81,14 +95,14 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
         //Retriece the attendance details and store in its appropriate list
-        checkRef.child("Subjects").child(currentSubjectItem.getSubjectName()).child("attendanceDetails").addListenerForSingleValueEvent(new ValueEventListener() {
+        checkRef.child("Subjects").child(currentSubjectItem.getSubjectName()).child("subjectAttendanceDetails").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.v("temp", "raj inside ondatachange " + dataSnapshot);
-                attendanceDetailsList.clear();
+                subjectAttendanceDetailsList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    AttendanceDetails data = postSnapshot.getValue(AttendanceDetails.class);
-                    attendanceDetailsList.add(data);
+                    SubjectAttendanceDetails data = postSnapshot.getValue(SubjectAttendanceDetails.class);
+                    subjectAttendanceDetailsList.add(data);
                     adapter.notifyDataSetChanged();
                     recyclerView.scheduleLayoutAnimation();
                 }
@@ -105,14 +119,14 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     }
 
     private void createAttendanceList() {
-        attendanceDetailsList = new ArrayList<>();
+        subjectAttendanceDetailsList = new ArrayList<>();
     }
 
     private void buildRecyclerView() {
         recyclerView = findViewById(R.id.detailsRecycler);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-        adapter = new AttendanceItemAdapter(attendanceDetailsList, this);
+        adapter = new AttendanceItemAdapter(subjectAttendanceDetailsList, this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
@@ -138,29 +152,29 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 
     private void updateDetails(String status, String date, int position) {
         Log.d("inside update", status + date + " - " + position);
-        AttendanceDetails updateItem = new AttendanceDetails(status, date);
+        SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date);
 
-        if (status.equalsIgnoreCase("present") && !attendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
-            attendanceDetailsList.get(position).setStatus(status);
+        if (status.equalsIgnoreCase("present") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
+            subjectAttendanceDetailsList.get(position).setStatus(status);
             currentSubjectItem.setPresent(currentSubjectItem.getPresent() + 1);
             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() - 1);
             Recalculate();
 
-        } else if (status.equalsIgnoreCase("absent") && !attendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
-            attendanceDetailsList.get(position).setStatus(status);
+        } else if (status.equalsIgnoreCase("absent") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
+            subjectAttendanceDetailsList.get(position).setStatus(status);
             currentSubjectItem.setPresent(currentSubjectItem.getPresent() - 1);
             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() + 1);
             Recalculate();
 
         }
-        attendanceDetailsList.set(position, updateItem);
-        Log.d("updated list", "" + updateItem + "========" + attendanceDetailsList);
+        subjectAttendanceDetailsList.set(position, updateItem);
+        Log.d("updated list", "" + updateItem + "========" + subjectAttendanceDetailsList);
         buildRecyclerView();
         adapter.notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
         DatabaseReference detailsRef = ref.child("Users").child(user.getUid()).child("Subjects").child(currentSubjectItem.getSubjectName());
         detailsRef.setValue(currentSubjectItem);
-        detailsRef.child("attendanceDetails").setValue(attendanceDetailsList);
+        detailsRef.child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
         setViews();
     }
 

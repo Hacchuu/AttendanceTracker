@@ -1,12 +1,16 @@
 package com.story.mipsa.attendancetracker;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +30,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.jar.Attributes;
 
 public class Login extends AppCompatActivity {
 
@@ -39,19 +51,42 @@ public class Login extends AppCompatActivity {
     private TextView signup;
     GoogleSignInClient googleSignInClient;
     int RC_SIGN_IN = 1;
+    FirebaseUser user;
+    FirebaseDatabase database;
+    DatabaseReference ref;
+    String minimumAttendance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+        this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        View view=getSupportActionBar().getCustomView();
+        ColorDrawable colorDrawable
+                = new ColorDrawable(Color.parseColor("#556e5f"));
+        ActionBar actionBar = getSupportActionBar();
+        getSupportActionBar().setElevation(0);
+        actionBar.setBackgroundDrawable(colorDrawable);
+        TextView display = view.findViewById(R.id.name);
+//        TextView options = view.findViewById(R.id.options);
+//        options.setVisibility(View.INVISIBLE);
+        display.setText("Attendance Tracker");
 
         firebaseAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference().getRoot();
+
+
 
         signInButton = findViewById(R.id.googleSignIn);
         signInButton = findViewById(R.id.googleSignIn);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 switch (view.getId()) {
                     case R.id.googleSignIn:
                         signIn();
@@ -75,12 +110,14 @@ public class Login extends AppCompatActivity {
         if (firebaseAuth.getCurrentUser() != null) {
             finish();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             startActivity(intent);
         }
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SignUp.class);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
             }
         });
@@ -89,6 +126,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), passwordReset.class);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
             }
         });
@@ -109,6 +147,9 @@ public class Login extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
+                progressDialog.setMessage("Logging in.");
+                progressDialog.isIndeterminate();
+                progressDialog.show();
                 //Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 //authenticating with firebase
@@ -125,7 +166,9 @@ public class Login extends AppCompatActivity {
         String Password = password.getText().toString().trim();
         boolean cancel = false;
         View focusView = null;
-
+        progressDialog.setMessage("Logging in.");
+        progressDialog.isIndeterminate();
+        progressDialog.show();
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(Password) && !isPasswordValid(Password)) {
             password.setError(getString(R.string.error_invalid_password));
@@ -157,12 +200,16 @@ public class Login extends AppCompatActivity {
                 @Override
                 public void onComplete(Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+                        user = firebaseAuth.getCurrentUser();
+                        target_callDB();
+                        finish();
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        progressDialog.setMessage("Logging in.");
-                        progressDialog.show();
+                        progressDialog.dismiss();
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(Login.this, "Unable to Log In!", Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                        Toast.makeText(Login.this, "This account does not exist", Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -179,7 +226,7 @@ public class Login extends AppCompatActivity {
         return password.length() > 4;
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
 
         //getting the auth credential
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -190,14 +237,17 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-//                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
-                            Toast.makeText(getApplicationContext(), "User Signed In", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), NamePage.class);
+                            user = firebaseAuth.getCurrentUser();
+                            target_callDB();
+                            finish();
+                            progressDialog.dismiss();
+                            Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);;
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
 //                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            progressDialog.dismiss();
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 
@@ -206,4 +256,26 @@ public class Login extends AppCompatActivity {
                 });
     }
 
+    private void target_callDB() {
+        DatabaseReference checkRef = ref.child("Users").child(user.getUid());
+        Log.v("temp", "Harsh setting  DB listener");
+        //Listener ofr Firebase DB
+        checkRef.child("Target").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.v("temp", "inside ondatachange " + dataSnapshot);
+                minimumAttendance = (String) dataSnapshot.getValue();
+                if(minimumAttendance != null){
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.v("temp", "Harsh read failed" + databaseError);
+            }
+        });
+    }
 }

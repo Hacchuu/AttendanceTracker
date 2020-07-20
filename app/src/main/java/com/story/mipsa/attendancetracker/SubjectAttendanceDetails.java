@@ -3,33 +3,31 @@ package com.story.mipsa.attendancetracker;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
-public class AttendanceDetails implements Parcelable {
+public class SubjectAttendanceDetails implements Parcelable {
     private String status;
     private String dateOfEntry;
 
-    public AttendanceDetails() {
+    public SubjectAttendanceDetails() {
     }
 
-    public AttendanceDetails(String status, String dateOfEntry) {
+    public SubjectAttendanceDetails(String status, String dateOfEntry) {
         this.status = status;
         this.dateOfEntry = dateOfEntry;
     }
 
-    protected AttendanceDetails(Parcel in) {
+    protected SubjectAttendanceDetails(Parcel in) {
         status = in.readString();
     }
 
-    public static final Creator<AttendanceDetails> CREATOR = new Creator<AttendanceDetails>() {
+    public static final Creator<SubjectAttendanceDetails> CREATOR = new Creator<SubjectAttendanceDetails>() {
         @Override
-        public AttendanceDetails createFromParcel(Parcel in) {
-            return new AttendanceDetails(in);
+        public SubjectAttendanceDetails createFromParcel(Parcel in) {
+            return new SubjectAttendanceDetails(in);
         }
 
         @Override
-        public AttendanceDetails[] newArray(int size) {
-            return new AttendanceDetails[size];
+        public SubjectAttendanceDetails[] newArray(int size) {
+            return new SubjectAttendanceDetails[size];
         }
     };
 

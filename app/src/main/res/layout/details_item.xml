@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center_horizontal"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp">
@@ -14,12 +15,14 @@
         android:layout_height="match_parent"
         app:markerSize="20dp"
         app:lineWidth="2dp"
+        app:markerInCenter="true"
         android:layout_marginLeft="20dp"
         app:startLineColor="@color/colorPrimaryDark"
         app:endLineColor="@color/colorPrimaryDark"
         app:linePadding="5dp" />
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"

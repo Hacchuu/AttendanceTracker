@@ -1,9 +1,12 @@
 package com.story.mipsa.attendancetracker;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,12 +39,28 @@ public class SignUp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        View view=getSupportActionBar().getCustomView();
+        ColorDrawable colorDrawable
+                = new ColorDrawable(Color.parseColor("#556e5f"));
+        ActionBar actionBar = getSupportActionBar();
+        getSupportActionBar().setElevation(0);
+        actionBar.setBackgroundDrawable(colorDrawable);
+        TextView display = view.findViewById(R.id.name);
+//        TextView options = view.findViewById(R.id.options);
+//        options.setVisibility(View.INVISIBLE);
+        display.setText("Attendance Tracker");
+
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
+            finish();
             Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             startActivity(intent);
         }
         mEmailView = findViewById(R.id.email_sign_up);
@@ -71,6 +90,7 @@ public class SignUp extends AppCompatActivity {
 
     public void SignIn(View view) {
         Intent intent = new Intent(this, Login.class);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(intent);
     }
 
@@ -118,7 +138,8 @@ public class SignUp extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         finish();
                         Log.d("......", " Main Activity activity should start");
-                        Intent intent = new Intent(getApplicationContext(), NamePage.class);
+                        Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         startActivity(intent);
                     } else
                         Toast.makeText(SignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();

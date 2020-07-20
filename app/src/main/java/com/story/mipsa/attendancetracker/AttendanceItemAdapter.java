@@ -1,5 +1,6 @@
 package com.story.mipsa.attendancetracker;
 
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -9,17 +10,21 @@ import com.github.vipulasri.timelineview.TimelineView;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAdapter.ViewHolder> {
     private TimelineView timelineView;
     private TextView date;
     private TextView title;
-    private ArrayList<AttendanceDetails> attendanceDetailsList;
+    CardView cardView;
+    private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList;
     private OnTimelimeListener onTimelimeListener;
+    private boolean multiSelect = false;
+    private ArrayList<SubjectAttendanceDetails> selectedItems = new ArrayList<>();
 
-    public AttendanceItemAdapter(ArrayList<AttendanceDetails> attendanceDetailsList, OnTimelimeListener onTimelimeListener) {
-        this.attendanceDetailsList = attendanceDetailsList;
+    public AttendanceItemAdapter(ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList, OnTimelimeListener onTimelimeListener) {
+        this.subjectAttendanceDetailsList = subjectAttendanceDetailsList;
         this.onTimelimeListener = onTimelimeListener;
     }
 
@@ -32,6 +37,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             super(itemView);
             timelineView = itemView.findViewById(R.id.timeline);
             timelineView.initLine(viewType);
+            cardView = itemView.findViewById(R.id.cardID);
             date = itemView.findViewById(R.id.timeline_date);
             title = itemView.findViewById(R.id.timeline_title);
             this.onTimelimeListener = onTimelimeListener;
@@ -42,8 +48,8 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
         public void onClick(View view) {
             onTimelimeListener.onTimelineClick(getAdapterPosition());
         }
-    }
 
+    }
 
     @NonNull
     @Override
@@ -54,14 +60,19 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final AttendanceDetails currentDetails = attendanceDetailsList.get(position);
+        final SubjectAttendanceDetails currentDetails = subjectAttendanceDetailsList.get(position);
         date.setText(currentDetails.getDateOfEntry());
         title.setText(currentDetails.getStatus());
+        String check = currentDetails.getStatus().toLowerCase().trim();
+        if(currentDetails.getStatus().equalsIgnoreCase("absent")){
+            timelineView.setMarkerColor(Color.RED);
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return attendanceDetailsList.size();
+        return subjectAttendanceDetailsList.size();
     }
 
 

@@ -14,12 +14,12 @@ public class SubjectItem implements Parcelable {
     private int bunk;
     private int attend;
     private float percentage;
-    private ArrayList<AttendanceDetails> attendanceDetails;
+    private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetails;
 
     public SubjectItem() {
     }
 
-    public SubjectItem(String subjectName, int present, int absent, int total, float percentage, int bunk, int attend, ArrayList<AttendanceDetails> attendanceDet) {
+    public SubjectItem(String subjectName, int present, int absent, int total, float percentage, int bunk, int attend, ArrayList<SubjectAttendanceDetails> attendanceDet) {
         this.subjectName = subjectName;
         this.present = present;
         this.absent = absent;
@@ -28,9 +28,9 @@ public class SubjectItem implements Parcelable {
         this.bunk = bunk;
         this.attend = attend;
         if (attendanceDet == null)
-            this.attendanceDetails = new ArrayList<AttendanceDetails>();
+            this.subjectAttendanceDetails = new ArrayList<SubjectAttendanceDetails>();
         else
-            this.attendanceDetails = attendanceDet;
+            this.subjectAttendanceDetails = attendanceDet;
     }
 
     protected SubjectItem(Parcel in) {
@@ -63,13 +63,13 @@ public class SubjectItem implements Parcelable {
         this.subjectName = subjectName;
     }
 
-    public ArrayList<AttendanceDetails> getAttendanceDetails() {
-        return attendanceDetails;
+    public ArrayList<SubjectAttendanceDetails> getSubjectAttendanceDetails() {
+        return subjectAttendanceDetails;
     }
 
-    public void setAttendanceDetails(AttendanceDetails attendanceDetails) {
-        if (this.attendanceDetails != null)
-            this.attendanceDetails.add(attendanceDetails);
+    public void setSubjectAttendanceDetails(SubjectAttendanceDetails subjectAttendanceDetails) {
+        if (this.subjectAttendanceDetails != null)
+            this.subjectAttendanceDetails.add(subjectAttendanceDetails);
     }
 
     public int getPresent() {
@@ -134,7 +134,7 @@ public class SubjectItem implements Parcelable {
         parcel.writeInt(bunk);
         parcel.writeInt(attend);
         parcel.writeFloat(percentage);
-//        parcel.writeTypedObject(attendanceDetails, i);
+//        parcel.writeTypedObject(subjectAttendanceDetails, i);
     }
 
 }
