@@ -88,7 +88,6 @@ public class AttendanceTarget extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 minimumAttendance = textView.getText().toString().trim();
                 if (!minimumAttendance.equalsIgnoreCase("%")) {
                     user = firebaseAuth.getCurrentUser();
@@ -98,6 +97,7 @@ public class AttendanceTarget extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     startActivity(intent);
+                    finish();
                 } else {
                     Toast message = Toast.makeText(getApplicationContext(), "Minimum Attendance can't be null", Toast.LENGTH_SHORT);
                     View toastView = message.getView();

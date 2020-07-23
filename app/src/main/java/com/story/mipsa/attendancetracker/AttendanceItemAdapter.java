@@ -1,19 +1,31 @@
 package com.story.mipsa.attendancetracker;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.vipulasri.timelineview.TimelineView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAdapter.ViewHolder> {
+    private final FragmentActivity context;
     private TimelineView timelineView;
     private TextView date;
     private TextView title;
@@ -22,10 +34,88 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
     private OnTimelimeListener onTimelimeListener;
     private boolean multiSelect = false;
     private ArrayList<SubjectAttendanceDetails> selectedItems = new ArrayList<>();
+    int flag = 0;
+    private FirebaseDatabase database;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser user;
+    private DatabaseReference ref;
+    SubjectDetails subjectDetails;
 
-    public AttendanceItemAdapter(ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList, OnTimelimeListener onTimelimeListener) {
+    private ActionMode.Callback callback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.contextual_menu,menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            user = firebaseAuth.getCurrentUser();
+            DatabaseReference userRef = ref.child("Users");
+            SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
+            flag = 0;
+            if(menuItem.getItemId() == R.id.action_delete){
+                flag = 1;
+                String sub = currentItem.getSubjectName();
+                for(int i=0; i<selectedItems.size();i++){
+                    int index = subjectAttendanceDetailsList.indexOf(selectedItems.get(i));
+                    subjectAttendanceDetailsList.remove(selectedItems.get(i));
+                    userRef.child(user.getUid()).child("Subjects").child(sub).child("subjectAttendanceDetails").child(Integer.toString(index)).removeValue();
+                    if(selectedItems.get(i).getStatus().equalsIgnoreCase("Absent")){
+                        currentItem.setAbsent(currentItem.getAbsent()-1);
+                        currentItem.setTotal(currentItem.getTotal()-1);
+                    }
+                    else if(selectedItems.get(i).getStatus().equalsIgnoreCase("Present")){
+                        currentItem.setPresent(currentItem.getPresent()-1);
+                        currentItem.setTotal(currentItem.getTotal()-1);
+                    }
+                }
+
+                Toast.makeText(context,"Selected cards deleted",Toast.LENGTH_SHORT);
+                actionMode.finish();
+            }
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            multiSelect = false;
+            user = firebaseAuth.getCurrentUser();
+            DatabaseReference userRef = ref.child("Users");
+            SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
+            String sub = currentItem.getSubjectName();
+            selectedItems.clear();
+            if(flag == 1){
+                subjectDetails.Recalculate();
+                subjectDetails.setViews();
+                userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
+                userRef.child(user.getUid()).child("Subjects").child(sub).child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
+                context.finish();
+                Intent intent = new Intent(context,SubjectDetails.class);
+                intent.putExtra("Selected Subject Item",subjectDetails.getCurrentSubjectItem());
+                context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                context.startActivity(intent);
+            }
+            else{
+                notifyDataSetChanged();
+            }
+        }
+    };
+
+
+
+    public AttendanceItemAdapter(ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList, FragmentActivity context, OnTimelimeListener onTimelimeListener) {
         this.subjectAttendanceDetailsList = subjectAttendanceDetailsList;
+        this.context = context;
         this.onTimelimeListener = onTimelimeListener;
+        subjectDetails = (SubjectDetails)context;
     }
 
 
@@ -59,15 +149,61 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        holder.itemView.setAlpha(1f);
+        database = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        ref = database.getReference().getRoot();
         final SubjectAttendanceDetails currentDetails = subjectAttendanceDetailsList.get(position);
         date.setText(currentDetails.getDateOfEntry());
         title.setText(currentDetails.getStatus());
-        String check = currentDetails.getStatus().toLowerCase().trim();
         if(currentDetails.getStatus().equalsIgnoreCase("absent")){
             timelineView.setMarkerColor(Color.RED);
         }
+        else if(currentDetails.getStatus().equalsIgnoreCase("present")){
+            timelineView.setMarkerColor(Color.parseColor("#228B22"));
+        }
 
+        if(selectedItems.contains(currentDetails)){
+            holder.itemView.setAlpha(0.5f);
+        }
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(!multiSelect){
+                    multiSelect = true;
+                    subjectDetails.startActionMode(callback);
+                    selectItems(holder,currentDetails);
+                }
+                return true;
+            }
+
+
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(multiSelect){
+                    selectItems(holder,currentDetails);
+                }
+                else{
+                    onTimelimeListener.onTimelineClick(holder.getAdapterPosition());
+                }
+            }
+        });
+
+    }
+    private void selectItems(AttendanceItemAdapter.ViewHolder holder, SubjectAttendanceDetails currentItem) {
+        if(selectedItems.contains(currentItem)){
+            selectedItems.remove(currentItem);
+            holder.itemView.setAlpha(1.0f);
+        }
+        else {
+            selectedItems.add(currentItem);
+            holder.itemView.setAlpha(0.5f);
+        }
     }
 
     @Override

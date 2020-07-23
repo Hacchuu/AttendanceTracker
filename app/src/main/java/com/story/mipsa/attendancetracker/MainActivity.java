@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -90,9 +92,9 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
+        ImageView logo = view.findViewById(R.id.logo);
+        logo.setVisibility(View.INVISIBLE);
         display.setText("Attendance Tracker");
-        Log.d("Mipsa name", "Here 9");
-
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -103,46 +105,17 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-
         user = firebaseAuth.getCurrentUser();
-
-//        boolean check = user.delete().isSuccessful();
-//        Log.d("Checking deletion", "Deletion done");
-//
-//        Log.d("deleting exception",""+user.delete().getException());
-
-
         //current date to display in main activity
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
         String currentDate = sdf.format(new Date());
-
-//        dateText = findViewById(R.id.date);
-//        dateText.setText(currentDate);
-
-        if (user == null) {
-            finish();
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            startActivity(new Intent(getApplicationContext(), Login.class));
-        } else {
-            uid = user.getUid();
-            ref = database.getReference().getRoot();
-        }
-        if (user != null) {
-            name_target_callDB();
-            subjectCallDb();
-            createExampleList();
-            buildRecyclerView();
-        }
+        uid = user.getUid();
+        ref = database.getReference().getRoot();
+        name_target_callDB();
+        subjectCallDb();
+        createExampleList();
+        buildRecyclerView();
         countView = findViewById(R.id.subjectCount);
-//        textView = findViewById(R.id.Name);
-//        textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(getApplicationContext(), NamePage.class);
-//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//                startActivity(intent);
-//            }
-//        });
         textView2 = findViewById(R.id.TargetFill);
         textView2.setText(minimumAttendance);
         textView2.setOnClickListener(new View.OnClickListener() {
@@ -151,12 +124,15 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                 Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
+                finish();
             }
         });
         insertButton = findViewById(R.id.addSubject);
         insertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("Subject List", subjectItems);
                 subjectDialog dialog = new subjectDialog();
                 dialog.show(getSupportFragmentManager(), "subjectDialog");
             }
@@ -287,19 +263,29 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
     //Function to insert the subject details in the arraylist as well as the database.
     public void insertItem(String inputSubject, int position) {
-        SubjectItem subjectItem = new SubjectItem(inputSubject, 0, 0, 0, 0, 0, 0, null);
-        Log.v("raj insertItem si", "" + subjectItem);
-        subjectItems.add(position, subjectItem);
+        int repeat = 0;
+        for(int i=0 ;i<subjectItems.size();i++){
+            if(subjectItems.get(i).getSubjectName().equalsIgnoreCase(inputSubject)){
+                repeat = 1;
+            }
+        }
+        if(repeat == 1){
+            Toast.makeText(getApplicationContext(), "This subject already exists", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            SubjectItem subjectItem = new SubjectItem(inputSubject, 0, 0, 0, 0, 0, 0, null);
+            Log.v("raj insertItem si", "" + subjectItem);
+            subjectItems.add(position, subjectItem);
 
-        //Adding data to firebase
-        user = firebaseAuth.getCurrentUser();
-        DatabaseReference userRef = ref.child("Users");
-        Log.v("raj subject", inputSubject + "----->" + subjectItem);
-        userRef.child(user.getUid()).child("Subjects").child(inputSubject).setValue(subjectItem);
-        adapter.notifyDataSetChanged();
-        subject_count = subjectItems.size();
-        countView.setText(Integer.toString(subject_count));
-
+            //Adding data to firebase
+            user = firebaseAuth.getCurrentUser();
+            DatabaseReference userRef = ref.child("Users");
+            Log.v("raj subject", inputSubject + "----->" + subjectItem);
+            userRef.child(user.getUid()).child("Subjects").child(inputSubject).setValue(subjectItem);
+            adapter.notifyDataSetChanged();
+            subject_count = subjectItems.size();
+            countView.setText(Integer.toString(subject_count));
+        }
     }
 
     //To log out of google account or custom account.
@@ -315,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(intent);
+        finish();
     }
 
     private void signOut() {
@@ -334,11 +321,13 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         intent.putExtra("Selected Subject Item", subjectItems.get(position));
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(intent);
+        finish();
     }
 
     //Functions to perform when back is pressed
     @Override
     public void onBackPressed() {
+
         new AlertDialog.Builder(this)
                 .setTitle("Exit?")
                 .setMessage("Are you sure you want to exit?")

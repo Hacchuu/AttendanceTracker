@@ -1,11 +1,18 @@
 package com.story.mipsa.attendancetracker;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -17,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import androidx.annotation.NonNull;
+//import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,15 +37,69 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     FirebaseDatabase database;
     DatabaseReference ref;
     private OnItemListener onItemListener;
+    private boolean multiSelect = false;
+    private ArrayList<SubjectItem> selectedItems = new ArrayList();
+    MainActivity mainActivity;
+    int flag;
+
+    private ActionMode.Callback callback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.contextual_menu,menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            user = firebaseAuth.getCurrentUser();
+            DatabaseReference userRef = ref.child("Users");
+//            String sub = currentItem.getSubjectName();
+           flag = 0;
+
+            if(menuItem.getItemId() == R.id.action_delete){
+                flag = 1;
+                for(int i=0; i<selectedItems.size();i++){
+                    subjectItems.remove(selectedItems.get(i));
+                    String sub = selectedItems.get(i).getSubjectName();
+                    userRef.child(user.getUid()).child("Subjects").child(sub).removeValue();
+                }
+                Toast.makeText(context,"Selected cards deleted",Toast.LENGTH_SHORT);
+                actionMode.finish();
+            }
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            multiSelect = false;
+            selectedItems.clear();
+            if(flag == 1){
+                context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                context.startActivity(new Intent(context,MainActivity.class));
+                context.finish();
+            }
+            else {
+                notifyDataSetChanged();
+            }
+        }
+    };
 
     public SubjectItemAdapter(ArrayList<SubjectItem> exampleList, FragmentActivity context, OnItemListener onItemListener) {
         subjectItems = exampleList;
         this.context = context;
         this.onItemListener = onItemListener;
+        mainActivity = (MainActivity) context;
     }
 
-    public static class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+    public static class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView subjectName, Attendance, Status, Percentage;
         TextView optionDigit;
         public Button present, absent;
@@ -92,10 +154,49 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     //This function determines which item in the list we are currently looking at
     @Override
     public void onBindViewHolder(@NonNull final ExampleViewHolder holder, int position) {
+        holder.itemView.setAlpha(1f);
         final SubjectItem currentItem = subjectItems.get(position);
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();
+
+        if(selectedItems.contains(currentItem)){
+            holder.itemView.setAlpha(0.5f);
+//            holder.itemView.setBackgroundColor(Color.LTGRAY);
+        }
+
+
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(!multiSelect){
+                    multiSelect = true;
+                    mainActivity.startActionMode(callback);
+                    selectItems(holder,currentItem);
+                }
+//                if(multiSelect){
+//                    selectItems(holder,currentItem);
+//                }
+                return true;
+            }
+
+
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(multiSelect){
+                    selectItems(holder,currentItem);
+                }
+                else{
+                    onItemListener.OnItemClick(holder.getAdapterPosition());
+                }
+            }
+        });
+
+
 
         //holder holds the pointer to the current item in the recycler view
         holder.subjectName.setText(currentItem.getSubjectName());
@@ -143,6 +244,18 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         });
     }
 
+
+    private void selectItems(ExampleViewHolder holder, SubjectItem currentItem) {
+        if(selectedItems.contains(currentItem)){
+            selectedItems.remove(currentItem);
+            holder.itemView.setAlpha(1.0f);
+        }
+        else {
+            selectedItems.add(currentItem);
+            holder.itemView.setAlpha(0.5f);
+        }
+    }
+
     @Override
     public int getItemCount() {
         return subjectItems.size();
@@ -158,7 +271,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setPercentage(avg);
         currentItem.setTotal(holder.total);
         currentItem.setPresent(holder.presentS);
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
         String currentDate = sdf.format(new Date());
         Log.d("harsh AD check", "" + new SubjectAttendanceDetails("Present", currentDate));
         currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate));
@@ -192,7 +305,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setAbsent(holder.absentS);
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         holder.Percentage.setText(String.format("%.1f%%", currentItem.getPercentage()));
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
         String currentDate = sdf.format(new Date());
         currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate));
         Calculate(currentItem, holder);
@@ -250,6 +363,8 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     public interface OnItemListener {
         void OnItemClick(int position);
     }
+
+
 }
 
 

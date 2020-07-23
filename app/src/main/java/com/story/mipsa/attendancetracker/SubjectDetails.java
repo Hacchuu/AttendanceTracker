@@ -2,6 +2,7 @@ package com.story.mipsa.attendancetracker;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,8 +11,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editSubjectDetails.onInput {
     TextView subjectName;
@@ -47,14 +53,18 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         return subjectAttendanceDetailsList;
     }
 
+    public SubjectItem getCurrentSubjectItem() {
+        return currentSubjectItem;
+    }
+
     //Functions to perform when back is pressed form subject details page
     @Override
     public void onBackPressed() {
-        finish();
         Intent intent = new Intent(this, MainActivity.class);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         intent.putExtra("splash_disable", 1);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -62,14 +72,25 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subject_details);
+        ActionBar actionBar = getSupportActionBar();
         this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.custom_action_bar);
         View view=getSupportActionBar().getCustomView();
         ColorDrawable colorDrawable
                 = new ColorDrawable(Color.parseColor("#556e5f"));
-        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
+
+        ImageView logo = view.findViewById(R.id.logo);
+        logo.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_back_black_24dp));
+        logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         display.setText("Subject Details");
 
 
@@ -85,17 +106,22 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             currentSubjectItem = getIntent().getParcelableExtra("Selected Subject Item");
         }
 
-        subjectName = findViewById(R.id.nameSubject);
+        subjectName = findViewById(R.id.nameSubjectDets);
         attendance = findViewById(R.id.percent);
         total = findViewById(R.id.totalFill);
         present = findViewById(R.id.presentFill);
         absent = findViewById(R.id.absentFill);
         outcome = findViewById(R.id.outcome);
         setViews();
+        details_DB();
+        createAttendanceList();
+        buildRecyclerView();
+    }
 
+    private  void details_DB(){
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
-        //Retriece the attendance details and store in its appropriate list
-        checkRef.child("Subjects").child(currentSubjectItem.getSubjectName()).child("subjectAttendanceDetails").addListenerForSingleValueEvent(new ValueEventListener() {
+        //Retrieve the attendance details and store in its appropriate list
+        checkRef.child("Subjects").child(currentSubjectItem.getSubjectName()).child("subjectAttendanceDetails").orderByChild("dateOfEntry").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.v("temp", "raj inside ondatachange " + dataSnapshot);
@@ -106,6 +132,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                     adapter.notifyDataSetChanged();
                     recyclerView.scheduleLayoutAnimation();
                 }
+                ;
             }
 
             @Override
@@ -113,9 +140,6 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                 Log.v("temp", "raj read failed" + databaseError);
             }
         });
-        createAttendanceList();
-        buildRecyclerView();
-
     }
 
     private void createAttendanceList() {
@@ -126,7 +150,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         recyclerView = findViewById(R.id.detailsRecycler);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-        adapter = new AttendanceItemAdapter(subjectAttendanceDetailsList, this);
+        adapter = new AttendanceItemAdapter(subjectAttendanceDetailsList, this,this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
@@ -145,13 +169,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         updateDetails(status, date, position);
     }
 
-    public void addClass() {
-        editSubjectDetails dialog = new editSubjectDetails();
-        dialog.show(getSupportFragmentManager(), "editSubjectDetails");
-    }
-
     private void updateDetails(String status, String date, int position) {
-        Log.d("inside update", status + date + " - " + position);
+//        Log.d("inside update", status + date + " - " + position);
         SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date);
 
         if (status.equalsIgnoreCase("present") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
@@ -165,21 +184,21 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             currentSubjectItem.setPresent(currentSubjectItem.getPresent() - 1);
             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() + 1);
             Recalculate();
-
         }
         subjectAttendanceDetailsList.set(position, updateItem);
         Log.d("updated list", "" + updateItem + "========" + subjectAttendanceDetailsList);
-        buildRecyclerView();
-        adapter.notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
         DatabaseReference detailsRef = ref.child("Users").child(user.getUid()).child("Subjects").child(currentSubjectItem.getSubjectName());
         detailsRef.setValue(currentSubjectItem);
         detailsRef.child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
-        setViews();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        Intent intent = new Intent(getApplicationContext(),SubjectDetails.class);
+        intent.putExtra("Selected Subject Item", currentSubjectItem);
+        startActivity(intent);
+        finish();
     }
 
     //Updates the views of all the required fields after any changes.
-    private void setViews() {
+    protected void setViews() {
         subjectName.setText(currentSubjectItem.getSubjectName());
         attendance.setText(String.format(java.util.Locale.US, "%.1f", currentSubjectItem.getPercentage()) + "%");
         total.setText(String.valueOf(currentSubjectItem.getTotal()));
@@ -201,7 +220,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     }
 
     //Recalculates the algorithm if there are any changes during updation of timeline.
-    private void Recalculate() {
+    protected void Recalculate() {
         int absentS = currentSubjectItem.getAbsent();
         int presentS = currentSubjectItem.getPresent();
         int total = currentSubjectItem.getTotal();
@@ -212,6 +231,12 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         if (totalS != 0) {
             avg = ((float) presentS / (float) totalS) * 100;
             currentSubjectItem.setPercentage(avg);
+        }
+        else{
+            currentSubjectItem.setPercentage(0);
+            currentSubjectItem.setAttend(0);
+            currentSubjectItem.setBunk(0);
+            return;
         }
         float temp = avg;
         String target = mainActivity.minimumAttendance;
@@ -225,7 +250,6 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             }
         }
         min = Integer.parseInt(target2);
-
         if (temp >= min) {
             do {
                 totalS += 1;

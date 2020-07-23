@@ -29,17 +29,9 @@ public class subjectDialog extends AppCompatDialogFragment {
 
     private EditText editText;
     private Button cancel, Add;
-    FirebaseUser user;
-    FirebaseDatabase database;
-    DatabaseReference ref;
-    FirebaseAuth firebaseAuth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference().getRoot();
 
         View view = inflater.inflate(R.layout.subject_dialog, container, false);
         editText = view.findViewById(R.id.enterSubject);
@@ -58,10 +50,6 @@ public class subjectDialog extends AppCompatDialogFragment {
             public void onClick(View view) {
                 String subject = editText.getText().toString().trim();
                 if (!subject.equals("")) {
-                    user = firebaseAuth.getCurrentUser();
-                    DatabaseReference userRef = ref.child("Users");
-                    String sName = subject;
-                    userRef.child(user.getUid()).child("Subjects").child(sName).setValue(subject);
                     onInput.sendInput(subject);
                 }
                 getDialog().dismiss();

@@ -30,7 +30,7 @@
 
 
             <TextView
-                android:id="@+id/nameSubject"
+                android:id="@+id/nameSubjectDets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Subject Name"
@@ -47,18 +47,17 @@
                 android:id="@+id/T3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="Target"
                 android:text="Classes Skipped:"
                 android:textColor="	#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                tools:ignore="OnClick"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.066"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/T2"
-                app:layout_constraintVertical_bias="0.245"
-                tools:ignore="OnClick" />
+                app:layout_constraintVertical_bias="0.245" />
 
             <TextView
                 android:id="@+id/absentFill"
@@ -68,14 +67,14 @@
                 android:textColor="	#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                tools:ignore="OnClick"
                 app:layout_constraintBaseline_toBaselineOf="@id/T3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/T3"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.767"
-                tools:ignore="OnClick" />
+                app:layout_constraintVertical_bias="0.767" />
 
             <TextView
                 android:id="@+id/T4"

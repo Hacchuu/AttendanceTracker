@@ -79,8 +79,6 @@ public class Login extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
 
-
-
         signInButton = findViewById(R.id.googleSignIn);
         signInButton = findViewById(R.id.googleSignIn);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -100,12 +98,14 @@ public class Login extends AppCompatActivity {
                 .requestEmail()
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
+        progressDialog = new ProgressDialog(this);
+
 
         email = findViewById(R.id.email_sign_in);
         password = findViewById(R.id.password_sign_in);
         button = findViewById(R.id.Signin);
         resetPassword = findViewById(R.id.resetPassword);
-        progressDialog = new ProgressDialog(this);
+
         signup = findViewById(R.id.signUp);
         if (firebaseAuth.getCurrentUser() != null) {
             finish();
@@ -147,15 +147,16 @@ public class Login extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                progressDialog.setMessage("Logging in.");
-                progressDialog.isIndeterminate();
-                progressDialog.show();
                 //Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 //authenticating with firebase
+                progressDialog.setMessage("Logging in.");
+                progressDialog.isIndeterminate();
+                progressDialog.show();
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("google sign in error", "onActivityResult: "+e.getMessage());
             }
         }
     }
@@ -199,14 +200,10 @@ public class Login extends AppCompatActivity {
             firebaseAuth.signInWithEmailAndPassword(Email, Password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(Task<AuthResult> task) {
+
                     if (task.isSuccessful()) {
                         user = firebaseAuth.getCurrentUser();
                         target_callDB();
-                        finish();
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        progressDialog.dismiss();
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        startActivity(intent);
                     } else {
                         progressDialog.dismiss();
                         Toast.makeText(Login.this, "This account does not exist", Toast.LENGTH_LONG).show();
@@ -239,11 +236,6 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             user = firebaseAuth.getCurrentUser();
                             target_callDB();
-                            finish();
-                            progressDialog.dismiss();
-                            Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);;
-                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                            startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
 //                            Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -267,8 +259,18 @@ public class Login extends AppCompatActivity {
                 minimumAttendance = (String) dataSnapshot.getValue();
                 if(minimumAttendance != null){
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    progressDialog.dismiss();
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     startActivity(intent);
+                    finish();
+                }
+                else{
+
+                    Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+                    progressDialog.dismiss();
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    startActivity(intent);
+                    finish();
                 }
             }
 

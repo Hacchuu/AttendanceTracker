@@ -27,13 +27,13 @@ public class editSubjectDetails extends AppCompatDialogFragment {
 
     public editSubjectDetails.onInput onInput;
 
-    CalendarView calendarView;
-    Button button, cancel;
-    RadioButton radioPresent, radioAbsent;
-    String status;
-    public String date;
-    SubjectDetails subjectDetails;
-    ArrayList<SubjectAttendanceDetails> subjectAttendanceDetails;
+    private CalendarView calendarView;
+    private Button button, cancel;
+    private RadioButton radioPresent, radioAbsent;
+    private String status;
+    private String date;
+    private SubjectDetails subjectDetails;
+    private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetails;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,19 +45,15 @@ public class editSubjectDetails extends AppCompatDialogFragment {
         radioAbsent = view.findViewById(R.id.radioAbsent);
         radioPresent = view.findViewById(R.id.radioPresent);
         cancel = view.findViewById(R.id.cancelDetails);
-
         subjectDetails = new SubjectDetails();
         subjectAttendanceDetails = subjectDetails.getSubjectAttendanceDetailsList();
-        Log.d("harsh subject array", "" + subjectAttendanceDetails);
-
+//        Log.d("harsh subject array", "" + subjectAttendanceDetails);
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
-                Log.d("harsh check", i + "/" + i1 + "/" + i2);
-
+//                Log.d("harsh check", i + "/" + i1 + "/" + i2);
                 String day = "", mon = "";
-
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(i, i1, i2);
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -125,7 +121,7 @@ public class editSubjectDetails extends AppCompatDialogFragment {
                         day = "Sat";
                         break;
                 }
-                date = day + ", " + i2 + " " + mon + " " + i;
+                date = + i2 + " " + mon + " " + i+", "+day;
                 Log.d("date check", date);
             }
         });
@@ -141,20 +137,22 @@ public class editSubjectDetails extends AppCompatDialogFragment {
             @Override
             public void onClick(View view) {
                 if (date == null) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
+                    SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
                     date = sdf.format(new Date());
                 }
 
                 if (radioPresent.isChecked()) {
                     status = "Present";
                     onInput.sendDetailsInput(status, date);
+                    getDialog().dismiss();
                 } else if (radioAbsent.isChecked()) {
                     status = "Absent";
                     onInput.sendDetailsInput(status, date);
+                    getDialog().dismiss();
                 } else {
-                    Toast.makeText(getActivity(), "Select an entry", Toast.LENGTH_SHORT);
+                    Toast.makeText(getActivity(),"Select an option",Toast.LENGTH_SHORT).show();
                 }
-                getDialog().dismiss();
+
             }
         });
 

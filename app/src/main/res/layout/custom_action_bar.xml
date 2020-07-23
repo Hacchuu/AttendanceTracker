@@ -11,11 +11,10 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="47dp"
-            android:layout_height="55dp"
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:src="@drawable/ic_all_out_black_48dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,19 +32,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/options"-->
-<!--            android:layout_width="18dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:gravity="end|center_vertical"-->
-<!--            android:text="&#8942;"-->
-<!--            android:textAlignment="center"-->
-<!--            android:textAppearance="?android:textAppearanceLarge"-->
-<!--            android:textColor="@color/colorPrimary"-->
-<!--            android:textStyle="bold"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
