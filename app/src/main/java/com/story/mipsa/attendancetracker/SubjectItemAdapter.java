@@ -2,6 +2,9 @@ package com.story.mipsa.attendancetracker;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -27,6 +30,8 @@ import androidx.annotation.NonNull;
 //import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static android.content.Context.VIBRATOR_SERVICE;
 
 
 public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.ExampleViewHolder> {
@@ -171,6 +176,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             @Override
             public boolean onLongClick(View view) {
                 if(!multiSelect){
+                    shakeItBaby();
                     multiSelect = true;
                     mainActivity.startActionMode(callback);
                     selectItems(holder,currentItem);
@@ -188,6 +194,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             @Override
             public void onClick(View view) {
                 if(multiSelect){
+                    shakeItBaby();
                     selectItems(holder,currentItem);
                 }
                 else{
@@ -285,9 +292,9 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                 holder.Status.setText("You can't bunk the next class ◉_◉");
         } else if (holder.bunk > 0) {
             if (holder.bunk > 1)
-                holder.Status.setText("You can bunk " + holder.bunk + " classes ♥‿♥");
+                holder.Status.setText("You can bunk " + holder.bunk + " classes (¬‿¬)");
             else if(holder.bunk == 1)
-                holder.Status.setText("You can bunk 1 class (ᵔᴥᵔ)");
+                holder.Status.setText("You can bunk 1 class ^.^");
 
         }
     }
@@ -357,6 +364,15 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         }
         currentItem.setAttend(holder.attend);
         currentItem.setBunk(holder.bunk);
+    }
+
+    //Vibration on clikc method
+    private void shakeItBaby() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            ((Vibrator) context.getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(125, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            ((Vibrator) context.getSystemService(VIBRATOR_SERVICE)).vibrate(125);
+        }
     }
 
     //Interface to send the position of the current item element

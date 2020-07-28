@@ -3,6 +3,7 @@ package com.story.mipsa.attendancetracker;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -22,6 +23,14 @@ public class passwordReset extends AppCompatActivity {
     EditText email;
     Button button;
     FirebaseAuth firebaseAuth;
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Login.class);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,20 +59,25 @@ public class passwordReset extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String rEmail = email.getText().toString().trim();
-                if (TextUtils.isEmpty(rEmail)) {
-                    email.setError("Enter email!");
+                if (rEmail.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Enter the email address", Toast.LENGTH_LONG).show();
                 }
-
-                firebaseAuth.sendPasswordResetEmail(rEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Password Reset Email sent!", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Failed to send Email!", Toast.LENGTH_LONG).show();
+                else{
+                    firebaseAuth.sendPasswordResetEmail(rEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Password Reset Email sent!", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(getApplicationContext(), Login.class);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Failed to send Email!", Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
                 });
+                }
             }
         });
     }

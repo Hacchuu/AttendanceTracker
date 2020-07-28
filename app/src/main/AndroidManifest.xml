@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.story.mipsa.attendancetracker">
-
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <application
         android:name=".myFirebaseApp"
         android:allowBackup="true"
@@ -10,23 +10,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".editSubjectDetails"></activity>
+        <activity android:name=".InstructionsPage"></activity>
+        <activity android:name=".editSubjectDetails" />
         <activity android:name=".SubjectDetails" />
         <activity android:name=".passwordReset" />
         <activity android:name=".SignUp" />
         <activity android:name=".Login" />
         <activity android:name=".AttendanceTarget" />
-        <activity android:name=".SplashActivity"
+        <activity
+            android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity">
+        <activity android:name=".MainActivity"></activity>
 
-        </activity>
     </application>
 
 </manifest>

@@ -12,7 +12,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -188,10 +192,17 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     @Override
     public boolean onOptionsItemSelected(MenuItem item) { switch(item.getItemId()) {
         case R.id.instructions:
-            Toast.makeText(getApplicationContext(), "You clicked instructions", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "You clicked instructions", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(),InstructionsPage.class);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            startActivity(intent);
+            finish();
             return(true);
         case R.id.support:
-            Toast.makeText(getApplicationContext(), "You clicked support", Toast.LENGTH_SHORT).show();
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto","harshppatel7@gmail.com", null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Attendance Tracker - Support");
+            startActivity(Intent.createChooser(emailIntent, "Send Email"));
             return(true);
         case R.id.logout:
             logout();
@@ -339,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                     }
                 }).create().show();
     }
+
 }
 
 

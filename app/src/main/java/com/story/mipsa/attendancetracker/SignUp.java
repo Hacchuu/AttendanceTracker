@@ -1,5 +1,6 @@
 package com.story.mipsa.attendancetracker;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -33,7 +35,15 @@ public class SignUp extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     FirebaseDatabase database;
     DatabaseReference ref;
+    private FirebaseUser user;
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Login.class);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +68,10 @@ public class SignUp extends AppCompatActivity {
         ref = database.getReference().getRoot();
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
-            finish();
             Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             startActivity(intent);
+            finish();
         }
         mEmailView = findViewById(R.id.email_sign_up);
         progressDialog = new ProgressDialog(this);
@@ -92,6 +102,7 @@ public class SignUp extends AppCompatActivity {
         Intent intent = new Intent(this, Login.class);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(intent);
+        finish();
     }
 
     private void attemptLogin() {
@@ -136,11 +147,24 @@ public class SignUp extends AppCompatActivity {
                 @Override
                 public void onComplete(Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        finish();
-                        Log.d("......", " Main Activity activity should start");
-                        Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        startActivity(intent);
+                        user = firebaseAuth.getCurrentUser();
+                        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(SignUp.this,"Registered Successfully. Please check your email",Toast.LENGTH_SHORT).show();
+                                    mEmailView.setText("");
+                                    mPasswordView.setText("");
+                                    Intent intent = new Intent(getApplicationContext(), Login.class);
+                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else{
+                                    Toast.makeText(SignUp.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     } else
                         Toast.makeText(SignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                 }

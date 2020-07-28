@@ -44,7 +44,7 @@ public class Login extends AppCompatActivity {
     private TextView resetPassword;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-    private Button button;
+    private Button normalSignInButton;
     SignInButton signInButton;
     private EditText email;
     private EditText password;
@@ -78,6 +78,7 @@ public class Login extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
+        firebaseAuth.signOut();
 
         signInButton = findViewById(R.id.googleSignIn);
         signInButton = findViewById(R.id.googleSignIn);
@@ -103,15 +104,22 @@ public class Login extends AppCompatActivity {
 
         email = findViewById(R.id.email_sign_in);
         password = findViewById(R.id.password_sign_in);
-        button = findViewById(R.id.Signin);
+        normalSignInButton = findViewById(R.id.SignIn);
         resetPassword = findViewById(R.id.resetPassword);
+
+        normalSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userLogin();
+            }
+        });
 
         signup = findViewById(R.id.signUp);
         if (firebaseAuth.getCurrentUser() != null) {
-            finish();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             startActivity(intent);
+            finish();
         }
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +127,7 @@ public class Login extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), SignUp.class);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -128,6 +137,7 @@ public class Login extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), passwordReset.class);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -162,7 +172,7 @@ public class Login extends AppCompatActivity {
     }
 
 
-    public void userLogin(View view) {
+    public void userLogin() {
         String Email = email.getText().toString().trim();
         String Password = password.getText().toString().trim();
         boolean cancel = false;
@@ -203,8 +213,17 @@ public class Login extends AppCompatActivity {
 
                     if (task.isSuccessful()) {
                         user = firebaseAuth.getCurrentUser();
-                        target_callDB();
-                    } else {
+                        if(user.isEmailVerified()){
+                            target_callDB();
+                            Toast.makeText(getApplicationContext(),"Succesful",Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(),"Please verify your email address", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                    else {
                         progressDialog.dismiss();
                         Toast.makeText(Login.this, "This account does not exist", Toast.LENGTH_LONG).show();
                     }

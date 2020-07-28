@@ -2,13 +2,17 @@ package com.story.mipsa.attendancetracker;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
+
+import static android.content.Context.VIBRATOR_SERVICE;
 
 public class subjectDialog extends AppCompatDialogFragment {
 
@@ -48,11 +54,12 @@ public class subjectDialog extends AppCompatDialogFragment {
         Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                shakeItBaby();
                 String subject = editText.getText().toString().trim();
                 if (!subject.equals("")) {
                     onInput.sendInput(subject);
+                    getDialog().dismiss();
                 }
-                getDialog().dismiss();
             }
         });
 
@@ -69,5 +76,12 @@ public class subjectDialog extends AppCompatDialogFragment {
         }
     }
 
+    private void shakeItBaby() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            ((Vibrator) getContext().getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(125, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            ((Vibrator)getContext().getSystemService(VIBRATOR_SERVICE)).vibrate(125);
+        }
+    }
 
 }

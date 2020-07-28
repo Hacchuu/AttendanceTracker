@@ -62,7 +62,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        intent.putExtra("splash_disable", 1);
+//        intent.putExtra("splash_disable", 1);
         startActivity(intent);
         finish();
     }

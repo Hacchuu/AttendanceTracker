@@ -2,6 +2,9 @@ package com.story.mipsa.attendancetracker;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static android.content.Context.VIBRATOR_SERVICE;
 
 public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAdapter.ViewHolder> {
     private final FragmentActivity context;
@@ -172,6 +177,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             @Override
             public boolean onLongClick(View view) {
                 if(!multiSelect){
+                    shakeItBaby();
                     multiSelect = true;
                     subjectDetails.startActionMode(callback);
                     selectItems(holder,currentDetails);
@@ -186,6 +192,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             @Override
             public void onClick(View view) {
                 if(multiSelect){
+                    shakeItBaby();
                     selectItems(holder,currentDetails);
                 }
                 else{
@@ -203,6 +210,15 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
         else {
             selectedItems.add(currentItem);
             holder.itemView.setAlpha(0.5f);
+        }
+    }
+
+    //Vibration on clikc method
+    private void shakeItBaby() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            ((Vibrator) context.getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(125, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            ((Vibrator) context.getSystemService(VIBRATOR_SERVICE)).vibrate(125);
         }
     }
 

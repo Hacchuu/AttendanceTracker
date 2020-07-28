@@ -18,7 +18,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
-        if(user != null){
+        if(user != null && user.isEmailVerified()){
             Intent intent = new Intent(this, MainActivity.class);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             startActivity(intent);
