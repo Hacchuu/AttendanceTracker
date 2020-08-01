@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,20 +23,17 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class editSubjectDetails extends AppCompatDialogFragment {
-
     public interface onInput {
-        void sendDetailsInput(String status, String date);
+        void sendDetailsInput(String status, long date);
     }
 
     public editSubjectDetails.onInput onInput;
-
     private CalendarView calendarView;
     private Button button, cancel;
     private RadioButton radioPresent, radioAbsent;
     private String status;
     private String date;
-    private SubjectDetails subjectDetails;
-    private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetails;
+    long dateInMillis;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,12 +41,14 @@ public class editSubjectDetails extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.activity_edit_details, container, false);
 
         calendarView = view.findViewById(R.id.calendarID);
+        calendarView.setMaxDate(new Date().getTime()+259200000);
+
+
         button = view.findViewById(R.id.saveDetails);
         radioAbsent = view.findViewById(R.id.radioAbsent);
         radioPresent = view.findViewById(R.id.radioPresent);
         cancel = view.findViewById(R.id.cancelDetails);
-        subjectDetails = new SubjectDetails();
-        subjectAttendanceDetails = subjectDetails.getSubjectAttendanceDetailsList();
+
 //        Log.d("harsh subject array", "" + subjectAttendanceDetails);
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -54,8 +56,10 @@ public class editSubjectDetails extends AppCompatDialogFragment {
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
 //                Log.d("harsh check", i + "/" + i1 + "/" + i2);
                 String day = "", mon = "";
+//                dateInMillis = calendar.getD
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(i, i1, i2);
+                dateInMillis = calendar.getTimeInMillis();
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                 Log.d("day check", "" + dayOfWeek);
 
@@ -137,17 +141,18 @@ public class editSubjectDetails extends AppCompatDialogFragment {
             @Override
             public void onClick(View view) {
                 if (date == null) {
+                    dateInMillis = new Date().getTime();
                     SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
                     date = sdf.format(new Date());
                 }
 
                 if (radioPresent.isChecked()) {
                     status = "Present";
-                    onInput.sendDetailsInput(status, date);
+                    onInput.sendDetailsInput(status, dateInMillis);
                     getDialog().dismiss();
                 } else if (radioAbsent.isChecked()) {
                     status = "Absent";
-                    onInput.sendDetailsInput(status, date);
+                    onInput.sendDetailsInput(status, dateInMillis);
                     getDialog().dismiss();
                 } else {
                     Toast.makeText(getActivity(),"Select an option",Toast.LENGTH_SHORT).show();

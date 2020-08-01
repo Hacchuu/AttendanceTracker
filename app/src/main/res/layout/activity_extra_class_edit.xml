@@ -21,30 +21,14 @@
         android:textSize="30sp"
         android:textColor="@color/colorPrimaryDark" />
 
-
-    <CalendarView
-        android:id="@+id/calendarID"
-        android:layout_width="match_parent"
-        android:padding="5dp"
-        android:layout_height="wrap_content"
-        android:minDate="09/01/2019"
-        android:layout_below="@id/editAttendance"
-        android:showWeekNumber="false" />
-
-
-<!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Present"-->
-<!--        android:background="@drawable/rounded_corner"/>-->
-
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/calendarID"
+        android:layout_below="@+id/editAttendance"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         android:gravity="center_horizontal">
 
@@ -63,7 +47,7 @@
             android:text="Absent"
             android:layout_marginLeft="10dp"
             android:background="@drawable/rounded_corner_red"
-             />
+            />
     </RadioGroup>
     <Button
         android:id="@+id/saveDetails"

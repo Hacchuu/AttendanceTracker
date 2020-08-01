@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#556e5f</color>
     <color name="background">#556e5f</color>
 
     <color name="Slider_background">#4227395a</color>

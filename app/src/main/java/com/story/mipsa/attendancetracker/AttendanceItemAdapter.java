@@ -20,7 +20,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -83,7 +85,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
                     }
                 }
 
-                Toast.makeText(context,"Selected cards deleted",Toast.LENGTH_SHORT);
+                Toast.makeText(context,"Selected cards deleted",Toast.LENGTH_SHORT).show();
                 actionMode.finish();
             }
             return true;
@@ -97,7 +99,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
             String sub = currentItem.getSubjectName();
             selectedItems.clear();
-            if(flag == 1){
+//            if(flag == 1){
                 subjectDetails.Recalculate();
                 subjectDetails.setViews();
                 userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
@@ -107,10 +109,8 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
                 intent.putExtra("Selected Subject Item",subjectDetails.getCurrentSubjectItem());
                 context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 context.startActivity(intent);
-            }
-            else{
-                notifyDataSetChanged();
-            }
+//            }
+//            holder.itemView.setAlpha(1f);
         }
     };
 
@@ -155,13 +155,22 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        holder.itemView.setAlpha(1f);
+
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();
         final SubjectAttendanceDetails currentDetails = subjectAttendanceDetailsList.get(position);
-        date.setText(currentDetails.getDateOfEntry());
-        title.setText(currentDetails.getStatus());
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
+        String currentDate = sdf.format(currentDetails.getDateOfEntry());
+        date.setText(currentDate);
+        title.setText(currentDetails.getStatus()+"                             ");
+        if(currentDetails.isExtraClass()){
+            cardView.setCardBackgroundColor(Color.parseColor("#FFFDB6"));
+            title.setText(currentDetails.getStatus()+" - Extra Class       ");
+        }
+        else
+            cardView.setCardBackgroundColor(Color.WHITE);
+
         if(currentDetails.getStatus().equalsIgnoreCase("absent")){
             timelineView.setMarkerColor(Color.RED);
         }

@@ -1,12 +1,14 @@
 package com.story.mipsa.attendancetracker;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.jhonnyx2012.horizontalpicker.DatePickerListener;
+import com.github.jhonnyx2012.horizontalpicker.HorizontalPicker;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -39,13 +44,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.joda.time.DateTime;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 
-public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, subjectDialog.onInput {
+
+public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, subjectDialog.onInput, DatePickerListener {
     private ArrayList<SubjectItem> subjectItems;
     TextView textView;
     TextView textView2;
@@ -64,25 +74,24 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     ArrayList<SubjectAttendanceDetails> det;
     GoogleSignInClient googleSignInClient;
     int subject_count;
+    String uid;
+    long selectedDate;
 
-    public ArrayList<SubjectItem> getSubjectItems() {
-        return subjectItems;
+    public long getSelectedDate() {
+        return selectedDate;
     }
 
-    public String getDataName() {
-        return dataName;
-    }
-
-    public void setSubjectItems(ArrayList<SubjectItem> subjectItems) {
-        this.subjectItems = subjectItems;
+    public void setSelectedDate(long selectedDate) {
+        this.selectedDate = selectedDate;
     }
 
     public static String getMinimumAttendance() {
         return minimumAttendance;
     }
 
-    String uid;
 
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -100,6 +109,26 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         logo.setVisibility(View.INVISIBLE);
         display.setText("Attendance Tracker");
 
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.MONTH, -1);
+        Calendar endDate = Calendar.getInstance();
+        endDate.add(Calendar.MONTH, 0);
+
+        final short daysInPast = 30;
+        HorizontalPicker picker = (HorizontalPicker) findViewById(R.id.datePicker);
+        picker
+                .setListener(this)
+                .setDateSelectedColor(getColor(R.color.background))
+                .setDays(daysInPast+4)
+                .setTodayButtonTextColor(Color.BLACK)
+                .showTodayButton(true   )
+                .setOffset(daysInPast)
+                .init();
+
+        picker.setBackground(getDrawable(R.drawable.rounded_corner));
+        picker.setDate(new DateTime());
+//        picker.setBackgroundColor(R.drawable.rounded_corner);
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -110,9 +139,12 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         user = firebaseAuth.getCurrentUser();
+
+
+
         //current date to display in main activity
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
-        String currentDate = sdf.format(new Date());
+//        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
+//        String currentDate = sdf.format(new Date());
         uid = user.getUid();
         ref = database.getReference().getRoot();
         name_target_callDB();
@@ -128,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                 Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
-                finish();
             }
         });
         insertButton = findViewById(R.id.addSubject);
@@ -351,6 +382,16 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                 }).create().show();
     }
 
+
+
+    @Override
+    public void onDateSelected(DateTime dateSelected) {
+//        Toast.makeText(getApplicationContext(), dateSelected.toString(), Toast.LENGTH_SHORT).show();
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
+//        selectedDate = sdf.format(dateSelected.toDate());
+        setSelectedDate(dateSelected.getMillis());
+//        Toast.makeText(getApplicationContext(),""+dateSelected.getMillis(), Toast.LENGTH_SHORT).show();
+    }
 }
 
 

@@ -5,14 +5,24 @@ import android.os.Parcelable;
 
 public class SubjectAttendanceDetails implements Parcelable {
     private String status;
-    private String dateOfEntry;
+    private long dateOfEntry;
+    boolean extraClass;
 
     public SubjectAttendanceDetails() {
     }
 
-    public SubjectAttendanceDetails(String status, String dateOfEntry) {
+    public boolean isExtraClass() {
+        return extraClass;
+    }
+
+    public void setExtraClass(boolean extraClass) {
+        this.extraClass = extraClass;
+    }
+
+    public SubjectAttendanceDetails(String status, long dateOfEntry, boolean extraClass) {
         this.status = status;
         this.dateOfEntry = dateOfEntry;
+        this.extraClass = extraClass;
     }
 
     protected SubjectAttendanceDetails(Parcel in) {
@@ -39,11 +49,11 @@ public class SubjectAttendanceDetails implements Parcelable {
         this.status = status;
     }
 
-    public String getDateOfEntry() {
+    public long getDateOfEntry() {
         return dateOfEntry;
     }
 
-    public void setDateOfEntry(String dateOfEntry) {
+    public void setDateOfEntry(long dateOfEntry) {
         this.dateOfEntry = dateOfEntry;
     }
 

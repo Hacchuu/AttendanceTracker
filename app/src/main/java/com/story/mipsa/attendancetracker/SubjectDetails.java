@@ -11,9 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,10 +24,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 
-public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editSubjectDetails.onInput {
+public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editSubjectDetails.onInput, extraClassEdit.onInput1{
     TextView subjectName;
     TextView total;
     TextView present;
@@ -132,7 +131,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                     adapter.notifyDataSetChanged();
                     recyclerView.scheduleLayoutAnimation();
                 }
-                ;
+                Collections.reverse(subjectAttendanceDetailsList);
             }
 
             @Override
@@ -159,20 +158,53 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     @Override
     public void onTimelineClick(int position) {
         this.position = position;
-        editSubjectDetails dialog = new editSubjectDetails();
-        dialog.show(getSupportFragmentManager(), "editSubjectDetails");
+
+        if(subjectAttendanceDetailsList.get(position).isExtraClass()){
+            extraClassEdit eDialog = new extraClassEdit();
+            eDialog.show(getSupportFragmentManager(), "extraClassEdit");
+        }
+        else{
+            editSubjectDetails dialog = new editSubjectDetails();
+            dialog.show(getSupportFragmentManager(), "editSubjectDetails");
+        }
     }
 
     @Override
-    public void sendDetailsInput(String status, String date) {
+    public void sendDetailsInput(String status, long date) {
+        if(date == 0){
+            date = subjectAttendanceDetailsList.get(position).getDateOfEntry();
+        }
         Log.d("harsh edited info", status + "----" + date + "----" + position);
         updateDetails(status, date, position);
     }
 
-    private void updateDetails(String status, String date, int position) {
-//        Log.d("inside update", status + date + " - " + position);
-        SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date);
+    private void updateDetails(String status, long date, int position) {
 
+
+
+        for(int i=0;i<subjectAttendanceDetailsList.size();i++){
+            boolean checkExtra = subjectAttendanceDetailsList.get(position).extraClass;
+            if(checkExtra)
+                break;
+
+            SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
+            String currentDate2 = sdf.format(subjectAttendanceDetailsList.get(i).getDateOfEntry());
+            String checkDate = sdf.format(date);
+            boolean checkExtraItem = subjectAttendanceDetailsList.get(i).extraClass;
+            if (currentDate2.equalsIgnoreCase(checkDate) && i != position ) {
+                if(!checkExtraItem){
+                    Toast.makeText(this, "You have already entered the attendance for " + currentDate2, Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        }
+//        Log.d("inside update", status + date + " - " + position);
+        boolean extraClass = subjectAttendanceDetailsList.get(position).isExtraClass();
+        SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date,extraClass);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
+        String currentDate = sdf.format(date);
+//        date.setText(currentDate);
         if (status.equalsIgnoreCase("present") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
             subjectAttendanceDetailsList.get(position).setStatus(status);
             currentSubjectItem.setPresent(currentSubjectItem.getPresent() + 1);
@@ -239,7 +271,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             return;
         }
         float temp = avg;
-        String target = mainActivity.minimumAttendance;
+        String target = mainActivity.getMinimumAttendance();
         String target2 = "";
         int min;
         for (int i = 0; i < 3; i++) {

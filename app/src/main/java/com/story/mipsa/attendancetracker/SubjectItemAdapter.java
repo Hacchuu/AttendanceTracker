@@ -1,7 +1,7 @@
 package com.story.mipsa.attendancetracker;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.hardware.camera2.TotalCaptureResult;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -14,9 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.progresviews.ProgressWheel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -24,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import androidx.annotation.NonNull;
 //import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +47,12 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     private ArrayList<SubjectItem> selectedItems = new ArrayList();
     MainActivity mainActivity;
     int flag;
+    private static int extraClass = 0,countExtra=0;
+
+    long currentDate;
+
+
+
 
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
@@ -75,7 +82,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                     String sub = selectedItems.get(i).getSubjectName();
                     userRef.child(user.getUid()).child("Subjects").child(sub).removeValue();
                 }
-                Toast.makeText(context,"Selected cards deleted",Toast.LENGTH_SHORT);
+                Toast.makeText(context,"Selected cards deleted",Toast.LENGTH_SHORT).show();
                 actionMode.finish();
             }
             return true;
@@ -96,6 +103,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         }
     };
 
+
     public SubjectItemAdapter(ArrayList<SubjectItem> exampleList, FragmentActivity context, OnItemListener onItemListener) {
         subjectItems = exampleList;
         this.context = context;
@@ -104,8 +112,8 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     }
 
 
-    public static class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView subjectName, Attendance, Status, Percentage;
+    public class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView subjectName, Attendance, Status;
         TextView optionDigit;
         public Button present, absent;
         MainActivity mainActivity = new MainActivity();
@@ -113,9 +121,13 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public int absentS, total, totalS, attend = 0, bunk = 0, min, per;
         public float avg = 0, temp;
         private OnItemListener onItemListener;
+        ProgressWheel progressWheelGreen;
+        ProgressWheel progressWheelRed;
+
+
 
         //Custom view Holder that describes the items in the recycler view element
-        public ExampleViewHolder(View itemView, OnItemListener onItemListener) {
+        public ExampleViewHolder(final View itemView, OnItemListener onItemListener) {
             super(itemView);
             this.onItemListener = onItemListener;
             present = itemView.findViewById(R.id.item_present);
@@ -123,9 +135,35 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             subjectName = itemView.findViewById(R.id.nameSubject);
             Attendance = itemView.findViewById(R.id.item_number);
             Status = itemView.findViewById(R.id.item_displayStatus);
-            Percentage = itemView.findViewById(R.id.item_displayPercentage);
             optionDigit = itemView.findViewById(R.id.txtOptionDigit);
+            progressWheelGreen = itemView.findViewById(R.id.wheelprogressGreen);
+            progressWheelRed = itemView.findViewById(R.id.wheelprogressRed);
             String target2 = "";
+
+            optionDigit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PopupMenu popupMenu = new PopupMenu(itemView.getContext(),view);
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()){
+                                case R.id.action_extra_class:
+                                    extraClass = 1;
+                                    countExtra += 1;
+                                    Toast.makeText(itemView.getContext(),"You have an extra class today", Toast.LENGTH_SHORT).show();
+                                    return true;
+                            }
+                            return false;
+                        }
+                    });
+                    popupMenu.inflate(R.menu.card_menu);
+                    popupMenu.show();
+                }
+            });
+
+//            currentDate = mainActivity.getSelectedDate();
+
 
             String target = mainActivity.getMinimumAttendance();
             for (int i = 0; i < 3; i++) {
@@ -208,7 +246,20 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         //holder holds the pointer to the current item in the recycler view
         holder.subjectName.setText(currentItem.getSubjectName());
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
-        holder.Percentage.setText(String.format("%.1f%%", currentItem.getPercentage()));
+        if(currentItem.getPercentage() >= holder.min){
+            holder.progressWheelRed.setVisibility(View.INVISIBLE);
+            holder.progressWheelGreen.setVisibility(View.VISIBLE);
+            holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelGreen.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
+        }
+        else{
+            holder.progressWheelGreen.setVisibility(View.INVISIBLE);
+            holder.progressWheelRed.setVisibility(View.VISIBLE);
+            holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
+        }
         if(currentItem.getTotal() != 0)
             Calculate(currentItem, holder);
         Log.d("check", ""+currentItem.getAttend()+"---"+currentItem.getBunk());
@@ -270,6 +321,12 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
 
     //Function to calculate all variables when present is enetered
     public void Present(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
+        currentDate = mainActivity.getSelectedDate();
+        ArrayList<SubjectAttendanceDetails> attendanceList = currentItem.getSubjectAttendanceDetails();
+        int check = checkExisiting(attendanceList, currentDate);
+        if(check == 1){
+            return;
+        }
         holder.presentS = currentItem.getPresent();
         holder.total = currentItem.getTotal();
         holder.presentS++;
@@ -278,12 +335,31 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setPercentage(avg);
         currentItem.setTotal(holder.total);
         currentItem.setPresent(holder.presentS);
-        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
-        String currentDate = sdf.format(new Date());
-        Log.d("harsh AD check", "" + new SubjectAttendanceDetails("Present", currentDate));
-        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate));
+
+//        Log.d("harsh AD check", "" + new SubjectAttendanceDetails("Present", currentDate));
+        if(extraClass == 1) {
+            extraClass = 0;
+            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,true));
+        }
+        else
+            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,false));
+
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
-        holder.Percentage.setText(String.format("%.1f%%", currentItem.getPercentage()));
+        if(currentItem.getPercentage() >= holder.min){
+            holder.progressWheelRed.setVisibility(View.INVISIBLE);
+            holder.progressWheelGreen.setVisibility(View.VISIBLE);
+            holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelGreen.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
+        }
+        else{
+            holder.progressWheelGreen.setVisibility(View.INVISIBLE);
+            holder.progressWheelRed.setVisibility(View.VISIBLE);
+            holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
+        }
+        if(currentItem.getPercentage() < holder.min)
         Calculate(currentItem, holder);
         if (holder.attend > 0) {
             if (holder.attend > 1)
@@ -295,12 +371,19 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                 holder.Status.setText("You can bunk " + holder.bunk + " classes (¬‿¬)");
             else if(holder.bunk == 1)
                 holder.Status.setText("You can bunk 1 class ^.^");
-
         }
     }
 
+
+
     //Function to calculate all variables when absent is entered
     public void Absent(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
+        currentDate = mainActivity.getSelectedDate();
+        ArrayList<SubjectAttendanceDetails> attendanceList = currentItem.getSubjectAttendanceDetails();
+        int check = checkExisiting(attendanceList, currentDate);
+        if(check == 1)
+            return;
+
         holder.absentS = currentItem.getAbsent();
         holder.presentS = currentItem.getPresent();
         holder.total = currentItem.getTotal();
@@ -311,10 +394,28 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setTotal(holder.total);
         currentItem.setAbsent(holder.absentS);
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
-        holder.Percentage.setText(String.format("%.1f%%", currentItem.getPercentage()));
-        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
-        String currentDate = sdf.format(new Date());
-        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate));
+        if(currentItem.getPercentage() >= holder.min){
+            holder.progressWheelRed.setVisibility(View.INVISIBLE);
+            holder.progressWheelGreen.setVisibility(View.VISIBLE);
+            holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelGreen.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
+        }
+        else{
+            holder.progressWheelGreen.setVisibility(View.INVISIBLE);
+            holder.progressWheelRed.setVisibility(View.VISIBLE);
+            holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
+            holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
+        }
+
+        if(extraClass == 1) {
+            extraClass = 0;
+            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,true));
+        }
+        else
+            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,false));
+
         Calculate(currentItem, holder);
         if (holder.attend > 0) {
             if (holder.attend > 1)
@@ -327,6 +428,25 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             else if(holder.bunk == 1)
                 holder.Status.setText("You can bunk your next class (ᵔᴥᵔ)");
         }
+    }
+
+    private int checkExisiting(ArrayList<SubjectAttendanceDetails> attendanceList, long currentDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
+        String currentDate1 = sdf.format(currentDate);
+        for(int i=0; i<attendanceList.size();i++) {
+            String checkDate = sdf.format(attendanceList.get(i).getDateOfEntry());
+            if (checkDate.equalsIgnoreCase(currentDate1)){
+                if(extraClass == 0){
+                    Toast.makeText(mainActivity, "You have already entered the attendance for " + currentDate1, Toast.LENGTH_LONG).show();
+                    return 1;
+                }
+                else if(extraClass == 1){
+                    return 0;
+                }
+            }
+        }
+//        extraClass = 1;
+        return 0;
     }
 
     //Calculate the prediction of number of classes to bunk or attend
