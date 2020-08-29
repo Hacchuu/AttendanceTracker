@@ -71,8 +71,6 @@ public class Login extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
-//        TextView options = view.findViewById(R.id.options);
-//        options.setVisibility(View.INVISIBLE);
         display.setText("Attendance Tracker");
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -165,7 +163,6 @@ public class Login extends AppCompatActivity {
                 progressDialog.show();
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-//                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("google sign in error", "onActivityResult: "+e.getMessage());
             }
         }
@@ -274,7 +271,6 @@ public class Login extends AppCompatActivity {
         checkRef.child("Target").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v("temp", "inside ondatachange " + dataSnapshot);
                 minimumAttendance = (String) dataSnapshot.getValue();
                 if(minimumAttendance != null){
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);

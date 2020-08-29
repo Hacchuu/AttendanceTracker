@@ -36,6 +36,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -55,12 +56,11 @@ import java.util.Date;
 
 
 
-public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, subjectDialog.onInput, DatePickerListener {
+public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, subjectDialog.onInput, DatePickerListener, ExtraClassDialog.onInput2 {
     private ArrayList<SubjectItem> subjectItems;
-    TextView textView;
     TextView textView2;
     TextView countView;
-    TextView dateText;
+    ImageView addExtra;
     public static String minimumAttendance;
     private Button insertButton;
     private RecyclerView recyclerView;
@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     int subject_count;
     String uid;
     long selectedDate;
+    BottomNavigationView bottomNavigationView;
+   SubjectDetails subjectDetails;
 
     public long getSelectedDate() {
         return selectedDate;
@@ -97,11 +99,11 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setDisplayShowCustomEnabled(true);getSupportActionBar().setCustomView(R.layout.custom_action_bar);
         View view=getSupportActionBar().getCustomView();
-        ColorDrawable colorDrawable
-                = new ColorDrawable(Color.parseColor("#556e5f"));
+        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#151515"));
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
@@ -140,7 +142,36 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         database = FirebaseDatabase.getInstance();
         user = firebaseAuth.getCurrentUser();
 
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setSelectedItemId(R.id.Home);
 
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.Home:
+                        Toast.makeText(getApplicationContext(),"You selected Home",Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.Reminder:
+                        bottomNavigationView.setSelectedItemId(R.id.Home);
+                        Intent intent = new Intent(getApplicationContext(), Reminder.class);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        startActivity(intent);
+                        finish();
+                        Toast.makeText(getApplicationContext(),"You selected Reminder",Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.Settings:
+
+                        Intent intent1 = new Intent(getApplicationContext(), Settings.class);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        startActivity(intent1);
+                        finish();;
+                        Toast.makeText(getApplicationContext(),"You selected Help",Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+                return false;
+            }
+        });
 
         //current date to display in main activity
 //        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
@@ -172,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                 dialog.show(getSupportFragmentManager(), "subjectDialog");
             }
         });
+
+
     }
 
 
@@ -179,15 +212,11 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     //Function that retrieves the name and target attendance in the database
     private void name_target_callDB() {
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
-        Log.v("temp", "Harsh setting  DB listener");
         //Listener ofr Firebase DB
         checkRef.child("Name").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v("temp", "harsh inside ondatachange " + dataSnapshot);
                 dataName = (String) dataSnapshot.getValue();
-//                textView.setText(dataName);
-//                Log.v("check",dataName);
             }
 
             @Override
@@ -198,11 +227,9 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         checkRef.child("Target").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v("temp", "inside ondatachange " + dataSnapshot);
                 dataName = (String) dataSnapshot.getValue();
                 textView2.setText(dataName);
                 minimumAttendance = dataName;
-//
             }
 
             @Override
@@ -212,43 +239,12 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         });
     }
 
-    //To create options menu in action bar
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.options_menu_card, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) { switch(item.getItemId()) {
-        case R.id.instructions:
-//            Toast.makeText(getApplicationContext(), "You clicked instructions", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getApplicationContext(),InstructionsPage.class);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            startActivity(intent);
-            finish();
-            return(true);
-        case R.id.support:
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                    "mailto","harshppatel7@gmail.com", null));
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Attendance Tracker - Support");
-            startActivity(Intent.createChooser(emailIntent, "Send Email"));
-            return(true);
-        case R.id.logout:
-            logout();
-            return(true);
-        }
-        return(super.onOptionsItemSelected(item));
-    }
-
     //Function to retrieve the subject details in the Firebase DB
     private void subjectCallDb() {
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
         checkRef.child("Subjects").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v("temp", "raj inside ondatachange " + dataSnapshot);
                 subjectItems.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     String sName = postSnapshot.child("subjectName").getValue(String.class);
@@ -262,7 +258,6 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                     for (DataSnapshot snapshot : postSnapshot.child("subjectAttendanceDetails").getChildren()) {
                         det.add(snapshot.getValue(SubjectAttendanceDetails.class));
                     }
-                    ;
                     SubjectItem data = new SubjectItem(sName, pre, ab, tot, percent, bun, att, det);
                     subjectItems.add(data);
                     adapter.notifyDataSetChanged();
@@ -316,13 +311,12 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         }
         else{
             SubjectItem subjectItem = new SubjectItem(inputSubject, 0, 0, 0, 0, 0, 0, null);
-            Log.v("raj insertItem si", "" + subjectItem);
             subjectItems.add(position, subjectItem);
 
             //Adding data to firebase
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
-            Log.v("raj subject", inputSubject + "----->" + subjectItem);
+//            Log.v("raj subject", inputSubject + "----->" + subjectItem);
             userRef.child(user.getUid()).child("Subjects").child(inputSubject).setValue(subjectItem);
             adapter.notifyDataSetChanged();
             subject_count = subjectItems.size();
@@ -330,30 +324,11 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         }
     }
 
-    //To log out of google account or custom account.
-    public void logout() {
-        signOut();
-        firebaseAuth.signOut();
-        finish();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        startActivity(new Intent(this, Login.class));
-    }
-
     public void Target() {
         Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(intent);
         finish();
-    }
-
-    private void signOut() {
-        googleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        finish();
-                    }
-                });
     }
 
     //Intent to appropriate subject activity by clicking on item list.
@@ -369,28 +344,112 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     //Functions to perform when back is pressed
     @Override
     public void onBackPressed() {
-
-        new AlertDialog.Builder(this)
-                .setTitle("Exit?")
-                .setMessage("Are you sure you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        MainActivity.super.onBackPressed();
-                    }
-                }).create().show();
+        if(isTaskRoot()){
+            new AlertDialog.Builder(this)
+                    .setTitle("Exit?")
+                    .setMessage("Are you sure you want to exit?")
+                    .setNegativeButton(android.R.string.no, null)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            MainActivity.super.onBackPressed();
+                        }
+                    }).create().show();
+        }
+        else{
+            super.onBackPressed();
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
     }
 
 
 
     @Override
     public void onDateSelected(DateTime dateSelected) {
-//        Toast.makeText(getApplicationContext(), dateSelected.toString(), Toast.LENGTH_SHORT).show();
-        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
-//        selectedDate = sdf.format(dateSelected.toDate());
         setSelectedDate(dateSelected.getMillis());
-//        Toast.makeText(getApplicationContext(),""+dateSelected.getMillis(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void sendExtraInput(String status, int position) {
+//        Toast.makeText(getApplicationContext(), status + position, Toast.LENGTH_SHORT).show();
+        insertExtraClass(status, position);
+    }
+
+    private void insertExtraClass(String status, int position) {
+        SubjectItem current = subjectItems.get(position);
+        if (status.equalsIgnoreCase("Present")) {
+            current.setPresent(current.getPresent() + 1);
+            current.setTotal(current.getTotal() + 1);
+            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(status, getSelectedDate(), true));
+            Recalculate(current);
+            user = firebaseAuth.getCurrentUser();
+            DatabaseReference userRef = ref.child("Users");
+            userRef.child(user.getUid()).child("Subjects").child(current.getSubjectName()).setValue(current);
+            buildRecyclerView();
+
+        } else if (status.equalsIgnoreCase("Absent")) {
+            current.setAbsent(current.getAbsent() + 1);
+            current.setTotal(current.getTotal() + 1);
+            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(status, getSelectedDate(), true));
+            Recalculate(current);
+            user = firebaseAuth.getCurrentUser();
+            DatabaseReference userRef = ref.child("Users");
+            userRef.child(user.getUid()).child("Subjects").child(current.getSubjectName()).setValue(current);
+            buildRecyclerView();
+        }
+    }
+
+    private void Recalculate(SubjectItem current) {
+        int presentS = current.getPresent();
+        int total = current.getTotal();
+        int totalS = total;
+        int attend = 0;
+        int bunk = 0;
+        float avg = 0;
+        if (totalS != 0) {
+            avg = ((float) presentS / (float) totalS) * 100;
+            current.setPercentage(avg);
+        }
+        else{
+            current.setPercentage(0);
+            current.setAttend(0);
+            current.setBunk(0);
+            return;
+        }
+        float temp = avg;
+        String target = getMinimumAttendance();
+        String target2 = "";
+        int min;
+        for (int i = 0; i < 3; i++) {
+            if (target.charAt(i) == '%') {
+                break;
+            } else {
+                target2 = target2 + target.charAt(i);
+            }
+        }
+        min = Integer.parseInt(target2);
+        if (temp >= min) {
+            do {
+                totalS += 1;
+                temp = ((float) presentS / (float) totalS) * 100;
+                if (temp < min && bunk == 0) {
+                    attend++;
+                } else if (temp >= min && attend == 0)
+                    bunk++;
+            } while (temp > min);
+        } else {
+            int presentTemp = presentS;
+            do {
+                totalS += 1;
+                presentTemp += 1;
+                temp = ((float) presentTemp / (float) totalS) * 100;
+                if (temp <= min && bunk == 0) {
+                    attend++;
+                } else if (temp > min && attend == 0)
+                    bunk++;
+            } while (temp <= min);
+        }
+        current.setAttend(attend);
+        current.setBunk(bunk);
     }
 }
 

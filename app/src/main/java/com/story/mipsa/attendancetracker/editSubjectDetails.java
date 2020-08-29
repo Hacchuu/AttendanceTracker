@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +25,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import static android.content.Context.VIBRATOR_SERVICE;
+
 public class editSubjectDetails extends AppCompatDialogFragment {
+
     public interface onInput {
         void sendDetailsInput(String status, long date);
     }
@@ -49,14 +55,10 @@ public class editSubjectDetails extends AppCompatDialogFragment {
         radioPresent = view.findViewById(R.id.radioPresent);
         cancel = view.findViewById(R.id.cancelDetails);
 
-//        Log.d("harsh subject array", "" + subjectAttendanceDetails);
-
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
-//                Log.d("harsh check", i + "/" + i1 + "/" + i2);
                 String day = "", mon = "";
-//                dateInMillis = calendar.getD
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(i, i1, i2);
                 dateInMillis = calendar.getTimeInMillis();
@@ -133,6 +135,7 @@ public class editSubjectDetails extends AppCompatDialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                shakeItBaby();
                 getDialog().dismiss();
             }
         });
@@ -140,6 +143,7 @@ public class editSubjectDetails extends AppCompatDialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                shakeItBaby();
                 if (date == null) {
                     dateInMillis = new Date().getTime();
                     SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
@@ -171,6 +175,14 @@ public class editSubjectDetails extends AppCompatDialogFragment {
             onInput = (editSubjectDetails.onInput) getActivity();
         } catch (ClassCastException e) {
 
+        }
+    }
+
+    private void shakeItBaby() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            ((Vibrator) getContext().getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(125, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            ((Vibrator)getContext().getSystemService(VIBRATOR_SERVICE)).vibrate(125);
         }
     }
 

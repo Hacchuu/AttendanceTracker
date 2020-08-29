@@ -1,11 +1,10 @@
 package com.story.mipsa.attendancetracker;
 
 import android.content.Intent;
-import android.hardware.camera2.TotalCaptureResult;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.PopupMenu;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 
-public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.ExampleViewHolder> {
+public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.ExampleViewHolder>  {
     private ArrayList<SubjectItem> subjectItems;
     private FragmentActivity context;
     FirebaseUser user;
@@ -47,12 +46,28 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     private ArrayList<SubjectItem> selectedItems = new ArrayList();
     MainActivity mainActivity;
     int flag;
-    private static int extraClass = 0,countExtra=0;
+    int extraFlag = 0;
+    String extraStatus;
+    SubjectDetails subjectDetails;
+//    private static int extraClass = 0,countExtra=0;
 
     long currentDate;
 
+    public int getExtraFlag() {
+        return extraFlag;
+    }
 
+    public void setExtraFlag(int extraFlag) {
+        this.extraFlag = extraFlag;
+    }
 
+    public String getExtraStatus() {
+        return extraStatus;
+    }
+
+    public void setExtraStatus(String extraStatus) {
+        this.extraStatus = extraStatus;
+    }
 
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
@@ -114,7 +129,8 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
 
     public class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView subjectName, Attendance, Status;
-        TextView optionDigit;
+        TextView optionDigit,displayExtra;
+        ImageView addExtraImage;
         public Button present, absent;
         MainActivity mainActivity = new MainActivity();
         public int presentS, presentTemp = 0;
@@ -135,32 +151,37 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             subjectName = itemView.findViewById(R.id.nameSubject);
             Attendance = itemView.findViewById(R.id.item_number);
             Status = itemView.findViewById(R.id.item_displayStatus);
-            optionDigit = itemView.findViewById(R.id.txtOptionDigit);
+//            optionDigit = itemView.findViewById(R.id.txtOptionDigit);
             progressWheelGreen = itemView.findViewById(R.id.wheelprogressGreen);
             progressWheelRed = itemView.findViewById(R.id.wheelprogressRed);
+            displayExtra = itemView.findViewById(R.id.displayExtra);
+            addExtraImage = itemView.findViewById(R.id.addExtra2);
+
+
             String target2 = "";
 
-            optionDigit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PopupMenu popupMenu = new PopupMenu(itemView.getContext(),view);
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem menuItem) {
-                            switch (menuItem.getItemId()){
-                                case R.id.action_extra_class:
-                                    extraClass = 1;
-                                    countExtra += 1;
-                                    Toast.makeText(itemView.getContext(),"You have an extra class today", Toast.LENGTH_SHORT).show();
-                                    return true;
-                            }
-                            return false;
-                        }
-                    });
-                    popupMenu.inflate(R.menu.card_menu);
-                    popupMenu.show();
-                }
-            });
+//            optionDigit.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(final View view) {
+//                    PopupMenu popupMenu = new PopupMenu(itemView.getContext(),view);
+//                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                        @Override
+//                        public boolean onMenuItemClick(MenuItem menuItem) {
+//                            switch (menuItem.getItemId()){
+//                                case R.id.action_extra_class:
+//                                    extraClass = 1;
+//                                    countExtra += 1;
+//                                    displayExtra.setVisibility(View.VISIBLE);
+//                                    Toast.makeText(itemView.getContext(),"You have an extra class today", Toast.LENGTH_SHORT).show();
+//                                    return true;
+//                            }
+//                            return false;
+//                        }
+//                    });
+//                    popupMenu.inflate(R.menu.card_menu);
+//                    popupMenu.show();
+//                }
+//            });
 
 //            currentDate = mainActivity.getSelectedDate();
 
@@ -182,8 +203,33 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public void onClick(View view) {
             onItemListener.OnItemClick(getAdapterPosition());
         }
-    }
 
+//        @Override
+//        public void sendExtraInput(String input, int position) {
+//            Toast.makeText(context, "Gujju", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Gujju", Toast.LENGTH_SHORT).show();
+//            SubjectItem current = subjectItems.get(getAdapterPosition());
+//            insertExtraClass(current, input);
+//        }
+//    }
+
+//    private void insertExtraClass(SubjectItem current, String input) {
+//        currentDate = mainActivity.getSelectedDate();
+//        if (input.equalsIgnoreCase("Present")) {
+//            current.setPresent(current.getPresent() + 1);
+//            current.setTotal(current.getTotal() + 1);
+//            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(input, currentDate, true));
+//            subjectDetails.Recalculate();
+//            mainActivity.buildRecyclerView();
+//
+//        } else if (input.equalsIgnoreCase("Absent")) {
+//            current.setAbsent(current.getAbsent() + 1);
+//            current.setTotal(current.getTotal() + 1);
+//            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(input, currentDate, true));
+//            subjectDetails.Recalculate();
+//            mainActivity.buildRecyclerView();
+//        }
+    }
 
     @NonNull
     @Override
@@ -196,19 +242,38 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
 
     //This function determines which item in the list we are currently looking at
     @Override
-    public void onBindViewHolder(@NonNull final ExampleViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ExampleViewHolder holder, final int position) {
         holder.itemView.setAlpha(1f);
         final SubjectItem currentItem = subjectItems.get(position);
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();
 
+        holder.addExtraImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, "You clicked card", Toast.LENGTH_SHORT).show();
+                ExtraClassDialog dialog = new ExtraClassDialog();
+                Bundle bundle = new Bundle();
+                bundle.putString("SubjectName", currentItem.getSubjectName());
+                bundle.putInt("position", position);
+                dialog.setArguments(bundle);
+                dialog.show((context).getSupportFragmentManager(), "ExtraClassDialog");
+            }
+        });
+
         if(selectedItems.contains(currentItem)){
             holder.itemView.setAlpha(0.5f);
 //            holder.itemView.setBackgroundColor(Color.LTGRAY);
         }
-
-
+//        String stat = getExtraStatus();
+//        int extra = getExtraFlag();
+//        if(stat.equalsIgnoreCase("Present")){
+//            Present(currentItem, holder, extra);
+//        }
+//        else if(stat.equalsIgnoreCase("Absent")){
+//            Absent(currentItem, holder, extra);
+//        }
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -219,9 +284,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                     mainActivity.startActionMode(callback);
                     selectItems(holder,currentItem);
                 }
-//                if(multiSelect){
-//                    selectItems(holder,currentItem);
-//                }
                 return true;
             }
 
@@ -241,9 +303,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             }
         });
 
-
-
-        //holder holds the pointer to the current item in the recycler view
+//        holder holds the pointer to the current item in the recycler view
         holder.subjectName.setText(currentItem.getSubjectName());
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         if(currentItem.getPercentage() >= holder.min){
@@ -262,7 +322,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         }
         if(currentItem.getTotal() != 0)
             Calculate(currentItem, holder);
-        Log.d("check", ""+currentItem.getAttend()+"---"+currentItem.getBunk());
         if (currentItem.getAttend() > 0) {
             if (currentItem.getAttend() > 1)
                 holder.Status.setText("You can't bunk the next " + currentItem.getAttend() + " classes ⚆_⚆");
@@ -274,8 +333,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             else
                 holder.Status.setText("You can bunk 1 class ^.^");
         }
-
-
 
         //When present button is pressed
         holder.present.setOnClickListener(new View.OnClickListener() {
@@ -320,10 +377,10 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     }
 
     //Function to calculate all variables when present is enetered
-    public void Present(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
+    public void Present(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder ) {
         currentDate = mainActivity.getSelectedDate();
         ArrayList<SubjectAttendanceDetails> attendanceList = currentItem.getSubjectAttendanceDetails();
-        int check = checkExisiting(attendanceList, currentDate);
+        int check = checkExisiting(attendanceList, currentDate, 0, currentItem);
         if(check == 1){
             return;
         }
@@ -336,12 +393,12 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setTotal(holder.total);
         currentItem.setPresent(holder.presentS);
 
-//        Log.d("harsh AD check", "" + new SubjectAttendanceDetails("Present", currentDate));
-        if(extraClass == 1) {
-            extraClass = 0;
-            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,true));
-        }
-        else
+//        if(extraClass == 1) {
+//            setExtraFlag(0);
+//            holder.displayExtra.setVisibility(View.INVISIBLE);
+//            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,true));
+//        }
+//        else
             currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,false));
 
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
@@ -355,11 +412,10 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         else{
             holder.progressWheelGreen.setVisibility(View.INVISIBLE);
             holder.progressWheelRed.setVisibility(View.VISIBLE);
-            holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
+               holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
         }
-        if(currentItem.getPercentage() < holder.min)
         Calculate(currentItem, holder);
         if (holder.attend > 0) {
             if (holder.attend > 1)
@@ -372,15 +428,14 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             else if(holder.bunk == 1)
                 holder.Status.setText("You can bunk 1 class ^.^");
         }
-    }
-
+        }
 
 
     //Function to calculate all variables when absent is entered
     public void Absent(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
         currentDate = mainActivity.getSelectedDate();
         ArrayList<SubjectAttendanceDetails> attendanceList = currentItem.getSubjectAttendanceDetails();
-        int check = checkExisiting(attendanceList, currentDate);
+        int check = checkExisiting(attendanceList, currentDate, 0, currentItem);
         if(check == 1)
             return;
 
@@ -409,11 +464,12 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
         }
 
-        if(extraClass == 1) {
-            extraClass = 0;
-            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,true));
-        }
-        else
+//        if(extraClass == 1) {
+//            setExtraFlag(0);
+//            holder.displayExtra.setVisibility(View.INVISIBLE);
+//            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,true));
+//        }
+//        else
             currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,false));
 
         Calculate(currentItem, holder);
@@ -430,22 +486,29 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         }
     }
 
-    private int checkExisiting(ArrayList<SubjectAttendanceDetails> attendanceList, long currentDate) {
+    private int checkExisiting(ArrayList<SubjectAttendanceDetails> attendanceList, long currentDate, int extraClasss, SubjectItem currentItem) {
         SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
         String currentDate1 = sdf.format(currentDate);
         for(int i=0; i<attendanceList.size();i++) {
             String checkDate = sdf.format(attendanceList.get(i).getDateOfEntry());
-            if (checkDate.equalsIgnoreCase(currentDate1)){
-                if(extraClass == 0){
+            boolean extraClass = attendanceList.get(i).isExtraClass();
+            if(checkDate.equalsIgnoreCase(currentDate1)){
+                if(extraClass){
+                    return 0;
+                }
+                else{
                     Toast.makeText(mainActivity, "You have already entered the attendance for " + currentDate1, Toast.LENGTH_LONG).show();
                     return 1;
                 }
-                else if(extraClass == 1){
-                    return 0;
-                }
+//                if(extraClass == 0){
+//                    Toast.makeText(mainActivity, "You have already entered the attendance for " + currentDate1, Toast.LENGTH_LONG).show();
+//                    return 1;
+//                }
+//                else if(extraClass == 1){
+//                    return 0;
+//                }
             }
         }
-//        extraClass = 1;
         return 0;
     }
 

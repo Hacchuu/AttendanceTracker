@@ -13,10 +13,8 @@ import android.widget.TextView;
 public class InstructionsPage extends AppCompatActivity {
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
+        super.onBackPressed();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        startActivity(intent);
-        finish();
     }
 
     @Override
@@ -30,7 +28,6 @@ public class InstructionsPage extends AppCompatActivity {
         ColorDrawable colorDrawable
                 = new ColorDrawable(Color.parseColor("#556e5f"));
         ActionBar actionBar = getSupportActionBar();
-//        getSupportActionBar().setElevation(0);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
         display.setText("App Information");

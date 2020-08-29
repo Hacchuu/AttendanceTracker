@@ -99,18 +99,15 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
             String sub = currentItem.getSubjectName();
             selectedItems.clear();
-//            if(flag == 1){
-                subjectDetails.Recalculate();
-                subjectDetails.setViews();
-                userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
-                userRef.child(user.getUid()).child("Subjects").child(sub).child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
-                context.finish();
-                Intent intent = new Intent(context,SubjectDetails.class);
-                intent.putExtra("Selected Subject Item",subjectDetails.getCurrentSubjectItem());
-                context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                context.startActivity(intent);
-//            }
-//            holder.itemView.setAlpha(1f);
+            subjectDetails.Recalculate();
+            subjectDetails.setViews();
+            userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
+            userRef.child(user.getUid()).child("Subjects").child(sub).child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
+            context.finish();
+            Intent intent = new Intent(context,SubjectDetails.class);
+            intent.putExtra("Selected Subject Item",subjectDetails.getCurrentSubjectItem());
+            context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            context.startActivity(intent);
         }
     };
 
@@ -165,7 +162,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
         date.setText(currentDate);
         title.setText(currentDetails.getStatus()+"                             ");
         if(currentDetails.isExtraClass()){
-            cardView.setCardBackgroundColor(Color.parseColor("#FFFDB6"));
+            cardView.setCardBackgroundColor(Color.parseColor("#CFD8DC"));
             title.setText(currentDetails.getStatus()+" - Extra Class       ");
         }
         else
@@ -201,7 +198,6 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             @Override
             public void onClick(View view) {
                 if(multiSelect){
-                    shakeItBaby();
                     selectItems(holder,currentDetails);
                 }
                 else{

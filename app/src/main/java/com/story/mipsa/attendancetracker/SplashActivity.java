@@ -17,6 +17,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
+//        firebaseAuth.updateCurrentUser(null);
         user = firebaseAuth.getCurrentUser();
         if(user != null && user.isEmailVerified()){
             Intent intent = new Intent(this, MainActivity.class);

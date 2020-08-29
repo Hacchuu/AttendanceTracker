@@ -12,24 +12,57 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".extraClassEdit"></activity>
-        <activity android:name=".InstructionsPage" />
-        <activity android:name=".editSubjectDetails" />
-        <activity android:name=".SubjectDetails" />
-        <activity android:name=".passwordReset" />
-        <activity android:name=".SignUp" />
-        <activity android:name=".Login" />
-        <activity android:name=".AttendanceTarget" />
+        <activity android:name=".Settings"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorPortrait"/>
+        <activity android:name=".Reminder"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorPortrait"/>
         <activity
+            android:launchMode="singleTop"
+            android:name=".extraClassEdit"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:launchMode="singleTop"
+            android:name=".InstructionsPage"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:launchMode="singleTop"
+            android:name=".editSubjectDetails"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:name=".SubjectDetails"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:launchMode="singleTop"
+            android:name=".passwordReset"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:launchMode="singleTop"
+            android:name=".SignUp"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:launchMode="singleTop"
+            android:name=".Login"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:launchMode="singleTop"
+            android:name=".AttendanceTarget"
+            android:screenOrientation="sensorPortrait" />
+        <activity
+            android:launchMode="singleTop"
             android:name=".SplashActivity"
+            android:screenOrientation="sensorPortrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity
+
+            android:name=".MainActivity"
+            android:screenOrientation="sensorPortrait" />
     </application>
 
 </manifest>

@@ -39,10 +39,8 @@ public class SignUp extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, Login.class);
+        super.onBackPressed();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        startActivity(intent);
-        finish();
     }
 
     @Override
@@ -59,8 +57,6 @@ public class SignUp extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
-//        TextView options = view.findViewById(R.id.options);
-//        options.setVisibility(View.INVISIBLE);
         display.setText("Attendance Tracker");
 
 
