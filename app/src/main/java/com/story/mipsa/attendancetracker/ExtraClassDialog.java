@@ -36,17 +36,14 @@ public class ExtraClassDialog extends AppCompatDialogFragment {
     public ExtraClassDialog.onInput2 onInput2;
 
     TextView subject;
-    private Button cancelExtra, addExtra;
+    private Button addExtra;
     private RadioButton radioPresent, radioAbsent;
-//    String status;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.extra_class_dialog, container, false);
-//        editText = view.findViewById(R.id.enterSubject);
         subject = view.findViewById(R.id.extraSubjectName);
-        cancelExtra = view.findViewById(R.id.cancelExtra);
         addExtra = view.findViewById(R.id.addExtra);
         radioPresent = view.findViewById(R.id.radioExtraPresent);
         radioAbsent = view.findViewById(R.id.radioExtraAbsent);
@@ -54,16 +51,9 @@ public class ExtraClassDialog extends AppCompatDialogFragment {
         Bundle bundle = getArguments();
         String subjectName = bundle.getString("SubjectName");
         final int position = bundle.getInt("position");
-        subject.setText(subjectName.toUpperCase() + "-" +position);
+        subject.setText(subjectName.toUpperCase());
 
-        cancelExtra.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shakeItBaby();
-                getDialog().dismiss();
-            }
-        });
-//
+
         addExtra.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

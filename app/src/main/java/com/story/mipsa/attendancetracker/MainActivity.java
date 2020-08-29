@@ -58,26 +58,24 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, subjectDialog.onInput, DatePickerListener, ExtraClassDialog.onInput2 {
     private ArrayList<SubjectItem> subjectItems;
-    TextView textView2;
-    TextView countView;
-    ImageView addExtra;
-    public static String minimumAttendance;
+    private TextView textView2;
+    private TextView countView;
+    private static String minimumAttendance;
     private Button insertButton;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private FirebaseUser user;
-    String dataName;
+    private String dataName;
     private FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    DatabaseReference ref;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
     private RecyclerView.LayoutManager layoutManager;
-    ArrayList<SubjectAttendanceDetails> det;
-    GoogleSignInClient googleSignInClient;
-    int subject_count;
-    String uid;
-    long selectedDate;
-    BottomNavigationView bottomNavigationView;
-   SubjectDetails subjectDetails;
+    private ArrayList<SubjectAttendanceDetails> det;
+    private GoogleSignInClient googleSignInClient;
+    private int subject_count;
+    private String uid;
+    private long selectedDate;
+    private BottomNavigationView bottomNavigationView;
 
     public long getSelectedDate() {
         return selectedDate;
@@ -150,32 +148,19 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.Home:
-                        Toast.makeText(getApplicationContext(),"You selected Home",Toast.LENGTH_SHORT).show();
                         return true;
-                    case R.id.Reminder:
-                        bottomNavigationView.setSelectedItemId(R.id.Home);
-                        Intent intent = new Intent(getApplicationContext(), Reminder.class);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        startActivity(intent);
-                        finish();
-                        Toast.makeText(getApplicationContext(),"You selected Reminder",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.Settings:
 
+                    case R.id.Settings:
                         Intent intent1 = new Intent(getApplicationContext(), Settings.class);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         startActivity(intent1);
                         finish();;
-                        Toast.makeText(getApplicationContext(),"You selected Help",Toast.LENGTH_SHORT).show();
                         return true;
                 }
                 return false;
             }
         });
 
-        //current date to display in main activity
-//        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy");
-//        String currentDate = sdf.format(new Date());
         uid = user.getUid();
         ref = database.getReference().getRoot();
         name_target_callDB();
@@ -185,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         countView = findViewById(R.id.subjectCount);
         textView2 = findViewById(R.id.TargetFill);
         textView2.setText(minimumAttendance);
+
         textView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                 startActivity(intent);
             }
         });
+
         insertButton = findViewById(R.id.addSubject);
         insertButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,11 +190,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                 dialog.show(getSupportFragmentManager(), "subjectDialog");
             }
         });
-
-
     }
-
-
 
     //Function that retrieves the name and target attendance in the database
     private void name_target_callDB() {
@@ -370,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
     @Override
     public void sendExtraInput(String status, int position) {
-//        Toast.makeText(getApplicationContext(), status + position, Toast.LENGTH_SHORT).show();
         insertExtraClass(status, position);
     }
 

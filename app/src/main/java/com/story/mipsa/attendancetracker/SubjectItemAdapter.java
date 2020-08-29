@@ -46,28 +46,8 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     private ArrayList<SubjectItem> selectedItems = new ArrayList();
     MainActivity mainActivity;
     int flag;
-    int extraFlag = 0;
-    String extraStatus;
-    SubjectDetails subjectDetails;
-//    private static int extraClass = 0,countExtra=0;
 
     long currentDate;
-
-    public int getExtraFlag() {
-        return extraFlag;
-    }
-
-    public void setExtraFlag(int extraFlag) {
-        this.extraFlag = extraFlag;
-    }
-
-    public String getExtraStatus() {
-        return extraStatus;
-    }
-
-    public void setExtraStatus(String extraStatus) {
-        this.extraStatus = extraStatus;
-    }
 
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
@@ -87,7 +67,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
-//            String sub = currentItem.getSubjectName();
            flag = 0;
 
             if(menuItem.getItemId() == R.id.action_delete){
@@ -151,7 +130,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             subjectName = itemView.findViewById(R.id.nameSubject);
             Attendance = itemView.findViewById(R.id.item_number);
             Status = itemView.findViewById(R.id.item_displayStatus);
-//            optionDigit = itemView.findViewById(R.id.txtOptionDigit);
             progressWheelGreen = itemView.findViewById(R.id.wheelprogressGreen);
             progressWheelRed = itemView.findViewById(R.id.wheelprogressRed);
             displayExtra = itemView.findViewById(R.id.displayExtra);
@@ -159,32 +137,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
 
 
             String target2 = "";
-
-//            optionDigit.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(final View view) {
-//                    PopupMenu popupMenu = new PopupMenu(itemView.getContext(),view);
-//                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//                        @Override
-//                        public boolean onMenuItemClick(MenuItem menuItem) {
-//                            switch (menuItem.getItemId()){
-//                                case R.id.action_extra_class:
-//                                    extraClass = 1;
-//                                    countExtra += 1;
-//                                    displayExtra.setVisibility(View.VISIBLE);
-//                                    Toast.makeText(itemView.getContext(),"You have an extra class today", Toast.LENGTH_SHORT).show();
-//                                    return true;
-//                            }
-//                            return false;
-//                        }
-//                    });
-//                    popupMenu.inflate(R.menu.card_menu);
-//                    popupMenu.show();
-//                }
-//            });
-
-//            currentDate = mainActivity.getSelectedDate();
-
 
             String target = mainActivity.getMinimumAttendance();
             for (int i = 0; i < 3; i++) {
@@ -203,32 +155,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public void onClick(View view) {
             onItemListener.OnItemClick(getAdapterPosition());
         }
-
-//        @Override
-//        public void sendExtraInput(String input, int position) {
-//            Toast.makeText(context, "Gujju", Toast.LENGTH_SHORT).show();
-//            Toast.makeText(context, "Gujju", Toast.LENGTH_SHORT).show();
-//            SubjectItem current = subjectItems.get(getAdapterPosition());
-//            insertExtraClass(current, input);
-//        }
-//    }
-
-//    private void insertExtraClass(SubjectItem current, String input) {
-//        currentDate = mainActivity.getSelectedDate();
-//        if (input.equalsIgnoreCase("Present")) {
-//            current.setPresent(current.getPresent() + 1);
-//            current.setTotal(current.getTotal() + 1);
-//            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(input, currentDate, true));
-//            subjectDetails.Recalculate();
-//            mainActivity.buildRecyclerView();
-//
-//        } else if (input.equalsIgnoreCase("Absent")) {
-//            current.setAbsent(current.getAbsent() + 1);
-//            current.setTotal(current.getTotal() + 1);
-//            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(input, currentDate, true));
-//            subjectDetails.Recalculate();
-//            mainActivity.buildRecyclerView();
-//        }
     }
 
     @NonNull
@@ -252,7 +178,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         holder.addExtraImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "You clicked card", Toast.LENGTH_SHORT).show();
                 ExtraClassDialog dialog = new ExtraClassDialog();
                 Bundle bundle = new Bundle();
                 bundle.putString("SubjectName", currentItem.getSubjectName());
@@ -264,17 +189,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
 
         if(selectedItems.contains(currentItem)){
             holder.itemView.setAlpha(0.5f);
-//            holder.itemView.setBackgroundColor(Color.LTGRAY);
         }
-//        String stat = getExtraStatus();
-//        int extra = getExtraFlag();
-//        if(stat.equalsIgnoreCase("Present")){
-//            Present(currentItem, holder, extra);
-//        }
-//        else if(stat.equalsIgnoreCase("Absent")){
-//            Absent(currentItem, holder, extra);
-//        }
-
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -392,14 +307,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setPercentage(avg);
         currentItem.setTotal(holder.total);
         currentItem.setPresent(holder.presentS);
-
-//        if(extraClass == 1) {
-//            setExtraFlag(0);
-//            holder.displayExtra.setVisibility(View.INVISIBLE);
-//            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,true));
-//        }
-//        else
-            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,false));
+        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,false));
 
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         if(currentItem.getPercentage() >= holder.min){
@@ -463,15 +371,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
         }
-
-//        if(extraClass == 1) {
-//            setExtraFlag(0);
-//            holder.displayExtra.setVisibility(View.INVISIBLE);
-//            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,true));
-//        }
-//        else
-            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,false));
-
+        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,false));
         Calculate(currentItem, holder);
         if (holder.attend > 0) {
             if (holder.attend > 1)
@@ -500,13 +400,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                     Toast.makeText(mainActivity, "You have already entered the attendance for " + currentDate1, Toast.LENGTH_LONG).show();
                     return 1;
                 }
-//                if(extraClass == 0){
-//                    Toast.makeText(mainActivity, "You have already entered the attendance for " + currentDate1, Toast.LENGTH_LONG).show();
-//                    return 1;
-//                }
-//                else if(extraClass == 1){
-//                    return 0;
-//                }
             }
         }
         return 0;

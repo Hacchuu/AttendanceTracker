@@ -7,6 +7,10 @@
     android:layout_height="match_parent"
     tools:context=".InstructionsPage">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -14,14 +18,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:scrollbars="vertical"
+        android:scrollbarStyle="outsideOverlay"
         app:layout_constraintTop_toTopOf="parent">
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
-            android:layout_marginTop="20dp"
-            android:text="Update Target Attendance"
+            android:layout_marginTop="10dp"
+            android:text="How many entries per subject per day?"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
             android:textStyle="bold" />
@@ -30,7 +37,129 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
-            android:text="-> Click on the target attendance.\n-> Set new target.\n-> Attendance prediction updated automatically.\n"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:text="\t ✪ You can register a single attendance entry per subject per day. This is maintained so that you will be able to track your attendance history date wise."
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="10dp"
+            android:text="What if I have an extra class?"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"
+            android:text="\t ✪ In case you want to enter more than one entry or have an extra class, you can click on the + icon beside the subject name. This will also reflect differently in the attendance timeline history."
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="10dp"
+            android:text="What if I forgot to enter my attendance?"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"
+            android:text="\t ✪ If you have forgotten to enter your attendance entries on multiple days, you can easily add them by selecting the date on the date picker and entering the attendance on the appropriate subjects."
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="10dp"
+            android:text="What if I chose the wrong date?"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:text="\t ✪ If you selected the wrong date, you can click on the subject to enter it's timeline view. Click on the entry you added by mistake, and you will be provided with update details dialog. Select the appropriate date and entry."
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="10dp"
+            android:text="How to add past attendance?"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:text="\t ✪ Past attendance can be added by clicking on the past date from the date picker and marking your attendance entry. You can also add upto 3 days of future attendance if neccesary"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="10dp"
+            android:text="What if I added an entry by mistake?"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:text="\t ✪ If you added an entry by mistake, you can easily delete it from the timeline view inside the subject. Long press on the card in the timeline view and press delete from the top right corner."
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="20dp"
+            android:text="How to update attendance target?"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:text="\t ✪ You can click on the target and adjust the slider to the appropriate attendance criteria. The app automatically handle attendance suggestions based the minimum attendance."
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15dp" />
 
@@ -39,7 +168,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
-            android:text="Add Subject"
+            android:layout_marginTop="10dp"
+            android:text="How to delete any subject?"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
             android:textStyle="bold" />
@@ -48,7 +178,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
-            android:text="-> Click on ADD SUBJECT.\n-> Enter subject name.\n-> All subjects will be displayed in single cards.\n"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"
+            android:text="\t ✪ If you wish to delete any subject, long press on any of the subject cards and delete from the top right corner of the screen."
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15dp" />
 
@@ -56,7 +188,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
-            android:text="Delete Subject"
+            android:layout_marginTop="10dp"
+            android:text="Are the suggestions reliable?"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
             android:textStyle="bold" />
@@ -65,7 +198,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
-            android:text="-> Long Click on the subject and click on delete.\n-> Multi Select to delete multiple subjects.\n"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:text="\t ✪ The algorithm for suggestions are reliable. They provide dynamic suggestions based on your entries. We do not encourage you to bunk your classes frequently."
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15dp" />
 
@@ -73,7 +208,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
-            android:text="Edit Existing Attendance"
+            android:layout_marginTop="10dp"
+            android:text="What if I find a bug?"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
             android:textStyle="bold" />
@@ -82,7 +218,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
-            android:text="-> Click on the subject.\n-> In timeline view, find the entry to edit based on date.\n-> Click on the entry to edit.\n"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:text="\t ✪ If you find a bug, you can directly reach out to the developer through email. Please mention the bug and add a photo if possible."
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15dp" />
 
@@ -90,7 +228,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
-            android:text="Delete Attendance Entry"
+            android:layout_marginTop="10dp"
+            android:text="What's next?"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
             android:textStyle="bold" />
@@ -99,43 +238,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
-            android:text="-> Click on the subject.\n-> In timeline view, long press on the entry you don't need and click Delete.\n-> Multi Select to delete multple entries.\n"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="\t ✪ As a developer, I'm working on new features to make this app easier to use. Any suggestion or enhancement will be greatly appreciated."
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:text="Dynamic Calculation"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="20dp"
-            android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="24dp"
-            android:text="-> Calculates automatic predictions on number of classes to bunk or attend.\n"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="15dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:text="Support and Bug Report"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="24dp"
-            android:text="-> In case you come across any bugs, click on Support to contact the developer.\n"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="15dp" />
     </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

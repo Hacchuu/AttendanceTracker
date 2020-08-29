@@ -15,9 +15,6 @@
         <activity android:name=".Settings"
             android:launchMode="singleTop"
             android:screenOrientation="sensorPortrait"/>
-        <activity android:name=".Reminder"
-            android:launchMode="singleTop"
-            android:screenOrientation="sensorPortrait"/>
         <activity
             android:launchMode="singleTop"
             android:name=".extraClassEdit"

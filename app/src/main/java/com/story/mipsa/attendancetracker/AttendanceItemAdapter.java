@@ -218,7 +218,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
         }
     }
 
-    //Vibration on clikc method
+    //Vibration on click method
     private void shakeItBaby() {
         if (Build.VERSION.SDK_INT >= 26) {
             ((Vibrator) context.getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(125, VibrationEffect.DEFAULT_AMPLITUDE));

@@ -3,6 +3,7 @@ package com.story.mipsa.attendancetracker;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,9 +39,16 @@ public class Settings extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
-        ImageView logo = view.findViewById(R.id.logo);
-        logo.setVisibility(View.INVISIBLE);
         display.setText("Settings");
+
+        ImageView logo = view.findViewById(R.id.logo);
+        logo.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_back_black_24dp));
+        logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.Settings);
@@ -54,13 +62,6 @@ public class Settings extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                         Toast.makeText(getApplicationContext(),"You selected Home",Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.Reminder:
-                        Intent intent1 = new Intent(getApplicationContext(), Reminder.class);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        startActivity(intent1);
-                        finish();
-                        Toast.makeText(getApplicationContext(),"You selected Reminder",Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.Settings:
                         Toast.makeText(getApplicationContext(),"You selected Help",Toast.LENGTH_SHORT).show();
@@ -82,7 +83,7 @@ public class Settings extends AppCompatActivity {
 
     private void initSettingsList(){
         settingImages.add(R.drawable.ic_info_black_24dp);
-        settingNames.add("Instructions");
+        settingNames.add("Information");
 
         settingImages.add(R.drawable.ic_help_black_24dp);
         settingNames.add("Help/Support");

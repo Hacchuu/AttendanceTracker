@@ -72,15 +72,14 @@ public class settingsAdapter extends RecyclerView.Adapter<settingsAdapter.settin
             @Override
             public void onClick(View view) {
                 String currentSelection = settingsNameList.get(position);
-                Toast.makeText(view.getContext(),"You clicked "+settingsNameList.get(position), Toast.LENGTH_SHORT).show();
-                if(currentSelection.equalsIgnoreCase("Instructions")){
+                if(currentSelection.equalsIgnoreCase("Information")){
                     Intent intent = new Intent(view.getContext(),InstructionsPage.class);
                     context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     context.startActivity(intent);
                 }
                 else if(currentSelection.equalsIgnoreCase("Help/Support")){
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                            "mailto","harshppatel7@gmail.com", null));
+                            "mailto","harshppatel719@gmail.com", null));
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Attendance Tracker - Support");
                     context.startActivity(Intent.createChooser(emailIntent, "Send Email"));
                 }

@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 dependencies {
@@ -34,6 +38,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     testImplementation 'junit:junit:4.12'
+    implementation 'com.google.android.play:core:1.8.0'
     implementation 'com.zekapp.library:progreswheelview:1.1.5'
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
     implementation 'com.github.vipulasri:timelineview:1.1.5'
