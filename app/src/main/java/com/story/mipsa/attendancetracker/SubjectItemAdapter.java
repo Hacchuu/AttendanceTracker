@@ -67,10 +67,11 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
-           flag = 0;
+//           flag = 0;
 
             if(menuItem.getItemId() == R.id.action_delete){
-                flag = 1;
+//                flag = 1;
+                shakeItBaby();
                 for(int i=0; i<selectedItems.size();i++){
                     subjectItems.remove(selectedItems.get(i));
                     String sub = selectedItems.get(i).getSubjectName();
@@ -86,14 +87,15 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public void onDestroyActionMode(ActionMode actionMode) {
             multiSelect = false;
             selectedItems.clear();
-            if(flag == 1){
+
+//            if(flag == 1){
                 context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 context.startActivity(new Intent(context,MainActivity.class));
                 context.finish();
-            }
-            else {
-                notifyDataSetChanged();
-            }
+//            }
+//            else {
+//                notifyDataSetChanged();
+//            }
         }
     };
 
@@ -165,6 +167,15 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         return exampleViewHolder;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return subjectItems.get(position).getId();
+}
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     //This function determines which item in the list we are currently looking at
     @Override
@@ -218,6 +229,8 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             }
         });
 
+
+
 //        holder holds the pointer to the current item in the recycler view
         holder.subjectName.setText(currentItem.getSubjectName());
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
@@ -235,20 +248,20 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
         }
-        if(currentItem.getTotal() != 0)
+        if(currentItem.getTotal() != 0) {
             Calculate(currentItem, holder);
-        if (currentItem.getAttend() > 0) {
-            if (currentItem.getAttend() > 1)
-                holder.Status.setText("You can't bunk the next " + currentItem.getAttend() + " classes ⚆_⚆");
-            else
-                holder.Status.setText("You can't bunk the next class ◉_◉");
-        } else if (currentItem.getBunk() > 0) {
-            if (currentItem.getBunk() > 1)
-                holder.Status.setText("You can bunk " + currentItem.getBunk() + " classes (¬‿¬)");
-            else
-                holder.Status.setText("You can bunk 1 class ^.^");
+            if (currentItem.getAttend() > 0) {
+                if (currentItem.getAttend() > 1)
+                    holder.Status.setText("You can't bunk the next " + currentItem.getAttend() + " classes ⚆_⚆");
+                else
+                    holder.Status.setText("You can't bunk the next class ◉_◉");
+            } else if (currentItem.getBunk() > 0) {
+                if (currentItem.getBunk() > 1)
+                    holder.Status.setText("You can bunk " + currentItem.getBunk() + " classes (¬‿¬)");
+                else
+                    holder.Status.setText("You can bunk 1 class ^.^");
+            }
         }
-
         //When present button is pressed
         holder.present.setOnClickListener(new View.OnClickListener() {
             @Override

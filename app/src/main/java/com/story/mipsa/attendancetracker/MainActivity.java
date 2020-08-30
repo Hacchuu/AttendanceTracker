@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -73,9 +74,9 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     private ArrayList<SubjectAttendanceDetails> det;
     private GoogleSignInClient googleSignInClient;
     private int subject_count;
-    private String uid;
     private long selectedDate;
     private BottomNavigationView bottomNavigationView;
+    private String uid;
 
     public long getSelectedDate() {
         return selectedDate;
@@ -237,11 +238,12 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                     int pre = postSnapshot.child("present").getValue(Integer.class);
                     int tot = postSnapshot.child("total").getValue(Integer.class);
                     float percent = postSnapshot.child("percentage").getValue(Float.class);
+                    int id = postSnapshot.child("id").getValue(Integer.class);
                     det = new ArrayList<>();
                     for (DataSnapshot snapshot : postSnapshot.child("subjectAttendanceDetails").getChildren()) {
                         det.add(snapshot.getValue(SubjectAttendanceDetails.class));
                     }
-                    SubjectItem data = new SubjectItem(sName, pre, ab, tot, percent, bun, att, det);
+                    SubjectItem data = new SubjectItem(sName, pre, ab, tot, percent, bun, att, id, det);
                     subjectItems.add(data);
                     adapter.notifyDataSetChanged();
                     recyclerView.scheduleLayoutAnimation();
@@ -268,6 +270,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         layoutManager = new LinearLayoutManager(this);
         adapter = new SubjectItemAdapter(subjectItems, this, this);
         recyclerView.setLayoutManager(layoutManager);
+        adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
     }
 
@@ -293,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             Toast.makeText(getApplicationContext(), "This subject already exists", Toast.LENGTH_SHORT).show();
         }
         else{
-            SubjectItem subjectItem = new SubjectItem(inputSubject, 0, 0, 0, 0, 0, 0, null);
+            SubjectItem subjectItem = new SubjectItem(inputSubject, 0, 0, 0, 0, 0, 0, position, null);
             subjectItems.add(position, subjectItem);
 
             //Adding data to firebase
@@ -301,7 +304,18 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             DatabaseReference userRef = ref.child("Users");
 //            Log.v("raj subject", inputSubject + "----->" + subjectItem);
             userRef.child(user.getUid()).child("Subjects").child(inputSubject).setValue(subjectItem);
-            adapter.notifyDataSetChanged();
+
+            adapter.notifyItemInserted(position);
+//            buildRecyclerView();
+
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getApplicationContext()) {
+                @Override protected int getVerticalSnapPreference() {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            smoothScroller.setTargetPosition(position);
+            layoutManager.startSmoothScroll(smoothScroller);
+
             subject_count = subjectItems.size();
             countView.setText(Integer.toString(subject_count));
         }
@@ -366,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
             userRef.child(user.getUid()).child("Subjects").child(current.getSubjectName()).setValue(current);
-            buildRecyclerView();
+            adapter.notifyDataSetChanged();
 
         } else if (status.equalsIgnoreCase("Absent")) {
             current.setAbsent(current.getAbsent() + 1);
@@ -376,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
             userRef.child(user.getUid()).child("Subjects").child(current.getSubjectName()).setValue(current);
-            buildRecyclerView();
+            adapter.notifyDataSetChanged();
         }
     }
 

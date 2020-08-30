@@ -69,6 +69,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
             flag = 0;
             if(menuItem.getItemId() == R.id.action_delete){
+                shakeItBaby();
                 flag = 1;
                 String sub = currentItem.getSubjectName();
                 for(int i=0; i<selectedItems.size();i++){
@@ -103,11 +104,12 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             subjectDetails.setViews();
             userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
             userRef.child(user.getUid()).child("Subjects").child(sub).child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
-            context.finish();
             Intent intent = new Intent(context,SubjectDetails.class);
             intent.putExtra("Selected Subject Item",subjectDetails.getCurrentSubjectItem());
             context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             context.startActivity(intent);
+            context.finish();
+
         }
     };
 
