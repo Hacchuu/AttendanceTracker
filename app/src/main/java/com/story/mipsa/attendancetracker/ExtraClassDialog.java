@@ -16,12 +16,6 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
 
@@ -35,7 +29,7 @@ public class ExtraClassDialog extends AppCompatDialogFragment {
 
     public ExtraClassDialog.onInput2 onInput2;
 
-    TextView subject;
+    private TextView subject;
     private Button addExtra;
     private RadioButton radioPresent, radioAbsent;
 

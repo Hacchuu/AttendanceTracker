@@ -1,17 +1,13 @@
 package com.story.mipsa.attendancetracker;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -23,26 +19,22 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static android.content.Context.ACTIVITY_SERVICE;
-
-public class settingsAdapter extends RecyclerView.Adapter<settingsAdapter.settingsViewHolder>{
+public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settingsViewHolder>{
 
     private ArrayList<String> settingsNameList = new ArrayList<>();
     private ArrayList<Integer> settingsImageList = new ArrayList<>();
     private FragmentActivity context;
-    MainActivity mainActivity;
     private GoogleSignInClient googleSignInClient;
-    FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    FirebaseUser user;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase database;
+    private FirebaseUser user;
 
-    public settingsAdapter(ArrayList<String> settingsList, ArrayList<Integer> settingsImage, FragmentActivity context) {
+    public SettingsAdapter(ArrayList<String> settingsList, ArrayList<Integer> settingsImage, FragmentActivity context) {
         this.settingsNameList = settingsList;
         this.settingsImageList = settingsImage;
         this.context = context;
@@ -97,17 +89,10 @@ public class settingsAdapter extends RecyclerView.Adapter<settingsAdapter.settin
 
     public void logout() {
         signOut();
-
-//        if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
-//            ((ActivityManager) context.getSystemService(ACTIVITY_SERVICE))
-//                    .clearApplicationUserData();
-//        }
-//        else
-
         firebaseAuth.signOut();
-        context.finish();
         context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         context.startActivity(new Intent(context.getBaseContext(), Login.class));
+        context.finish();
     }
 
     private void signOut() {

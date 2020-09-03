@@ -15,31 +15,27 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.joda.time.DateTime;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 
-public class editSubjectDetails extends AppCompatDialogFragment {
+public class EditSubjectDetails extends AppCompatDialogFragment {
 
     public interface onInput {
         void sendDetailsInput(String status, long date);
     }
 
-    public editSubjectDetails.onInput onInput;
+    public EditSubjectDetails.onInput onInput;
     private CalendarView calendarView;
     private Button button, cancel;
     private RadioButton radioPresent, radioAbsent;
     private String status;
     private String date;
-    long dateInMillis;
+    private long dateInMillis;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -172,7 +168,7 @@ public class editSubjectDetails extends AppCompatDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onInput = (editSubjectDetails.onInput) getActivity();
+            onInput = (EditSubjectDetails.onInput) getActivity();
         } catch (ClassCastException e) {
 
         }

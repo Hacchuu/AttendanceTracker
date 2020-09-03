@@ -36,12 +36,12 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
     private TimelineView timelineView;
     private TextView date;
     private TextView title;
-    CardView cardView;
+    private CardView cardView;
     private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList;
     private OnTimelimeListener onTimelimeListener;
     private boolean multiSelect = false;
     private ArrayList<SubjectAttendanceDetails> selectedItems = new ArrayList<>();
-    int flag = 0;
+    private int flag = 0;
     private FirebaseDatabase database;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
@@ -99,11 +99,10 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
-            String sub = currentItem.getSubjectName();
             String ind = subjectDetails.getIndex();
 
             selectedItems.clear();
-            subjectDetails.Recalculate();
+            subjectDetails.recalculate();
             subjectDetails.setViews();
 
             userRef.child(user.getUid()).child("Subjects").child(ind).setValue(currentItem);
@@ -141,7 +140,6 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             cardView = itemView.findViewById(R.id.cardID);
             date = itemView.findViewById(R.id.timeline_date);
             title = itemView.findViewById(R.id.timeline_title);
-//            setIsRecyclable(false);
             this.onTimelimeListener = onTimelimeListener;
             itemView.setOnClickListener(this);
         }
@@ -246,14 +244,12 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
     @Override
     public long getItemId(int position) {
         return position;
-//        return subjectAttendanceDetailsList.get(position).getId();
     }
 
     @Override
     public int getItemViewType(int position) {
         return position;
 //        return TimelineView.getTimeLineViewType(position, getItemCount());
-//        return subjectAttendanceDetailsList.get(position).getId();
     }
 
 

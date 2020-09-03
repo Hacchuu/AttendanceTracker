@@ -18,11 +18,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class passwordReset extends AppCompatActivity {
+public class PasswordReset extends AppCompatActivity {
 
-    EditText email;
-    Button button;
-    FirebaseAuth firebaseAuth;
+    private EditText email;
+    private Button button;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     public void onBackPressed() {

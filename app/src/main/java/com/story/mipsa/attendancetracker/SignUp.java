@@ -33,8 +33,8 @@ public class SignUp extends AppCompatActivity {
     private EditText mPasswordView;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    DatabaseReference ref;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
     private FirebaseUser user;
 
     @Override
@@ -85,7 +85,6 @@ public class SignUp extends AppCompatActivity {
 
 
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

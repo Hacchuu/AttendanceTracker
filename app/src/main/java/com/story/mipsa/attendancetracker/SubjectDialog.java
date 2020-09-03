@@ -1,37 +1,27 @@
 package com.story.mipsa.attendancetracker;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 
-public class subjectDialog extends AppCompatDialogFragment {
+public class SubjectDialog extends AppCompatDialogFragment {
 
     public interface onInput {
         void sendInput(String input);
     }
 
-    public subjectDialog.onInput onInput;
+    public SubjectDialog.onInput onInput;
 
     private EditText editText;
     private Button cancel, Add;
@@ -70,7 +60,7 @@ public class subjectDialog extends AppCompatDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onInput = (subjectDialog.onInput) getActivity();
+            onInput = (SubjectDialog.onInput) getActivity();
         } catch (ClassCastException e) {
 
         }

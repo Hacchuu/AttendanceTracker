@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,14 +14,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -35,8 +29,6 @@ import com.github.jhonnyx2012.horizontalpicker.HorizontalPicker;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,16 +40,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 
-
-public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, subjectDialog.onInput, DatePickerListener, ExtraClassDialog.onInput2 {
+public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, SubjectDialog.onInput, DatePickerListener, ExtraClassDialog.onInput2 {
     private ArrayList<SubjectItem> subjectItems;
     private TextView textView2;
     private TextView countView;
@@ -116,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         endDate.add(Calendar.MONTH, 0);
 
         final short daysInPast = 30;
-        HorizontalPicker picker = (HorizontalPicker) findViewById(R.id.datePicker);
+        HorizontalPicker picker = findViewById(R.id.datePicker);
         picker
                 .setListener(this)
                 .setDateSelectedColor(getColor(R.color.background))
@@ -128,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
         picker.setBackground(getDrawable(R.drawable.rounded_corner));
         picker.setDate(new DateTime());
-//        picker.setBackgroundColor(R.drawable.rounded_corner);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -188,8 +175,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("Subject List", subjectItems);
-                subjectDialog dialog = new subjectDialog();
-                dialog.show(getSupportFragmentManager(), "subjectDialog");
+                SubjectDialog dialog = new SubjectDialog();
+                dialog.show(getSupportFragmentManager(), "SubjectDialog");
             }
         });
     }
@@ -206,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("temp", "Harsh read failed" + databaseError);
+                Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
         checkRef.child("Target").addValueEventListener(new ValueEventListener() {
@@ -219,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("temp", "Harsh read failed" + databaseError);
+                Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -255,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("temp", "raj read failed" + databaseError);
+                Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -303,10 +290,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             //Adding data to firebase
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
-//            Log.v("raj subject", inputSubject + "----->" + subjectItem);
             userRef.child(user.getUid()).child("Subjects").setValue(subjectItems);
             adapter.notifyItemInserted(position);
-//            buildRecyclerView();
 
             RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getApplicationContext()) {
                 @Override protected int getVerticalSnapPreference() {
@@ -375,7 +360,6 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         SubjectItem current = subjectItems.get(position);
         SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
         String currentDate = sdf.format(getSelectedDate());
-        Toast.makeText(getApplicationContext(),currentDate, Toast.LENGTH_SHORT).show();
         ArrayList<SubjectAttendanceDetails> attendanceDetails = current.getSubjectAttendanceDetails();
         String ind = String.valueOf(subjectItems.indexOf(current));
         if (status.equalsIgnoreCase("Present")) {
@@ -383,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             current.setTotal(current.getTotal() + 1);
 
             current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(status, getSelectedDate(), true, attendanceDetails.size()+1));
-            Recalculate(current);
+            recalculate(current);
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
             userRef.child(user.getUid()).child("Subjects").child(ind).setValue(current);
@@ -393,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             current.setAbsent(current.getAbsent() + 1);
             current.setTotal(current.getTotal() + 1);
             current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(status, getSelectedDate(), true, attendanceDetails.size()+1));
-            Recalculate(current);
+            recalculate(current);
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
             userRef.child(user.getUid()).child("Subjects").child(ind).setValue(current);
@@ -401,15 +385,14 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         }
     }
 
-    private void Recalculate(SubjectItem current) {
+    private void recalculate(SubjectItem current) {
         int presentS = current.getPresent();
         int total = current.getTotal();
-        int totalS = total;
         int attend = 0;
         int bunk = 0;
         float avg = 0;
-        if (totalS != 0) {
-            avg = ((float) presentS / (float) totalS) * 100;
+        if (total != 0) {
+            avg = ((float) presentS / (float) total) * 100;
             current.setPercentage(avg);
         }
         else{
@@ -432,8 +415,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         min = Integer.parseInt(target2);
         if (temp >= min) {
             do {
-                totalS += 1;
-                temp = ((float) presentS / (float) totalS) * 100;
+                total += 1;
+                temp = ((float) presentS / (float) total) * 100;
                 if (temp < min && bunk == 0) {
                     attend++;
                 } else if (temp >= min && attend == 0)
@@ -442,9 +425,9 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         } else {
             int presentTemp = presentS;
             do {
-                totalS += 1;
+                total += 1;
                 presentTemp += 1;
-                temp = ((float) presentTemp / (float) totalS) * 100;
+                temp = ((float) presentTemp / (float) total) * 100;
                 if (temp <= min && bunk == 0) {
                     attend++;
                 } else if (temp > min && attend == 0)

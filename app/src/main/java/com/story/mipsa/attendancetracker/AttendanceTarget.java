@@ -27,7 +27,7 @@ public class AttendanceTarget extends AppCompatActivity {
     private TextView textView;
     private Button button;
     private SeekBar seekBar;
-    public static String minimumAttendance;
+    private static String minimumAttendance;
     private FirebaseUser user;
     private FirebaseDatabase database;
     private DatabaseReference ref;

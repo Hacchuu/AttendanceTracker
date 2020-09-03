@@ -124,21 +124,6 @@
             app:layout_constraintTop_toBottomOf="@+id/item_displayStatus"
             app:layout_constraintVertical_bias="0.862" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/txtOptionDigit"-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="&#8942;"-->
-<!--            android:textAlignment="center"-->
-<!--            android:textAppearance="?android:textAppearanceLarge"-->
-<!--            android:textColor="@color/colorPrimaryDark"-->
-<!--            android:textStyle="bold"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintVertical_bias="0.088" />-->
-
         <ImageView
             android:id="@+id/addExtra2"
             android:layout_width="50dp"
@@ -190,21 +175,6 @@
             app:marginBtwText="15dp"
             app:percentage="180"
             app:progressColor="#df9999" />
-
-        <TextView
-            android:id="@+id/displayExtra"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Extra"
-            android:textAllCaps="true"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/item_present"
-            app:layout_constraintStart_toEndOf="@+id/item_absent"
-            app:layout_constraintTop_toBottomOf="@+id/item_displayStatus" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

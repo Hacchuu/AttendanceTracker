@@ -30,14 +30,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.jar.Attributes;
 
 public class Login extends AppCompatActivity {
 
@@ -45,16 +42,16 @@ public class Login extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private Button normalSignInButton;
-    SignInButton signInButton;
+    private SignInButton signInButton;
     private EditText email;
     private EditText password;
     private TextView signup;
-    GoogleSignInClient googleSignInClient;
-    int RC_SIGN_IN = 1;
-    FirebaseUser user;
-    FirebaseDatabase database;
-    DatabaseReference ref;
-    String minimumAttendance;
+    private GoogleSignInClient googleSignInClient;
+    private int RC_SIGN_IN = 1;
+    private FirebaseUser user;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
+    private String minimumAttendance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +129,7 @@ public class Login extends AppCompatActivity {
         resetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), passwordReset.class);
+                Intent intent = new Intent(getApplicationContext(), PasswordReset.class);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
                 finish();
@@ -163,6 +160,7 @@ public class Login extends AppCompatActivity {
                 progressDialog.show();
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
+                Toast.makeText(getApplicationContext(),task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 Log.d("google sign in error", "onActivityResult: "+e.getMessage());
             }
         }
@@ -254,11 +252,9 @@ public class Login extends AppCompatActivity {
                             target_callDB();
                         } else {
                             // If sign in fails, display a message to the user.
-//                            Log.w(TAG, "signInWithCredential:failure", task.getException());
                             progressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "Authentication failed.",
+                            Toast.makeText(getApplicationContext(), "Authentication failed",
                                     Toast.LENGTH_SHORT).show();
-
                         }
                     }
                 });
@@ -266,7 +262,6 @@ public class Login extends AppCompatActivity {
 
     private void target_callDB() {
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
-        Log.v("temp", "Harsh setting  DB listener");
         //Listener ofr Firebase DB
         checkRef.child("Target").addValueEventListener(new ValueEventListener() {
             @Override
@@ -291,7 +286,7 @@ public class Login extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("temp", "Harsh read failed" + databaseError);
+                Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

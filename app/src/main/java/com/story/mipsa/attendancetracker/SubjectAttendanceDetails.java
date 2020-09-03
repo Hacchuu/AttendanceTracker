@@ -6,8 +6,8 @@ import android.os.Parcelable;
 public class SubjectAttendanceDetails implements Parcelable {
     private String status;
     private long dateOfEntry;
-    boolean extraClass;
-    int id;
+    private boolean extraClass;
+    private int id;
 
     public SubjectAttendanceDetails(String status, long dateOfEntry, boolean extraClass, int id) {
         this.status = status;

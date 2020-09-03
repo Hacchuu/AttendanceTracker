@@ -22,35 +22,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity {
-//    implements OnSuccessListener<AppUpdateInfo>
 
-//    private static final int REQUEST_CODE = 1234;
+
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
-//    AppUpdateManager appUpdateManager;
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        if(requestCode == REQUEST_CODE){
-//            if(resultCode == RESULT_OK){
-//                Log.i("Splash Activity", "onActivityResult: Update flow completed" + resultCode);
-//            }
-//            else{
-//                Log.e("Splash Activity", "onActivityResult: Updare flow failed" + resultCode);
-//            }
-//        }
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//       appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
-//        appUpdateManager.getAppUpdateInfo().addOnSuccessListener(this);
-
-
         firebaseAuth = FirebaseAuth.getInstance();
-//        firebaseAuth.updateCurrentUser(null);
         user = firebaseAuth.getCurrentUser();
         if(user != null && user.isEmailVerified()){
             Intent intent = new Intent(this, MainActivity.class);
@@ -65,37 +47,4 @@ public class SplashActivity extends AppCompatActivity {
             finish();
         }
     }
-
-//    @Override
-//    public void onSuccess(AppUpdateInfo appUpdateInfo) {
-//        if(appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS){
-//            startUpdate(appUpdateInfo, AppUpdateType.IMMEDIATE);
-//        }
-//        else if(appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED){
-//            Log.d("Splash Activity", "onSuccess: Downloaded");
-//        }
-//        else if(appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE){
-//            if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
-//                startUpdate(appUpdateInfo, AppUpdateType.IMMEDIATE);
-//            }
-//        }
-//    }
-
-//
-//    private void startUpdate(AppUpdateInfo appUpdateInfo, int immediate) {
-//        final Activity activity = this;
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
-//                            immediate,
-//                            activity,
-//                            REQUEST_CODE);
-//                } catch (IntentSender.SendIntentException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
 }

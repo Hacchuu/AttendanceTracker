@@ -28,22 +28,22 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editSubjectDetails.onInput, extraClassEdit.onInput1{
-    TextView subjectName;
-    TextView total;
-    TextView present;
-    TextView absent;
-    TextView attendance;
-    TextView outcome;
-    SubjectItem currentSubjectItem;
+public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, EditSubjectDetails.onInput, ExtraClassEdit.onInput1{
+    private TextView subjectName;
+    private TextView total;
+    private TextView present;
+    private TextView absent;
+    private TextView attendance;
+    private TextView outcome;
+    private SubjectItem currentSubjectItem;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList;
     private FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    DatabaseReference ref;
-    FirebaseUser user;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
+    private FirebaseUser user;
     private int position;
     MainActivity mainActivity;
     AttendanceTarget attendanceTarget;
@@ -137,8 +137,6 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                     SubjectAttendanceDetails data = postSnapshot.getValue(SubjectAttendanceDetails.class);
                     subjectAttendanceDetailsList.add(data);
                     adapter.notifyDataSetChanged();
-//                    recyclerView.setNestedScrollingEnabled(false);
-//                    recyclerView.setHasFixedSize(false);
                     recyclerView.scheduleLayoutAnimation();
                 }
                 Collections.reverse(subjectAttendanceDetailsList);
@@ -146,7 +144,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("temp", "raj read failed" + databaseError);
+                Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -162,7 +160,6 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         adapter = new AttendanceItemAdapter(subjectAttendanceDetailsList, this,this);
         recyclerView.setLayoutManager(layoutManager);
         adapter.setHasStableIds(true);
-
         recyclerView.setAdapter(adapter);
     }
 
@@ -172,12 +169,12 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         this.position = position;
 
         if(subjectAttendanceDetailsList.get(position).isExtraClass()){
-            extraClassEdit eDialog = new extraClassEdit();
-            eDialog.show(getSupportFragmentManager(), "extraClassEdit");
+            ExtraClassEdit eDialog = new ExtraClassEdit();
+            eDialog.show(getSupportFragmentManager(), "ExtraClassEdit");
         }
         else{
-            editSubjectDetails dialog = new editSubjectDetails();
-            dialog.show(getSupportFragmentManager(), "editSubjectDetails");
+            EditSubjectDetails dialog = new EditSubjectDetails();
+            dialog.show(getSupportFragmentManager(), "EditSubjectDetails");
         }
     }
 
@@ -191,13 +188,13 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 
     private void updateDetails(String status, long date, int position) {
         for(int i=0;i<subjectAttendanceDetailsList.size();i++){
-            boolean checkExtra = subjectAttendanceDetailsList.get(position).extraClass;
+            boolean checkExtra = subjectAttendanceDetailsList.get(position).isExtraClass();
             if(checkExtra)
                 break;
             SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
             String currentDate2 = sdf.format(subjectAttendanceDetailsList.get(i).getDateOfEntry());
             String checkDate = sdf.format(date);
-            boolean checkExtraItem = subjectAttendanceDetailsList.get(i).extraClass;
+            boolean checkExtraItem = subjectAttendanceDetailsList.get(i).isExtraClass();
             if (currentDate2.equalsIgnoreCase(checkDate) && i != position ) {
                 if(!checkExtraItem){
                     Toast.makeText(this, "You have already entered the attendance for " + currentDate2, Toast.LENGTH_LONG).show();
@@ -208,17 +205,16 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         boolean extraClass = subjectAttendanceDetailsList.get(position).isExtraClass();
 
         SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date,extraClass, position);
-        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
         if (status.equalsIgnoreCase("present") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
             subjectAttendanceDetailsList.get(position).setStatus(status);
             currentSubjectItem.setPresent(currentSubjectItem.getPresent() + 1);
             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() - 1);
-            Recalculate();
+            recalculate();
         } else if (status.equalsIgnoreCase("absent") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
             subjectAttendanceDetailsList.get(position).setStatus(status);
             currentSubjectItem.setPresent(currentSubjectItem.getPresent() - 1);
             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() + 1);
-            Recalculate();
+            recalculate();
         }
         subjectAttendanceDetailsList.set(position, updateItem);
         DatabaseReference detailsRef = ref.child("Users").child(user.getUid()).child("Subjects").child(index);
@@ -255,10 +251,9 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     }
 
     //Recalculates the algorithm if there are any changes during updation of timeline.
-    protected void Recalculate() {
+    protected void recalculate() {
         int presentS = currentSubjectItem.getPresent();
-        int total = currentSubjectItem.getTotal();
-        int totalS = total;
+        int totalS = currentSubjectItem.getTotal();
         int attend = 0;
         int bunk = 0;
         float avg = 0;

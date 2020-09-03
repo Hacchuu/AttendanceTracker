@@ -14,7 +14,7 @@ public class SubjectItem implements Parcelable {
     private int bunk;
     private int attend;
     private float percentage;
-    int id;
+    private int id;
     private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetails;
 
     public int getId() {

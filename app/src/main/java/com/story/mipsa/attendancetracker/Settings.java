@@ -22,7 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 
 public class Settings extends AppCompatActivity {
-    BottomNavigationView bottomNavigationView;
+    private BottomNavigationView bottomNavigationView;
     private ArrayList<String> settingNames = new ArrayList<>();
     private ArrayList<Integer> settingImages = new ArrayList<>();
 
@@ -94,7 +94,7 @@ public class Settings extends AppCompatActivity {
 
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerSettings);
-        settingsAdapter adapter = new settingsAdapter(settingNames,settingImages,this);
+        SettingsAdapter adapter = new SettingsAdapter(settingNames,settingImages,this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
