@@ -1,8 +1,10 @@
 package com.story.mipsa.attendancetracker;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +28,8 @@ import java.util.concurrent.Executor;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 public class settingsAdapter extends RecyclerView.Adapter<settingsAdapter.settingsViewHolder>{
 
@@ -93,6 +97,13 @@ public class settingsAdapter extends RecyclerView.Adapter<settingsAdapter.settin
 
     public void logout() {
         signOut();
+
+//        if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+//            ((ActivityManager) context.getSystemService(ACTIVITY_SERVICE))
+//                    .clearApplicationUserData();
+//        }
+//        else
+
         firebaseAuth.signOut();
         context.finish();
         context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

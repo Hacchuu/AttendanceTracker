@@ -67,6 +67,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
+            String ind = subjectDetails.getIndex();
             flag = 0;
             if(menuItem.getItemId() == R.id.action_delete){
                 shakeItBaby();
@@ -75,7 +76,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
                 for(int i=0; i<selectedItems.size();i++){
                     int index = subjectAttendanceDetailsList.indexOf(selectedItems.get(i));
                     subjectAttendanceDetailsList.remove(selectedItems.get(i));
-                    userRef.child(user.getUid()).child("Subjects").child(sub).child("subjectAttendanceDetails").child(Integer.toString(index)).removeValue();
+                    userRef.child(user.getUid()).child("Subjects").child(ind).child("subjectAttendanceDetails").child(Integer.toString(index)).removeValue();
                     if(selectedItems.get(i).getStatus().equalsIgnoreCase("Absent")){
                         currentItem.setAbsent(currentItem.getAbsent()-1);
                         currentItem.setTotal(currentItem.getTotal()-1);
@@ -99,13 +100,18 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             DatabaseReference userRef = ref.child("Users");
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
             String sub = currentItem.getSubjectName();
+            String ind = subjectDetails.getIndex();
+
             selectedItems.clear();
             subjectDetails.Recalculate();
             subjectDetails.setViews();
-            userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
-            userRef.child(user.getUid()).child("Subjects").child(sub).child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
+
+            userRef.child(user.getUid()).child("Subjects").child(ind).setValue(currentItem);
+            userRef.child(user.getUid()).child("Subjects").child(ind).child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
+
             Intent intent = new Intent(context,SubjectDetails.class);
             intent.putExtra("Selected Subject Item",subjectDetails.getCurrentSubjectItem());
+            intent.putExtra("index",subjectDetails.getIndex());
             context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             context.startActivity(intent);
             context.finish();
@@ -130,10 +136,12 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
         public ViewHolder(@NonNull View itemView, int viewType, OnTimelimeListener onTimelimeListener) {
             super(itemView);
             timelineView = itemView.findViewById(R.id.timeline);
-            timelineView.initLine(viewType);
+//            timelineView.initLine(viewType);
+
             cardView = itemView.findViewById(R.id.cardID);
             date = itemView.findViewById(R.id.timeline_date);
             title = itemView.findViewById(R.id.timeline_title);
+//            setIsRecyclable(false);
             this.onTimelimeListener = onTimelimeListener;
             itemView.setOnClickListener(this);
         }
@@ -229,16 +237,25 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
         }
     }
 
+
     @Override
     public int getItemCount() {
         return subjectAttendanceDetailsList.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+//        return subjectAttendanceDetailsList.get(position).getId();
+    }
 
     @Override
     public int getItemViewType(int position) {
-        return TimelineView.getTimeLineViewType(position, getItemCount());
+        return position;
+//        return TimelineView.getTimeLineViewType(position, getItemCount());
+//        return subjectAttendanceDetailsList.get(position).getId();
     }
+
 
     public interface OnTimelimeListener {
         void onTimelineClick(int position);

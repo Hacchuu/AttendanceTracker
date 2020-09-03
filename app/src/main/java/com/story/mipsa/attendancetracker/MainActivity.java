@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
         uid = user.getUid();
         ref = database.getReference().getRoot();
+        ref.keepSynced(true);
         name_target_callDB();
         subjectCallDb();
         createExampleList();
@@ -303,8 +304,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
 //            Log.v("raj subject", inputSubject + "----->" + subjectItem);
-            userRef.child(user.getUid()).child("Subjects").child(inputSubject).setValue(subjectItem);
-
+            userRef.child(user.getUid()).child("Subjects").setValue(subjectItems);
             adapter.notifyItemInserted(position);
 //            buildRecyclerView();
 
@@ -333,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     public void OnItemClick(int position) {
         Intent intent = new Intent(getApplicationContext(), SubjectDetails.class);
         intent.putExtra("Selected Subject Item", subjectItems.get(position));
+        intent.putExtra("index", String.valueOf(position));
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         startActivity(intent);
         finish();
@@ -372,24 +373,30 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
 
     private void insertExtraClass(String status, int position) {
         SubjectItem current = subjectItems.get(position);
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
+        String currentDate = sdf.format(getSelectedDate());
+        Toast.makeText(getApplicationContext(),currentDate, Toast.LENGTH_SHORT).show();
+        ArrayList<SubjectAttendanceDetails> attendanceDetails = current.getSubjectAttendanceDetails();
+        String ind = String.valueOf(subjectItems.indexOf(current));
         if (status.equalsIgnoreCase("Present")) {
             current.setPresent(current.getPresent() + 1);
             current.setTotal(current.getTotal() + 1);
-            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(status, getSelectedDate(), true));
+
+            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(status, getSelectedDate(), true, attendanceDetails.size()+1));
             Recalculate(current);
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
-            userRef.child(user.getUid()).child("Subjects").child(current.getSubjectName()).setValue(current);
+            userRef.child(user.getUid()).child("Subjects").child(ind).setValue(current);
             adapter.notifyDataSetChanged();
 
         } else if (status.equalsIgnoreCase("Absent")) {
             current.setAbsent(current.getAbsent() + 1);
             current.setTotal(current.getTotal() + 1);
-            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(status, getSelectedDate(), true));
+            current.setSubjectAttendanceDetails(new SubjectAttendanceDetails(status, getSelectedDate(), true, attendanceDetails.size()+1));
             Recalculate(current);
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
-            userRef.child(user.getUid()).child("Subjects").child(current.getSubjectName()).setValue(current);
+            userRef.child(user.getUid()).child("Subjects").child(ind).setValue(current);
             adapter.notifyDataSetChanged();
         }
     }

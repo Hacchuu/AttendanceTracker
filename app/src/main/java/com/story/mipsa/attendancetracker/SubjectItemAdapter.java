@@ -72,11 +72,13 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             if(menuItem.getItemId() == R.id.action_delete){
 //                flag = 1;
                 shakeItBaby();
-                for(int i=0; i<selectedItems.size();i++){
+                for(int i = 0; i < selectedItems.size(); i++){
                     subjectItems.remove(selectedItems.get(i));
-                    String sub = selectedItems.get(i).getSubjectName();
-                    userRef.child(user.getUid()).child("Subjects").child(sub).removeValue();
                 }
+
+                DatabaseReference checkRef = ref.child("Users").child(user.getUid()).child("Subjects");
+                checkRef.setValue(subjectItems);
+                userRef.keepSynced(true);
                 Toast.makeText(context,"Selected cards deleted",Toast.LENGTH_SHORT).show();
                 actionMode.finish();
             }
@@ -87,15 +89,15 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public void onDestroyActionMode(ActionMode actionMode) {
             multiSelect = false;
             selectedItems.clear();
+            user = firebaseAuth.getCurrentUser();
+            DatabaseReference checkRef = ref.child("Users").child(user.getUid()).child("Subjects");
+            checkRef.setValue(subjectItems);
+            checkRef.keepSynced(true);
 
-//            if(flag == 1){
-                context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                context.startActivity(new Intent(context,MainActivity.class));
-                context.finish();
-//            }
-//            else {
-//                notifyDataSetChanged();
-//            }
+//            notifyDataSetChanged();
+            context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            context.startActivity(new Intent(context, MainActivity.class));
+            context.finish();
         }
     };
 
@@ -182,6 +184,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     public void onBindViewHolder(@NonNull final ExampleViewHolder holder, final int position) {
         holder.itemView.setAlpha(1f);
         final SubjectItem currentItem = subjectItems.get(position);
+        String ind = String.valueOf(subjectItems.indexOf(currentItem));
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();
@@ -270,9 +273,11 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                 user = firebaseAuth.getCurrentUser();
                 DatabaseReference userRef = ref.child("Users");
                 String sub = currentItem.getSubjectName();
-                userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
+                userRef.child(user.getUid()).child("Subjects").child(ind).setValue(currentItem);
             }
         });
+
+
 
         //When absent button is pressed
         holder.absent.setOnClickListener(new View.OnClickListener() {
@@ -282,7 +287,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                 user = firebaseAuth.getCurrentUser();
                 DatabaseReference userRef = ref.child("Users");
                 String sub = currentItem.getSubjectName();
-                userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
+                userRef.child(user.getUid()).child("Subjects").child(ind).setValue(currentItem);
             }
         });
     }
@@ -320,7 +325,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setPercentage(avg);
         currentItem.setTotal(holder.total);
         currentItem.setPresent(holder.presentS);
-        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,false));
+        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate, false, attendanceList.size() + 1));
 
         holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         if(currentItem.getPercentage() >= holder.min){
@@ -384,7 +389,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
         }
-        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,false));
+        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,false, attendanceList.size()+1));
         Calculate(currentItem, holder);
         if (holder.attend > 0) {
             if (holder.attend > 1)

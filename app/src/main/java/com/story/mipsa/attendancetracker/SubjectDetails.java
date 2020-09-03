@@ -47,9 +47,18 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     private int position;
     MainActivity mainActivity;
     AttendanceTarget attendanceTarget;
+    private String index;
 
     public ArrayList<SubjectAttendanceDetails> getSubjectAttendanceDetailsList() {
         return subjectAttendanceDetailsList;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
     }
 
     public SubjectItem getCurrentSubjectItem() {
@@ -101,8 +110,10 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         //retrieve the details of the subject that is clicked in main Activity from adaptor class
         if (getIntent().hasExtra("Selected Subject Item")) {
             currentSubjectItem = getIntent().getParcelableExtra("Selected Subject Item");
-        }
+            index = getIntent().getStringExtra("index");
 
+        }
+        setIndex(index);
         subjectName = findViewById(R.id.nameSubjectDets);
         attendance = findViewById(R.id.percent);
         total = findViewById(R.id.totalFill);
@@ -118,7 +129,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     private  void details_DB(){
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
         //Retrieve the attendance details and store in its appropriate list
-        checkRef.child("Subjects").child(currentSubjectItem.getSubjectName()).child("subjectAttendanceDetails").orderByChild("dateOfEntry").addListenerForSingleValueEvent(new ValueEventListener() {
+        checkRef.child("Subjects").child(index).child("subjectAttendanceDetails").orderByChild("dateOfEntry").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 subjectAttendanceDetailsList.clear();
@@ -126,6 +137,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                     SubjectAttendanceDetails data = postSnapshot.getValue(SubjectAttendanceDetails.class);
                     subjectAttendanceDetailsList.add(data);
                     adapter.notifyDataSetChanged();
+//                    recyclerView.setNestedScrollingEnabled(false);
+//                    recyclerView.setHasFixedSize(false);
                     recyclerView.scheduleLayoutAnimation();
                 }
                 Collections.reverse(subjectAttendanceDetailsList);
@@ -148,6 +161,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         adapter = new AttendanceItemAdapter(subjectAttendanceDetailsList, this,this);
         recyclerView.setLayoutManager(layoutManager);
+        adapter.setHasStableIds(true);
+
         recyclerView.setAdapter(adapter);
     }
 
@@ -191,7 +206,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             }
         }
         boolean extraClass = subjectAttendanceDetailsList.get(position).isExtraClass();
-        SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date,extraClass);
+
+        SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date,extraClass, position);
         SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
         if (status.equalsIgnoreCase("present") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
             subjectAttendanceDetailsList.get(position).setStatus(status);
@@ -205,12 +221,13 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             Recalculate();
         }
         subjectAttendanceDetailsList.set(position, updateItem);
-        DatabaseReference detailsRef = ref.child("Users").child(user.getUid()).child("Subjects").child(currentSubjectItem.getSubjectName());
+        DatabaseReference detailsRef = ref.child("Users").child(user.getUid()).child("Subjects").child(index);
         detailsRef.setValue(currentSubjectItem);
         detailsRef.child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         Intent intent = new Intent(getApplicationContext(),SubjectDetails.class);
         intent.putExtra("Selected Subject Item", currentSubjectItem);
+        intent.putExtra("index", getIndex());
         startActivity(intent);
         finish();
     }
