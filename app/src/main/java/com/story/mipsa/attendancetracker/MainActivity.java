@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         TextView display = view.findViewById(R.id.name);
         ImageView logo = view.findViewById(R.id.logo);
         logo.setVisibility(View.INVISIBLE);
-        display.setText("Attendance Tracker");
+        display.setText("Student Pocket");
 
         Calendar startDate = Calendar.getInstance();
         startDate.add(Calendar.MONTH, -1);

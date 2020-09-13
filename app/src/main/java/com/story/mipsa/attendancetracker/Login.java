@@ -68,7 +68,7 @@ public class Login extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
-        display.setText("Attendance Tracker");
+        display.setText("Student Pocket");
 
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AttendanceTracker</string>
+    <string name="app_name">Student Pocket</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Login</string>
