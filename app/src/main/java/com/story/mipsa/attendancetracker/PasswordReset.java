@@ -44,7 +44,7 @@ public class PasswordReset extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
-        display.setText("Attendance Tracker");
+        display.setText("Student Pocket");
 
         email =  findViewById(R.id.ResetEmail);
         button =  findViewById(R.id.Confirmation);

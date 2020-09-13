@@ -68,7 +68,7 @@ public class Login extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
-        display.setText("Attendance Tracker");
+        display.setText("Student Pocket");
 
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -122,7 +122,6 @@ public class Login extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), SignUp.class);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -132,7 +131,6 @@ public class Login extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), PasswordReset.class);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
-                finish();
             }
         });
 

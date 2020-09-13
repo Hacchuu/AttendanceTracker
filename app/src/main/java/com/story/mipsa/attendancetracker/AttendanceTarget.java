@@ -33,6 +33,11 @@ public class AttendanceTarget extends AppCompatActivity {
     private DatabaseReference ref;
     private FirebaseAuth firebaseAuth;
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +53,7 @@ public class AttendanceTarget extends AppCompatActivity {
         actionBar.setBackgroundDrawable(colorDrawable);
         getSupportActionBar().setElevation(0);
         TextView display = view.findViewById(R.id.name);
-        display.setText("Attendance Tracker");
+        display.setText("Student Pocket");
 
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
