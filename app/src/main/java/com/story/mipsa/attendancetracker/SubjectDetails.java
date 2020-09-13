@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, EditSubjectDetails.onInput, ExtraClassEdit.onInput1{
+public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, EditSubjectDetails.OnInput, ExtraClassEdit.OnInput1{
     private TextView subjectName;
     private TextView total;
     private TextView present;

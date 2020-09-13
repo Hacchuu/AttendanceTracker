@@ -164,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/rounded_corner_background_green"
-                android:text="Situation"
+                android:text="No Suggestions"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp"
                 android:textStyle="bold"

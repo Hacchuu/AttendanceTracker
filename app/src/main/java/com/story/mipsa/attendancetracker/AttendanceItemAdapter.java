@@ -67,7 +67,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
-            String ind = subjectDetails.getIndex();
+            String subjectIndex = subjectDetails.getIndex();
             flag = 0;
             if(menuItem.getItemId() == R.id.action_delete){
                 shakeItBaby();
@@ -76,7 +76,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
                 for(int i=0; i<selectedItems.size();i++){
                     int index = subjectAttendanceDetailsList.indexOf(selectedItems.get(i));
                     subjectAttendanceDetailsList.remove(selectedItems.get(i));
-                    userRef.child(user.getUid()).child("Subjects").child(ind).child("subjectAttendanceDetails").child(Integer.toString(index)).removeValue();
+                    userRef.child(user.getUid()).child("Subjects").child(subjectIndex).child("subjectAttendanceDetails").child(Integer.toString(index)).removeValue();
                     if(selectedItems.get(i).getStatus().equalsIgnoreCase("Absent")){
                         currentItem.setAbsent(currentItem.getAbsent()-1);
                         currentItem.setTotal(currentItem.getTotal()-1);
@@ -99,18 +99,18 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
-            String ind = subjectDetails.getIndex();
+            String subjectIndex = subjectDetails.getIndex();
 
             selectedItems.clear();
             subjectDetails.recalculate();
             subjectDetails.setViews();
 
-            userRef.child(user.getUid()).child("Subjects").child(ind).setValue(currentItem);
-            userRef.child(user.getUid()).child("Subjects").child(ind).child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
+            userRef.child(user.getUid()).child("Subjects").child(subjectIndex).setValue(currentItem);
+            userRef.child(user.getUid()).child("Subjects").child(subjectIndex).child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
 
             Intent intent = new Intent(context,SubjectDetails.class);
-            intent.putExtra("Selected Subject Item",subjectDetails.getCurrentSubjectItem());
-            intent.putExtra("index",subjectDetails.getIndex());
+            intent.putExtra("Selected Subject Item", subjectDetails.getCurrentSubjectItem());
+            intent.putExtra("index", subjectDetails.getIndex());
             context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             context.startActivity(intent);
             context.finish();

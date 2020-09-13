@@ -60,26 +60,24 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
         database = FirebaseDatabase.getInstance();
         user = firebaseAuth.getCurrentUser();
         
-        
-        
         holder.imageView.setImageResource(settingsImageList.get(position));
         holder.textView.setText(settingsNameList.get(position));
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String currentSelection = settingsNameList.get(position);
-                if(currentSelection.equalsIgnoreCase("Information")){
-                    Intent intent = new Intent(view.getContext(),InstructionsPage.class);
+                if (currentSelection.equalsIgnoreCase("Information")) {
+                    Intent intent = new Intent(view.getContext(), InstructionsPage.class);
                     context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     context.startActivity(intent);
                 }
-                else if(currentSelection.equalsIgnoreCase("Help/Support")){
+                else if (currentSelection.equalsIgnoreCase("Help/Support")) {
                     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                            "mailto","harshppatel719@gmail.com", null));
+                            "mailto", "harshppatel719@gmail.com", null));
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Attendance Tracker - Support");
                     context.startActivity(Intent.createChooser(emailIntent, "Send Email"));
                 }
-                else if(currentSelection.equalsIgnoreCase("Logout")){
+                else if (currentSelection.equalsIgnoreCase("Logout")) {
                     logout();
                 }
 
@@ -88,6 +86,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
     }
 
     public void logout() {
+        database.goOffline();
         signOut();
         firebaseAuth.signOut();
         context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

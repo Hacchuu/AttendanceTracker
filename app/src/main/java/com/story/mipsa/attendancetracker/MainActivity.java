@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, SubjectDialog.onInput, DatePickerListener, ExtraClassDialog.onInput2 {
+public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, SubjectDialog.onInput, DatePickerListener, ExtraClassDialog.OnInput2 {
     private ArrayList<SubjectItem> subjectItems;
     private TextView textView2;
     private TextView countView;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SubjectAttendanceDetails> det;
     private GoogleSignInClient googleSignInClient;
-    private int subject_count;
+    private int subjectCount;
     private long selectedDate;
     private BottomNavigationView bottomNavigationView;
     private String uid;
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                         Intent intent1 = new Intent(getApplicationContext(), Settings.class);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         startActivity(intent1);
-                        finish();;
+                        finish();
                         return true;
                 }
                 return false;
@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         uid = user.getUid();
         ref = database.getReference().getRoot();
         ref.keepSynced(true);
+
         name_target_callDB();
         subjectCallDb();
         createExampleList();
@@ -235,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                     subjectItems.add(data);
                     adapter.notifyDataSetChanged();
                     recyclerView.scheduleLayoutAnimation();
-                    subject_count = subjectItems.size();
-                    countView.setText(Integer.toString(subject_count));
+                    subjectCount = subjectItems.size();
+                    countView.setText(Integer.toString(subjectCount));
                 }
             }
 
@@ -286,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         else{
             SubjectItem subjectItem = new SubjectItem(inputSubject, 0, 0, 0, 0, 0, 0, position, null);
             subjectItems.add(position, subjectItem);
-
             //Adding data to firebase
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
@@ -301,8 +301,8 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             smoothScroller.setTargetPosition(position);
             layoutManager.startSmoothScroll(smoothScroller);
 
-            subject_count = subjectItems.size();
-            countView.setText(Integer.toString(subject_count));
+            subjectCount = subjectItems.size();
+            countView.setText(Integer.toString(subjectCount));
         }
     }
 

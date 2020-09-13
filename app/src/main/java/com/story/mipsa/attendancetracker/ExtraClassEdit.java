@@ -18,11 +18,11 @@ import static android.content.Context.VIBRATOR_SERVICE;
 
 public class ExtraClassEdit extends AppCompatDialogFragment {
 
-    public interface onInput1 {
+    public interface OnInput1 {
         void sendDetailsInput(String status, long date);
     }
 
-    public ExtraClassEdit.onInput1 onInput1;
+    public ExtraClassEdit.OnInput1 onInput1;
     private Button button;
     private RadioButton radioPresent, radioAbsent;
     private String status;
@@ -61,7 +61,7 @@ public class ExtraClassEdit extends AppCompatDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onInput1 = (ExtraClassEdit.onInput1) getActivity();
+            onInput1 = (ExtraClassEdit.OnInput1) getActivity();
         } catch (ClassCastException e) {
 
         }

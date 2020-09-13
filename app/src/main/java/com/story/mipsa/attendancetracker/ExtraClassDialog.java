@@ -23,11 +23,11 @@ import static android.content.Context.VIBRATOR_SERVICE;
 
 public class ExtraClassDialog extends AppCompatDialogFragment {
 
-    public interface onInput2 {
+    public interface OnInput2 {
         void sendExtraInput(String status, int position);
     }
 
-    public ExtraClassDialog.onInput2 onInput2;
+    public ExtraClassDialog.OnInput2 onInput2;
 
     private TextView subject;
     private Button addExtra;
@@ -61,7 +61,7 @@ public class ExtraClassDialog extends AppCompatDialogFragment {
                         onInput2.sendExtraInput("Absent", position);
                     getDialog().dismiss();
                 } else {
-                    Toast.makeText(getActivity(),"Select an option",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Select an option", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -74,7 +74,7 @@ public class ExtraClassDialog extends AppCompatDialogFragment {
         super.onAttach(context);
 
         try {
-            onInput2 = (ExtraClassDialog.onInput2) getActivity();
+            onInput2 = (ExtraClassDialog.OnInput2) getActivity();
         } catch (ClassCastException e) {
 
         }

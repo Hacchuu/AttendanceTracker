@@ -33,8 +33,9 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);getSupportActionBar().setCustomView(R.layout.custom_action_bar);
-        View view=getSupportActionBar().getCustomView();
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_action_bar);
+        View view = getSupportActionBar().getCustomView();
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#151515"));
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(colorDrawable);
@@ -61,10 +62,8 @@ public class Settings extends AppCompatActivity {
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         startActivity(intent);
                         finish();
-                        Toast.makeText(getApplicationContext(),"You selected Home",Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.Settings:
-                        Toast.makeText(getApplicationContext(),"You selected Help",Toast.LENGTH_SHORT).show();
                         return true;
                 }
                 return false;

@@ -178,6 +178,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         final SubjectItem currentItem = subjectItems.get(position);
         String ind = String.valueOf(subjectItems.indexOf(currentItem));
         database = FirebaseDatabase.getInstance();
+
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();
 
@@ -276,8 +277,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             @Override
             public void onClick(View view) {
                 Absent(currentItem, holder);
-                user = firebaseAuth.getCurrentUser();
-                DatabaseReference userRef = ref.child("Users");
+                user = firebaseAuth.getCurrentUser();DatabaseReference userRef = ref.child("Users");
                 String sub = currentItem.getSubjectName();
                 userRef.child(user.getUid()).child("Subjects").child(ind).setValue(currentItem);
             }
