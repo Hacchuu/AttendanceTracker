@@ -14,12 +14,21 @@ public class SubjectItem implements Parcelable {
     private int bunk;
     private int attend;
     private float percentage;
+    private int id;
     private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetails;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public SubjectItem() {
     }
 
-    public SubjectItem(String subjectName, int present, int absent, int total, float percentage, int bunk, int attend, ArrayList<SubjectAttendanceDetails> attendanceDet) {
+    public SubjectItem(String subjectName, int present, int absent, int total, float percentage, int bunk, int attend, int id, ArrayList<SubjectAttendanceDetails> attendanceDet) {
         this.subjectName = subjectName;
         this.present = present;
         this.absent = absent;
@@ -27,6 +36,7 @@ public class SubjectItem implements Parcelable {
         this.percentage = percentage;
         this.bunk = bunk;
         this.attend = attend;
+        this.id = id;
         if (attendanceDet == null)
             this.subjectAttendanceDetails = new ArrayList<SubjectAttendanceDetails>();
         else

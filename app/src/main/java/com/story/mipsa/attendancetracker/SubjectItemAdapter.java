@@ -1,11 +1,10 @@
 package com.story.mipsa.attendancetracker;
 
 import android.content.Intent;
-import android.hardware.camera2.TotalCaptureResult;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.PopupMenu;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,31 +27,25 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-//import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 
 
-public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.ExampleViewHolder> {
+public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.ExampleViewHolder>{
     private ArrayList<SubjectItem> subjectItems;
     private FragmentActivity context;
-    FirebaseUser user;
-    FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    DatabaseReference ref;
+    private FirebaseUser user;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
     private OnItemListener onItemListener;
     private boolean multiSelect = false;
     private ArrayList<SubjectItem> selectedItems = new ArrayList();
     MainActivity mainActivity;
-    int flag;
-    private static int extraClass = 0,countExtra=0;
-
-    long currentDate;
-
-
-
+    private long currentDate;
 
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
@@ -72,16 +65,16 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             user = firebaseAuth.getCurrentUser();
             DatabaseReference userRef = ref.child("Users");
-//            String sub = currentItem.getSubjectName();
-           flag = 0;
 
             if(menuItem.getItemId() == R.id.action_delete){
-                flag = 1;
-                for(int i=0; i<selectedItems.size();i++){
+                shakeItBaby();
+                for(int i = 0; i < selectedItems.size(); i++){
                     subjectItems.remove(selectedItems.get(i));
-                    String sub = selectedItems.get(i).getSubjectName();
-                    userRef.child(user.getUid()).child("Subjects").child(sub).removeValue();
                 }
+
+                DatabaseReference checkRef = ref.child("Users").child(user.getUid()).child("Subjects");
+                checkRef.setValue(subjectItems);
+                userRef.keepSynced(true);
                 Toast.makeText(context,"Selected cards deleted",Toast.LENGTH_SHORT).show();
                 actionMode.finish();
             }
@@ -92,14 +85,13 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         public void onDestroyActionMode(ActionMode actionMode) {
             multiSelect = false;
             selectedItems.clear();
-            if(flag == 1){
-                context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                context.startActivity(new Intent(context,MainActivity.class));
-                context.finish();
-            }
-            else {
-                notifyDataSetChanged();
-            }
+            user = firebaseAuth.getCurrentUser();
+            DatabaseReference checkRef = ref.child("Users").child(user.getUid()).child("Subjects");
+            checkRef.setValue(subjectItems);
+            checkRef.keepSynced(true);
+            context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            context.startActivity(new Intent(context, MainActivity.class));
+            context.finish();
         }
     };
 
@@ -113,16 +105,16 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
 
 
     public class ExampleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView subjectName, Attendance, Status;
-        TextView optionDigit;
-        public Button present, absent;
+        private TextView subjectName, attendance, status;
+        private ImageView addExtraImage;
+        private Button present, absent;
         MainActivity mainActivity = new MainActivity();
-        public int presentS, presentTemp = 0;
-        public int absentS, total, totalS, attend = 0, bunk = 0, min, per;
-        public float avg = 0, temp;
+        private int presentS, presentTemp = 0;
+        private int absentS, total, totalS, attend = 0, bunk = 0, min, per;
+        private float avg = 0, temp;
         private OnItemListener onItemListener;
-        ProgressWheel progressWheelGreen;
-        ProgressWheel progressWheelRed;
+        private ProgressWheel progressWheelGreen;
+        private ProgressWheel progressWheelRed;
 
 
 
@@ -133,37 +125,14 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             present = itemView.findViewById(R.id.item_present);
             absent = itemView.findViewById(R.id.item_absent);
             subjectName = itemView.findViewById(R.id.nameSubject);
-            Attendance = itemView.findViewById(R.id.item_number);
-            Status = itemView.findViewById(R.id.item_displayStatus);
-            optionDigit = itemView.findViewById(R.id.txtOptionDigit);
+            attendance = itemView.findViewById(R.id.item_number);
+            status = itemView.findViewById(R.id.item_displayStatus);
             progressWheelGreen = itemView.findViewById(R.id.wheelprogressGreen);
             progressWheelRed = itemView.findViewById(R.id.wheelprogressRed);
+            addExtraImage = itemView.findViewById(R.id.addExtra2);
+
+
             String target2 = "";
-
-            optionDigit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PopupMenu popupMenu = new PopupMenu(itemView.getContext(),view);
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem menuItem) {
-                            switch (menuItem.getItemId()){
-                                case R.id.action_extra_class:
-                                    extraClass = 1;
-                                    countExtra += 1;
-                                    Toast.makeText(itemView.getContext(),"You have an extra class today", Toast.LENGTH_SHORT).show();
-                                    return true;
-                            }
-                            return false;
-                        }
-                    });
-                    popupMenu.inflate(R.menu.card_menu);
-                    popupMenu.show();
-                }
-            });
-
-//            currentDate = mainActivity.getSelectedDate();
-
 
             String target = mainActivity.getMinimumAttendance();
             for (int i = 0; i < 3; i++) {
@@ -184,7 +153,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         }
     }
 
-
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -193,23 +161,42 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         return exampleViewHolder;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return subjectItems.get(position).getId();
+}
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     //This function determines which item in the list we are currently looking at
     @Override
-    public void onBindViewHolder(@NonNull final ExampleViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ExampleViewHolder holder, final int position) {
         holder.itemView.setAlpha(1f);
         final SubjectItem currentItem = subjectItems.get(position);
+        String ind = String.valueOf(subjectItems.indexOf(currentItem));
         database = FirebaseDatabase.getInstance();
+
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();
 
+        holder.addExtraImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExtraClassDialog dialog = new ExtraClassDialog();
+                Bundle bundle = new Bundle();
+                bundle.putString("SubjectName", currentItem.getSubjectName());
+                bundle.putInt("position", position);
+                dialog.setArguments(bundle);
+                dialog.show((context).getSupportFragmentManager(), "ExtraClassDialog");
+            }
+        });
+
         if(selectedItems.contains(currentItem)){
             holder.itemView.setAlpha(0.5f);
-//            holder.itemView.setBackgroundColor(Color.LTGRAY);
         }
-
-
-
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -219,9 +206,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                     mainActivity.startActionMode(callback);
                     selectItems(holder,currentItem);
                 }
-//                if(multiSelect){
-//                    selectItems(holder,currentItem);
-//                }
                 return true;
             }
 
@@ -243,9 +227,9 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
 
 
 
-        //holder holds the pointer to the current item in the recycler view
+//        holder holds the pointer to the current item in the recycler view
         holder.subjectName.setText(currentItem.getSubjectName());
-        holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
+        holder.attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         if(currentItem.getPercentage() >= holder.min){
             holder.progressWheelRed.setVisibility(View.INVISIBLE);
             holder.progressWheelGreen.setVisibility(View.VISIBLE);
@@ -260,23 +244,20 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
         }
-        if(currentItem.getTotal() != 0)
-            Calculate(currentItem, holder);
-        Log.d("check", ""+currentItem.getAttend()+"---"+currentItem.getBunk());
-        if (currentItem.getAttend() > 0) {
-            if (currentItem.getAttend() > 1)
-                holder.Status.setText("You can't bunk the next " + currentItem.getAttend() + " classes ⚆_⚆");
-            else
-                holder.Status.setText("You can't bunk the next class ◉_◉");
-        } else if (currentItem.getBunk() > 0) {
-            if (currentItem.getBunk() > 1)
-                holder.Status.setText("You can bunk " + currentItem.getBunk() + " classes (¬‿¬)");
-            else
-                holder.Status.setText("You can bunk 1 class ^.^");
+        if(currentItem.getTotal() != 0) {
+            calculate(currentItem, holder);
+            if (currentItem.getAttend() > 0) {
+                if (currentItem.getAttend() > 1)
+                    holder.status.setText("You can't bunk the next " + currentItem.getAttend() + " classes ⚆_⚆");
+                else
+                    holder.status.setText("You can't bunk the next class ◉_◉");
+            } else if (currentItem.getBunk() > 0) {
+                if (currentItem.getBunk() > 1)
+                    holder.status.setText("You can bunk " + currentItem.getBunk() + " classes (¬‿¬)");
+                else
+                    holder.status.setText("You can bunk 1 class ^.^");
+            }
         }
-
-
-
         //When present button is pressed
         holder.present.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,19 +266,20 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                 user = firebaseAuth.getCurrentUser();
                 DatabaseReference userRef = ref.child("Users");
                 String sub = currentItem.getSubjectName();
-                userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
+                userRef.child(user.getUid()).child("Subjects").child(ind).setValue(currentItem);
             }
         });
+
+
 
         //When absent button is pressed
         holder.absent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Absent(currentItem, holder);
-                user = firebaseAuth.getCurrentUser();
-                DatabaseReference userRef = ref.child("Users");
+                user = firebaseAuth.getCurrentUser();DatabaseReference userRef = ref.child("Users");
                 String sub = currentItem.getSubjectName();
-                userRef.child(user.getUid()).child("Subjects").child(sub).setValue(currentItem);
+                userRef.child(user.getUid()).child("Subjects").child(ind).setValue(currentItem);
             }
         });
     }
@@ -320,7 +302,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     }
 
     //Function to calculate all variables when present is enetered
-    public void Present(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
+    public void Present(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder){
         currentDate = mainActivity.getSelectedDate();
         ArrayList<SubjectAttendanceDetails> attendanceList = currentItem.getSubjectAttendanceDetails();
         int check = checkExisiting(attendanceList, currentDate);
@@ -335,16 +317,9 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setPercentage(avg);
         currentItem.setTotal(holder.total);
         currentItem.setPresent(holder.presentS);
+        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate, false, attendanceList.size() + 1));
 
-//        Log.d("harsh AD check", "" + new SubjectAttendanceDetails("Present", currentDate));
-        if(extraClass == 1) {
-            extraClass = 0;
-            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,true));
-        }
-        else
-            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Present", currentDate,false));
-
-        holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
+        holder.attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         if(currentItem.getPercentage() >= holder.min){
             holder.progressWheelRed.setVisibility(View.INVISIBLE);
             holder.progressWheelGreen.setVisibility(View.VISIBLE);
@@ -355,25 +330,23 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         else{
             holder.progressWheelGreen.setVisibility(View.INVISIBLE);
             holder.progressWheelRed.setVisibility(View.VISIBLE);
-            holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
+               holder.progressWheelRed.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
         }
-        if(currentItem.getPercentage() < holder.min)
-        Calculate(currentItem, holder);
+        calculate(currentItem, holder);
         if (holder.attend > 0) {
             if (holder.attend > 1)
-                holder.Status.setText("You can't bunk the next " + holder.attend + " classes ⚆_⚆");
+                holder.status.setText("You can't bunk the next " + holder.attend + " classes ⚆_⚆");
             else
-                holder.Status.setText("You can't bunk the next class ◉_◉");
+                holder.status.setText("You can't bunk the next class ◉_◉");
         } else if (holder.bunk > 0) {
             if (holder.bunk > 1)
-                holder.Status.setText("You can bunk " + holder.bunk + " classes (¬‿¬)");
+                holder.status.setText("You can bunk " + holder.bunk + " classes (¬‿¬)");
             else if(holder.bunk == 1)
-                holder.Status.setText("You can bunk 1 class ^.^");
+                holder.status.setText("You can bunk 1 class ^.^");
         }
-    }
-
+        }
 
 
     //Function to calculate all variables when absent is entered
@@ -393,7 +366,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setPercentage(avg);
         currentItem.setTotal(holder.total);
         currentItem.setAbsent(holder.absentS);
-        holder.Attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
+        holder.attendance.setText(currentItem.getPresent() + "/" + currentItem.getTotal());
         if(currentItem.getPercentage() >= holder.min){
             holder.progressWheelRed.setVisibility(View.INVISIBLE);
             holder.progressWheelGreen.setVisibility(View.VISIBLE);
@@ -408,25 +381,18 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             holder.progressWheelGreen.setPercentage((int)(3.6 * currentItem.getPercentage()));
             holder.progressWheelRed.setStepCountText(String.format("%.1f%%", currentItem.getPercentage()));
         }
-
-        if(extraClass == 1) {
-            extraClass = 0;
-            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,true));
-        }
-        else
-            currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,false));
-
-        Calculate(currentItem, holder);
+        currentItem.setSubjectAttendanceDetails(new SubjectAttendanceDetails("Absent", currentDate,false, attendanceList.size()+1));
+        calculate(currentItem, holder);
         if (holder.attend > 0) {
             if (holder.attend > 1)
-                holder.Status.setText("You can't bunk the next " + holder.attend + " classes ⚆_⚆");
+                holder.status.setText("You can't bunk the next " + holder.attend + " classes ⚆_⚆");
             else
-                holder.Status.setText("You can't bunk the next class ◉_◉");
+                holder.status.setText("You can't bunk the next class ◉_◉");
         } else if (holder.bunk > 0) {
             if (holder.bunk > 1)
-                holder.Status.setText("You can bunk " + holder.bunk + " classes ♥‿♥");
+                holder.status.setText("You can bunk " + holder.bunk + " classes ♥‿♥");
             else if(holder.bunk == 1)
-                holder.Status.setText("You can bunk your next class (ᵔᴥᵔ)");
+                holder.status.setText("You can bunk your next class (ᵔᴥᵔ)");
         }
     }
 
@@ -435,26 +401,26 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         String currentDate1 = sdf.format(currentDate);
         for(int i=0; i<attendanceList.size();i++) {
             String checkDate = sdf.format(attendanceList.get(i).getDateOfEntry());
-            if (checkDate.equalsIgnoreCase(currentDate1)){
-                if(extraClass == 0){
-                    Toast.makeText(mainActivity, "You have already entered the attendance for " + currentDate1, Toast.LENGTH_LONG).show();
-                    return 1;
+            long checkD = attendanceList.get(i).getDateOfEntry();
+            boolean extraClass = attendanceList.get(i).isExtraClass();
+            if(checkDate.equalsIgnoreCase(currentDate1)){
+                if(extraClass){
+                    continue;
                 }
-                else if(extraClass == 1){
-                    return 0;
+                else{
+                    Toast.makeText(mainActivity, "Already entered attendance for\n" + currentDate1, Toast.LENGTH_LONG).show();
+                    return 1;
                 }
             }
         }
-//        extraClass = 1;
         return 0;
     }
 
     //Calculate the prediction of number of classes to bunk or attend
-    public void Calculate(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
+    public void calculate(SubjectItem currentItem, SubjectItemAdapter.ExampleViewHolder holder) {
         holder.absentS = currentItem.getAbsent();
         holder.presentS = currentItem.getPresent();
-        holder.total = currentItem.getTotal();
-        holder.totalS = holder.total;
+        holder.totalS = currentItem.getTotal();
         holder.attend = 0;
         holder.bunk = 0;
         if (holder.totalS != 0) {
@@ -486,7 +452,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         currentItem.setBunk(holder.bunk);
     }
 
-    //Vibration on clikc method
+    //Vibration on click method
     private void shakeItBaby() {
         if (Build.VERSION.SDK_INT >= 26) {
             ((Vibrator) context.getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(125, VibrationEffect.DEFAULT_AMPLITUDE));

@@ -24,19 +24,14 @@ import com.google.firebase.database.ValueEventListener;
 
 
 public class AttendanceTarget extends AppCompatActivity {
-    TextView textView;
-    Button button;
-    SeekBar seekBar;
-    public static String minimumAttendance;
-    FirebaseUser user;
-    FirebaseDatabase database;
-    DatabaseReference ref;
-
-    public static String getMinimumAttendance() {
-        return minimumAttendance;
-    }
-
-    FirebaseAuth firebaseAuth;
+    private TextView textView;
+    private Button button;
+    private SeekBar seekBar;
+    private static String minimumAttendance;
+    private FirebaseUser user;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
+    private FirebaseAuth firebaseAuth;
 
 
     @Override
@@ -75,7 +70,6 @@ public class AttendanceTarget extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-//                textView.setText(minimumAttendance+"%");
             }
 
             @Override

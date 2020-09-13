@@ -31,13 +31,6 @@
         android:layout_below="@id/editAttendance"
         android:showWeekNumber="false" />
 
-
-<!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Present"-->
-<!--        android:background="@drawable/rounded_corner"/>-->
-
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
@@ -72,7 +65,7 @@
         android:layout_below="@+id/radioGroup"
         android:layout_alignParentEnd="true"
         android:background="@drawable/rounded_corner_black"
-        android:text="Add"
+        android:text="Update"
         android:layout_marginBottom="5dp"
         android:textColor="@color/colorPrimary" />
 

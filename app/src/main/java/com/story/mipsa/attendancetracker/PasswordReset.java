@@ -18,20 +18,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class passwordReset extends AppCompatActivity {
+public class PasswordReset extends AppCompatActivity {
 
-    EditText email;
-    Button button;
-    FirebaseAuth firebaseAuth;
+    private EditText email;
+    private Button button;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, Login.class);
+        super.onBackPressed();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        startActivity(intent);
-        finish();
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,8 +44,6 @@ public class passwordReset extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
-//        TextView options = view.findViewById(R.id.options);
-//        options.setVisibility(View.INVISIBLE);
         display.setText("Attendance Tracker");
 
         email =  findViewById(R.id.ResetEmail);

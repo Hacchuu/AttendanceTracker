@@ -33,16 +33,14 @@ public class SignUp extends AppCompatActivity {
     private EditText mPasswordView;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    DatabaseReference ref;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
     private FirebaseUser user;
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, Login.class);
+        super.onBackPressed();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        startActivity(intent);
-        finish();
     }
 
     @Override
@@ -59,8 +57,6 @@ public class SignUp extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
-//        TextView options = view.findViewById(R.id.options);
-//        options.setVisibility(View.INVISIBLE);
         display.setText("Attendance Tracker");
 
 
@@ -89,7 +85,6 @@ public class SignUp extends AppCompatActivity {
 
 
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

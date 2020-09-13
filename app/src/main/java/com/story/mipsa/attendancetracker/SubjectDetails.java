@@ -28,28 +28,37 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, editSubjectDetails.onInput, extraClassEdit.onInput1{
-    TextView subjectName;
-    TextView total;
-    TextView present;
-    TextView absent;
-    TextView attendance;
-    TextView outcome;
-    SubjectItem currentSubjectItem;
+public class SubjectDetails extends AppCompatActivity implements AttendanceItemAdapter.OnTimelimeListener, EditSubjectDetails.OnInput, ExtraClassEdit.OnInput1{
+    private TextView subjectName;
+    private TextView total;
+    private TextView present;
+    private TextView absent;
+    private TextView attendance;
+    private TextView outcome;
+    private SubjectItem currentSubjectItem;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList;
     private FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    DatabaseReference ref;
-    FirebaseUser user;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
+    private FirebaseUser user;
     private int position;
     MainActivity mainActivity;
     AttendanceTarget attendanceTarget;
+    private String index;
 
     public ArrayList<SubjectAttendanceDetails> getSubjectAttendanceDetailsList() {
         return subjectAttendanceDetailsList;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
     }
 
     public SubjectItem getCurrentSubjectItem() {
@@ -61,7 +70,6 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//        intent.putExtra("splash_disable", 1);
         startActivity(intent);
         finish();
     }
@@ -77,8 +85,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         actionBar.setCustomView(R.layout.custom_action_bar);
         View view=getSupportActionBar().getCustomView();
         ColorDrawable colorDrawable
-                = new ColorDrawable(Color.parseColor("#556e5f"));
-//        actionBar.setDisplayHomeAsUpEnabled(true);
+                = new ColorDrawable(Color.parseColor("#151515"));
         actionBar.setBackgroundDrawable(colorDrawable);
         TextView display = view.findViewById(R.id.name);
 
@@ -103,8 +110,10 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         //retrieve the details of the subject that is clicked in main Activity from adaptor class
         if (getIntent().hasExtra("Selected Subject Item")) {
             currentSubjectItem = getIntent().getParcelableExtra("Selected Subject Item");
-        }
+            index = getIntent().getStringExtra("index");
 
+        }
+        setIndex(index);
         subjectName = findViewById(R.id.nameSubjectDets);
         attendance = findViewById(R.id.percent);
         total = findViewById(R.id.totalFill);
@@ -120,10 +129,9 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     private  void details_DB(){
         DatabaseReference checkRef = ref.child("Users").child(user.getUid());
         //Retrieve the attendance details and store in its appropriate list
-        checkRef.child("Subjects").child(currentSubjectItem.getSubjectName()).child("subjectAttendanceDetails").orderByChild("dateOfEntry").addListenerForSingleValueEvent(new ValueEventListener() {
+        checkRef.child("Subjects").child(index).child("subjectAttendanceDetails").orderByChild("dateOfEntry").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v("temp", "raj inside ondatachange " + dataSnapshot);
                 subjectAttendanceDetailsList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     SubjectAttendanceDetails data = postSnapshot.getValue(SubjectAttendanceDetails.class);
@@ -136,7 +144,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("temp", "raj read failed" + databaseError);
+                Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -151,6 +159,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         adapter = new AttendanceItemAdapter(subjectAttendanceDetailsList, this,this);
         recyclerView.setLayoutManager(layoutManager);
+        adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
     }
 
@@ -160,12 +169,12 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         this.position = position;
 
         if(subjectAttendanceDetailsList.get(position).isExtraClass()){
-            extraClassEdit eDialog = new extraClassEdit();
-            eDialog.show(getSupportFragmentManager(), "extraClassEdit");
+            ExtraClassEdit eDialog = new ExtraClassEdit();
+            eDialog.show(getSupportFragmentManager(), "ExtraClassEdit");
         }
         else{
-            editSubjectDetails dialog = new editSubjectDetails();
-            dialog.show(getSupportFragmentManager(), "editSubjectDetails");
+            EditSubjectDetails dialog = new EditSubjectDetails();
+            dialog.show(getSupportFragmentManager(), "EditSubjectDetails");
         }
     }
 
@@ -174,23 +183,18 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         if(date == 0){
             date = subjectAttendanceDetailsList.get(position).getDateOfEntry();
         }
-        Log.d("harsh edited info", status + "----" + date + "----" + position);
         updateDetails(status, date, position);
     }
 
     private void updateDetails(String status, long date, int position) {
-
-
-
         for(int i=0;i<subjectAttendanceDetailsList.size();i++){
-            boolean checkExtra = subjectAttendanceDetailsList.get(position).extraClass;
+            boolean checkExtra = subjectAttendanceDetailsList.get(position).isExtraClass();
             if(checkExtra)
                 break;
-
             SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
             String currentDate2 = sdf.format(subjectAttendanceDetailsList.get(i).getDateOfEntry());
             String checkDate = sdf.format(date);
-            boolean checkExtraItem = subjectAttendanceDetailsList.get(i).extraClass;
+            boolean checkExtraItem = subjectAttendanceDetailsList.get(i).isExtraClass();
             if (currentDate2.equalsIgnoreCase(checkDate) && i != position ) {
                 if(!checkExtraItem){
                     Toast.makeText(this, "You have already entered the attendance for " + currentDate2, Toast.LENGTH_LONG).show();
@@ -198,33 +202,28 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
                 }
             }
         }
-//        Log.d("inside update", status + date + " - " + position);
         boolean extraClass = subjectAttendanceDetailsList.get(position).isExtraClass();
-        SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date,extraClass);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
-        String currentDate = sdf.format(date);
-//        date.setText(currentDate);
+        SubjectAttendanceDetails updateItem = new SubjectAttendanceDetails(status, date,extraClass, position);
         if (status.equalsIgnoreCase("present") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
             subjectAttendanceDetailsList.get(position).setStatus(status);
             currentSubjectItem.setPresent(currentSubjectItem.getPresent() + 1);
             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() - 1);
-            Recalculate();
-
+            recalculate();
         } else if (status.equalsIgnoreCase("absent") && !subjectAttendanceDetailsList.get(position).getStatus().equalsIgnoreCase(status)) {
             subjectAttendanceDetailsList.get(position).setStatus(status);
             currentSubjectItem.setPresent(currentSubjectItem.getPresent() - 1);
             currentSubjectItem.setAbsent(currentSubjectItem.getAbsent() + 1);
-            Recalculate();
+            recalculate();
         }
         subjectAttendanceDetailsList.set(position, updateItem);
-        Log.d("updated list", "" + updateItem + "========" + subjectAttendanceDetailsList);
-        DatabaseReference detailsRef = ref.child("Users").child(user.getUid()).child("Subjects").child(currentSubjectItem.getSubjectName());
+        DatabaseReference detailsRef = ref.child("Users").child(user.getUid()).child("Subjects").child(index);
         detailsRef.setValue(currentSubjectItem);
         detailsRef.child("subjectAttendanceDetails").setValue(subjectAttendanceDetailsList);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         Intent intent = new Intent(getApplicationContext(),SubjectDetails.class);
         intent.putExtra("Selected Subject Item", currentSubjectItem);
+        intent.putExtra("index", getIndex());
         startActivity(intent);
         finish();
     }
@@ -252,11 +251,9 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     }
 
     //Recalculates the algorithm if there are any changes during updation of timeline.
-    protected void Recalculate() {
-        int absentS = currentSubjectItem.getAbsent();
+    protected void recalculate() {
         int presentS = currentSubjectItem.getPresent();
-        int total = currentSubjectItem.getTotal();
-        int totalS = total;
+        int totalS = currentSubjectItem.getTotal();
         int attend = 0;
         int bunk = 0;
         float avg = 0;

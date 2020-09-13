@@ -4,89 +4,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="5dp"
     app:cardBackgroundColor="@color/colorPrimary"
     app:cardCornerRadius="20dp"
-    android:padding="5dp"
-    app:cardUseCompatPadding="true">
+    android:layout_margin="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/nameSubject"
-            android:layout_width="172dp"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:autoSizeTextType="uniform"
-            android:fontFamily="serif"
+            android:background="@drawable/rounded_corner_light_green"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"
             android:paddingLeft="2dp"
             android:text="Subject Name"
+            android:textAllCaps="true"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="15sp"
-            android:textStyle="bold"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.031"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.044" />
 
         <TextView
             android:id="@+id/item_attendance"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="6dp"
             android:layout_marginBottom="8dp"
-            android:text="Attendance: "
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.027"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.345" />
-
-        <TextView
-            android:id="@+id/item_number"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="10/10"
+            android:text="Attendance"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/item_attendance"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.345" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameSubject"
+            app:layout_constraintVertical_bias="0.063" />
+
+        <TextView
+            android:id="@+id/item_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="10/10"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.053"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/item_attendance"
+            app:layout_constraintVertical_bias="0.057" />
 
         <TextView
             android:id="@+id/item_displayStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="66dp"
+            android:layout_width="175dp"
+            android:layout_height="55dp"
+            android:gravity="center_horizontal"
             android:paddingLeft="2dp"
-            android:text="Situation"
+            android:text=""
             android:textColor="@color/colorPrimaryDark"
             android:textSize="17sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.025"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/wheelprogressGreen"
+            app:layout_constraintStart_toEndOf="@+id/item_attendance"
+            app:layout_constraintTop_toBottomOf="@+id/nameSubject"
+            app:layout_constraintVertical_bias="0.106" />
 
         <Button
             android:id="@+id/item_absent"
@@ -124,35 +124,34 @@
             app:layout_constraintTop_toBottomOf="@+id/item_displayStatus"
             app:layout_constraintVertical_bias="0.862" />
 
-        <TextView
-            android:id="@+id/txtOptionDigit"
-            android:layout_width="30dp"
+        <ImageView
+            android:id="@+id/addExtra2"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:text="&#8942;"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_add_circle_black_24dp"
             android:textAlignment="center"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.088" />
+            app:layout_constraintVertical_bias="0.132" />
 
         <com.app.progresviews.ProgressWheel
             android:id="@+id/wheelprogressGreen"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             app:barWidth="8dp"
             app:countTextColor="@android:color/black"
-            app:countTextSize="20sp"
+            app:countTextSize="15sp"
             app:defTextColor="@android:color/black"
             app:defTextSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.937"
+            app:layout_constraintHorizontal_bias="0.944"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameSubject"
             app:layout_constraintVertical_bias="0.0"
             app:marginBtwText="15dp"
             app:percentage="0"
@@ -160,26 +159,22 @@
 
         <com.app.progresviews.ProgressWheel
             android:id="@+id/wheelprogressRed"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            app:barWidth="10dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            app:barWidth="8dp"
             app:countTextColor="@android:color/black"
-            app:countTextSize="20sp"
+            app:countTextSize="15sp"
             app:defTextColor="@android:color/black"
             app:defTextSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.937"
+            app:layout_constraintHorizontal_bias="0.944"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameSubject"
             app:layout_constraintVertical_bias="0.0"
             app:marginBtwText="15dp"
             app:percentage="180"
             app:progressColor="#df9999" />
-
-
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
