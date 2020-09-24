@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+                intent.putExtra("initialTarget", minimumAttendance);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
             }
@@ -292,7 +293,6 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             DatabaseReference userRef = ref.child("Users");
             userRef.child(user.getUid()).child("Subjects").setValue(subjectItems);
             adapter.notifyItemInserted(position);
-
             RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getApplicationContext()) {
                 @Override protected int getVerticalSnapPreference() {
                     return LinearSmoothScroller.SNAP_TO_START;

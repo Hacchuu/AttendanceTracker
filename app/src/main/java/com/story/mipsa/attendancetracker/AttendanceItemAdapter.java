@@ -168,7 +168,10 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
         SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
         String currentDate = sdf.format(currentDetails.getDateOfEntry());
         date.setText(currentDate);
-        title.setText(currentDetails.getStatus()+"                             ");
+        if(currentDetails.getStatus().equalsIgnoreCase("present"))
+            title.setText("Present                             ");
+        else if(currentDetails.getStatus().equalsIgnoreCase("absent"))
+            title.setText("Absent                              ");
         if(currentDetails.isExtraClass()){
             cardView.setCardBackgroundColor(Color.parseColor("#CFD8DC"));
             title.setText(currentDetails.getStatus()+" - Extra Class       ");

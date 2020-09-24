@@ -28,6 +28,6 @@
         android:layout_toEndOf="@+id/settingsIcon"
         android:layout_toRightOf="@+id/settingsIcon"
         android:text="Settings"
-        android:textSize="15sp" />
+        android:textSize="15dp" />
 
 </RelativeLayout>
