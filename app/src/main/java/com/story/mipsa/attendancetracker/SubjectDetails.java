@@ -268,7 +268,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
             return;
         }
         float temp = avg;
-        String target = mainActivity.getMinimumAttendance();
+        String target = MainActivity.getMinimumAttendance();
         String target2 = "";
         int min;
         for (int i = 0; i < 3; i++) {

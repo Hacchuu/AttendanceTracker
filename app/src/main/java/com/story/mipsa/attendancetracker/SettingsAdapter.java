@@ -14,8 +14,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         user = firebaseAuth.getCurrentUser();
-        
+
         holder.imageView.setImageResource(settingsImageList.get(position));
         holder.textView.setText(settingsNameList.get(position));
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +88,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
     }
 
     public void logout() {
-        database.goOffline();
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(false);
+//        database.goOffline();
         signOut();
         firebaseAuth.signOut();
         context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

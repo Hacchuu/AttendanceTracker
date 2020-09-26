@@ -134,7 +134,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
 
             String target2 = "";
 
-            String target = mainActivity.getMinimumAttendance();
+            String target = MainActivity.getMinimumAttendance();
             for (int i = 0; i < 3; i++) {
                 if (target.charAt(i) == '%') {
                     break;

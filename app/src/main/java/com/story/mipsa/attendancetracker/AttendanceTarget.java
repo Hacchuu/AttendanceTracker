@@ -57,9 +57,10 @@ public class AttendanceTarget extends AppCompatActivity {
         display.setText("Student Pocket");
 
         String initTarget = getIntent().getStringExtra("initialTarget");
+
 //        existingTarget = Integer.valueOf(initTarget);
         String target2 = "";
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < initTarget.length(); i++) {
             if (initTarget.charAt(i) == '%') {
                 break;
             } else {

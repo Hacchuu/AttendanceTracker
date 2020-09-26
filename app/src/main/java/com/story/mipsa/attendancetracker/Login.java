@@ -276,7 +276,7 @@ public class Login extends AppCompatActivity {
 
                     Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
                     progressDialog.dismiss();
-                    intent.putExtra("initialTarget", 0);
+                    intent.putExtra("initialTarget", "0");
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     startActivity(intent);
                     finish();
