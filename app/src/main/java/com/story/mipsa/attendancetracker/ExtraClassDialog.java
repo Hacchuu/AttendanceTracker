@@ -1,17 +1,14 @@
 package com.story.mipsa.attendancetracker;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,16 +26,14 @@ public class ExtraClassDialog extends AppCompatDialogFragment {
 
     public ExtraClassDialog.OnInput2 onInput2;
 
-    private TextView subject;
-    private Button addExtra;
     private RadioButton radioPresent, radioAbsent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.extra_class_dialog, container, false);
-        subject = view.findViewById(R.id.extraSubjectName);
-        addExtra = view.findViewById(R.id.addExtra);
+        TextView subject = view.findViewById(R.id.extraSubjectName);
+        Button addExtra = view.findViewById(R.id.addExtra);
         radioPresent = view.findViewById(R.id.radioExtraPresent);
         radioAbsent = view.findViewById(R.id.radioExtraAbsent);
 

@@ -30,8 +30,6 @@ public class EditSubjectDetails extends AppCompatDialogFragment {
     }
 
     public EditSubjectDetails.OnInput onInput;
-    private CalendarView calendarView;
-    private Button button, cancel;
     private RadioButton radioPresent, radioAbsent;
     private String status;
     private String date;
@@ -42,14 +40,14 @@ public class EditSubjectDetails extends AppCompatDialogFragment {
 
         View view = inflater.inflate(R.layout.activity_edit_details, container, false);
 
-        calendarView = view.findViewById(R.id.calendarID);
+        CalendarView calendarView = view.findViewById(R.id.calendarID);
         calendarView.setMaxDate(new Date().getTime()+259200000);
 
 
-        button = view.findViewById(R.id.saveDetails);
+        Button button = view.findViewById(R.id.saveDetails);
         radioAbsent = view.findViewById(R.id.radioAbsent);
         radioPresent = view.findViewById(R.id.radioPresent);
-        cancel = view.findViewById(R.id.cancelDetails);
+        Button cancel = view.findViewById(R.id.cancelDetails);
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -131,7 +129,6 @@ public class EditSubjectDetails extends AppCompatDialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shakeItBaby();
                 getDialog().dismiss();
             }
         });
@@ -139,7 +136,6 @@ public class EditSubjectDetails extends AppCompatDialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shakeItBaby();
                 if (date == null) {
                     dateInMillis = new Date().getTime();
                     SimpleDateFormat sdf = new SimpleDateFormat("d MMM yyyy, EEE");
@@ -173,13 +169,4 @@ public class EditSubjectDetails extends AppCompatDialogFragment {
 
         }
     }
-
-    private void shakeItBaby() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            ((Vibrator) getContext().getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(125, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-            ((Vibrator)getContext().getSystemService(VIBRATOR_SERVICE)).vibrate(125);
-        }
-    }
-
 }

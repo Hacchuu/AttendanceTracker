@@ -22,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -41,12 +40,10 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
     private OnTimelimeListener onTimelimeListener;
     private boolean multiSelect = false;
     private ArrayList<SubjectAttendanceDetails> selectedItems = new ArrayList<>();
-    private int flag = 0;
-    private FirebaseDatabase database;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
     private DatabaseReference ref;
-    SubjectDetails subjectDetails;
+    private SubjectDetails subjectDetails;
 
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
@@ -68,10 +65,8 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
             DatabaseReference userRef = ref.child("Users");
             SubjectItem currentItem = subjectDetails.getCurrentSubjectItem();
             String subjectIndex = subjectDetails.getIndex();
-            flag = 0;
             if(menuItem.getItemId() == R.id.action_delete){
                 shakeItBaby();
-                flag = 1;
                 String sub = currentItem.getSubjectName();
                 for(int i=0; i<selectedItems.size();i++){
                     int index = subjectAttendanceDetailsList.indexOf(selectedItems.get(i));
@@ -161,7 +156,7 @@ public class AttendanceItemAdapter extends RecyclerView.Adapter<AttendanceItemAd
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
-        database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();
         final SubjectAttendanceDetails currentDetails = subjectAttendanceDetailsList.get(position);

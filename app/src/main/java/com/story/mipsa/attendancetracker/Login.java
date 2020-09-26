@@ -38,18 +38,13 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Login extends AppCompatActivity {
 
-    private TextView resetPassword;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-    private Button normalSignInButton;
-    private SignInButton signInButton;
     private EditText email;
     private EditText password;
-    private TextView signup;
     private GoogleSignInClient googleSignInClient;
     private int RC_SIGN_IN = 1;
     private FirebaseUser user;
-    private FirebaseDatabase database;
     private DatabaseReference ref;
     private String minimumAttendance;
 
@@ -71,20 +66,18 @@ public class Login extends AppCompatActivity {
         display.setText("Student Pocket");
 
         firebaseAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
         firebaseAuth.signOut();
 
-        signInButton = findViewById(R.id.googleSignIn);
+        SignInButton signInButton = findViewById(R.id.googleSignIn);
         signInButton = findViewById(R.id.googleSignIn);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                switch (view.getId()) {
-                    case R.id.googleSignIn:
-                        signIn();
-                        break;
+                if (view.getId() == R.id.googleSignIn) {
+                    signIn();
                 }
             }
         });
@@ -99,8 +92,8 @@ public class Login extends AppCompatActivity {
 
         email = findViewById(R.id.email_sign_in);
         password = findViewById(R.id.password_sign_in);
-        normalSignInButton = findViewById(R.id.SignIn);
-        resetPassword = findViewById(R.id.resetPassword);
+        Button normalSignInButton = findViewById(R.id.SignIn);
+        TextView resetPassword = findViewById(R.id.resetPassword);
 
         normalSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +102,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        signup = findViewById(R.id.signUp);
+        TextView signup = findViewById(R.id.signUp);
         if (firebaseAuth.getCurrentUser() != null) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -165,7 +158,7 @@ public class Login extends AppCompatActivity {
     }
 
 
-    public void userLogin() {
+    private void userLogin() {
         String Email = email.getText().toString().trim();
         String Password = password.getText().toString().trim();
         boolean cancel = false;

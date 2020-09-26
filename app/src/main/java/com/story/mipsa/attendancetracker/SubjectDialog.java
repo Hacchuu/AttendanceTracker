@@ -24,15 +24,14 @@ public class SubjectDialog extends AppCompatDialogFragment {
     public SubjectDialog.onInput onInput;
 
     private EditText editText;
-    private Button cancel, Add;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.subject_dialog, container, false);
         editText = view.findViewById(R.id.enterSubject);
-        cancel = view.findViewById(R.id.cancel);
-        Add = view.findViewById(R.id.add);
+        Button cancel = view.findViewById(R.id.cancel);
+        Button add = view.findViewById(R.id.add);
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +40,7 @@ public class SubjectDialog extends AppCompatDialogFragment {
             }
         });
 
-        Add.setOnClickListener(new View.OnClickListener() {
+        add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 shakeItBaby();

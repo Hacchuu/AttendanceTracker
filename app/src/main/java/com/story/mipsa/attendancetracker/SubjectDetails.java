@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,10 +37,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     private SubjectItem currentSubjectItem;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SubjectAttendanceDetails> subjectAttendanceDetailsList;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseDatabase database;
     private DatabaseReference ref;
     private FirebaseUser user;
     private int position;
@@ -102,8 +98,8 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
 
         mainActivity = new MainActivity();
         attendanceTarget = new AttendanceTarget();
-        firebaseAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         user = firebaseAuth.getCurrentUser();
         ref = database.getReference().getRoot();
 
@@ -156,7 +152,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
     private void buildRecyclerView() {
         recyclerView = findViewById(R.id.detailsRecycler);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         adapter = new AttendanceItemAdapter(subjectAttendanceDetailsList, this,this);
         recyclerView.setLayoutManager(layoutManager);
         adapter.setHasStableIds(true);
@@ -256,7 +252,7 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         int totalS = currentSubjectItem.getTotal();
         int attend = 0;
         int bunk = 0;
-        float avg = 0;
+        float avg;
         if (totalS != 0) {
             avg = ((float) presentS / (float) totalS) * 100;
             currentSubjectItem.setPercentage(avg);
@@ -269,16 +265,16 @@ public class SubjectDetails extends AppCompatActivity implements AttendanceItemA
         }
         float temp = avg;
         String target = MainActivity.getMinimumAttendance();
-        String target2 = "";
+        StringBuilder target2 = new StringBuilder();
         int min;
         for (int i = 0; i < 3; i++) {
             if (target.charAt(i) == '%') {
                 break;
             } else {
-                target2 = target2 + target.charAt(i);
+                target2.append(target.charAt(i));
             }
         }
-        min = Integer.parseInt(target2);
+        min = Integer.parseInt(target2.toString());
         if (temp >= min) {
             do {
                 totalS += 1;

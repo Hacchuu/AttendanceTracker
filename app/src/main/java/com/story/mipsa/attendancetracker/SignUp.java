@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -31,10 +30,7 @@ public class SignUp extends AppCompatActivity {
 
     private EditText mEmailView;
     private EditText mPasswordView;
-    private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-    private FirebaseDatabase database;
-    private DatabaseReference ref;
     private FirebaseUser user;
 
     @Override
@@ -60,8 +56,8 @@ public class SignUp extends AppCompatActivity {
         display.setText("Student Pocket");
 
 
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference().getRoot();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference().getRoot();
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
             Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
@@ -70,7 +66,7 @@ public class SignUp extends AppCompatActivity {
             finish();
         }
         mEmailView = findViewById(R.id.email_sign_up);
-        progressDialog = new ProgressDialog(this);
+        ProgressDialog progressDialog = new ProgressDialog(this);
         mPasswordView = findViewById(R.id.password_sign_up);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

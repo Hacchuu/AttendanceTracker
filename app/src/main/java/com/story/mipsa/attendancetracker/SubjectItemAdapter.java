@@ -27,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,7 +38,6 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     private FragmentActivity context;
     private FirebaseUser user;
     private FirebaseAuth firebaseAuth;
-    private FirebaseDatabase database;
     private DatabaseReference ref;
     private OnItemListener onItemListener;
     private boolean multiSelect = false;
@@ -132,17 +130,17 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
             addExtraImage = itemView.findViewById(R.id.addExtra2);
 
 
-            String target2 = "";
+            StringBuilder target2 = new StringBuilder();
 
             String target = MainActivity.getMinimumAttendance();
             for (int i = 0; i < 3; i++) {
                 if (target.charAt(i) == '%') {
                     break;
                 } else {
-                    target2 = target2 + target.charAt(i);
+                    target2.append(target.charAt(i));
                 }
             }
-            min = Integer.parseInt(target2);
+            min = Integer.parseInt(target2.toString());
 
             itemView.setOnClickListener(this);
         }
@@ -157,8 +155,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_example, parent, false);
-        ExampleViewHolder exampleViewHolder = new ExampleViewHolder(v, onItemListener);
-        return exampleViewHolder;
+        return new ExampleViewHolder(v, onItemListener);
     }
 
     @Override
@@ -177,7 +174,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
         holder.itemView.setAlpha(1f);
         final SubjectItem currentItem = subjectItems.get(position);
         String ind = String.valueOf(subjectItems.indexOf(currentItem));
-        database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         firebaseAuth = FirebaseAuth.getInstance();
         ref = database.getReference().getRoot();

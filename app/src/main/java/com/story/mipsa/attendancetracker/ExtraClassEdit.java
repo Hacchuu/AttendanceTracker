@@ -23,7 +23,6 @@ public class ExtraClassEdit extends AppCompatDialogFragment {
     }
 
     public ExtraClassEdit.OnInput1 onInput1;
-    private Button button;
     private RadioButton radioPresent, radioAbsent;
     private String status;
 
@@ -31,7 +30,7 @@ public class ExtraClassEdit extends AppCompatDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.activity_extra_class_edit, container, false);
-        button = view.findViewById(R.id.saveDetails);
+        Button button = view.findViewById(R.id.saveDetails);
         radioAbsent = view.findViewById(R.id.radioAbsent);
         radioPresent = view.findViewById(R.id.radioPresent);
 

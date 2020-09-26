@@ -14,10 +14,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
@@ -28,13 +26,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settingsViewHolder>{
 
-    private ArrayList<String> settingsNameList = new ArrayList<>();
-    private ArrayList<Integer> settingsImageList = new ArrayList<>();
+    private ArrayList<String> settingsNameList;
+    private ArrayList<Integer> settingsImageList;
     private FragmentActivity context;
     private GoogleSignInClient googleSignInClient;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase database;
-    private FirebaseUser user;
 
     public SettingsAdapter(ArrayList<String> settingsList, ArrayList<Integer> settingsImage, FragmentActivity context) {
         this.settingsNameList = settingsList;
@@ -46,8 +43,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
     @Override
     public settingsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.settings_item, parent, false);
-        settingsViewHolder holder = new settingsViewHolder(view);
-        return holder;
+        return new settingsViewHolder(view);
     }
 
     @Override
@@ -60,7 +56,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
 
         firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        user = firebaseAuth.getCurrentUser();
+        FirebaseUser user = firebaseAuth.getCurrentUser();
 
         holder.imageView.setImageResource(settingsImageList.get(position));
         holder.textView.setText(settingsNameList.get(position));
@@ -87,9 +83,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<SettingsAdapter.settin
         });
     }
 
-    public void logout() {
-//        FirebaseDatabase.getInstance().setPersistenceEnabled(false);
-//        database.goOffline();
+    private void logout() {
+        database.goOffline();
         signOut();
         firebaseAuth.signOut();
         context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

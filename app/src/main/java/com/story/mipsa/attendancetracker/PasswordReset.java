@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class PasswordReset extends AppCompatActivity {
 
     private EditText email;
-    private Button button;
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -47,7 +45,7 @@ public class PasswordReset extends AppCompatActivity {
         display.setText("Student Pocket");
 
         email =  findViewById(R.id.ResetEmail);
-        button =  findViewById(R.id.Confirmation);
+        Button button = findViewById(R.id.Confirmation);
         firebaseAuth = FirebaseAuth.getInstance();
 
         button.setOnClickListener(new View.OnClickListener() {

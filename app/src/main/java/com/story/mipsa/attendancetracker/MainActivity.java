@@ -16,7 +16,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -50,21 +49,16 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
     private TextView textView2;
     private TextView countView;
     private static String minimumAttendance;
-    private Button insertButton;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private FirebaseUser user;
     private String dataName;
     private FirebaseAuth firebaseAuth;
-    private FirebaseDatabase database;
     private DatabaseReference ref;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SubjectAttendanceDetails> det;
-    private GoogleSignInClient googleSignInClient;
     private int subjectCount;
     private long selectedDate;
-    private BottomNavigationView bottomNavigationView;
-    private String uid;
 
     public long getSelectedDate() {
         return selectedDate;
@@ -122,13 +116,13 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                 .requestEmail()
                 .build();
 
-        googleSignInClient = GoogleSignIn.getClient(this, gso);
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         user = firebaseAuth.getCurrentUser();
 
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.Home);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -149,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             }
         });
 
-        uid = user.getUid();
+        String uid = user.getUid();
         ref = database.getReference().getRoot();
         ref.keepSynced(true);
 
@@ -171,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
             }
         });
 
-        insertButton = findViewById(R.id.addSubject);
+        Button insertButton = findViewById(R.id.addSubject);
         insertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,12 +243,12 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         });
     }
 
-    public void createExampleList() {
+    private void createExampleList() {
         subjectItems = new ArrayList<>();
     }
 
     //Function to build the layout and connect the adaptor to the recycler view.
-    public void buildRecyclerView() {
+    private void buildRecyclerView() {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -390,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         int total = current.getTotal();
         int attend = 0;
         int bunk = 0;
-        float avg = 0;
+        float avg;
         if (total != 0) {
             avg = ((float) presentS / (float) total) * 100;
             current.setPercentage(avg);
@@ -403,16 +397,16 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         }
         float temp = avg;
         String target = getMinimumAttendance();
-        String target2 = "";
+        StringBuilder target2 = new StringBuilder();
         int min;
         for (int i = 0; i < 3; i++) {
             if (target.charAt(i) == '%') {
                 break;
             } else {
-                target2 = target2 + target.charAt(i);
+                target2.append(target.charAt(i));
             }
         }
-        min = Integer.parseInt(target2);
+        min = Integer.parseInt(target2.toString());
         if (temp >= min) {
             do {
                 total += 1;

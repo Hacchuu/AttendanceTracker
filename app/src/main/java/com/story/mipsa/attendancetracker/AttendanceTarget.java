@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -16,23 +15,17 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 
 public class AttendanceTarget extends AppCompatActivity {
     private TextView textView;
-    private Button button;
-    private SeekBar seekBar;
     private static String minimumAttendance;
     private FirebaseUser user;
-    private FirebaseDatabase database;
     private DatabaseReference ref;
     private FirebaseAuth firebaseAuth;
-    int existingTarget;
+    private int existingTarget;
 
     @Override
     public void onBackPressed() {
@@ -58,28 +51,25 @@ public class AttendanceTarget extends AppCompatActivity {
 
         String initTarget = getIntent().getStringExtra("initialTarget");
 
-//        existingTarget = Integer.valueOf(initTarget);
-        String target2 = "";
+        StringBuilder target2 = new StringBuilder();
         for (int i = 0; i < initTarget.length(); i++) {
             if (initTarget.charAt(i) == '%') {
                 break;
             } else {
-                target2 = target2 + initTarget.charAt(i);
+                target2.append(initTarget.charAt(i));
             }
         }
-        existingTarget = Integer.parseInt(target2);
+        existingTarget = Integer.parseInt(target2.toString());
 
 
         firebaseAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         ref = database.getReference().getRoot();
         user = firebaseAuth.getCurrentUser();
 
         textView = findViewById(R.id.number);
-        button = findViewById(R.id.save);
-        seekBar = findViewById(R.id.seekBar);
-
-//        fetchTargetDB();
+        Button button = findViewById(R.id.save);
+        SeekBar seekBar = findViewById(R.id.seekBar);
 
         seekBar.setProgress(existingTarget);
         textView.setText(existingTarget + "%");
