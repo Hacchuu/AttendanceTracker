@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "953632050290-to2agi4edg3j1gpn005k75oqm3glf5kr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.story.mipsa.attendancetracker",
+            "certificate_hash": "1a52a6cc63088193da2d370345eb12d78ef3140b"
+          }
+        },
+        {
+          "client_id": "953632050290-lpf9b93orgkvuia3j5g7pak1dd7fkuoc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.story.mipsa.attendancetracker",
+            "certificate_hash": "2a4b0a0fb8f51ca44c3d0cad10757baee6755c3b"
+          }
+        },
+        {
           "client_id": "953632050290-uochick0c4ql19h1s708m6f73bs700di.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

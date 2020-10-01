@@ -2,15 +2,25 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.story.mipsa.attendancetracker"
         minSdkVersion 22
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release{
+                storeFile file('F:/Data/AppKey')
+                storePassword "Stuket4ksp@blr5"
+                keyAlias "appKey"
+                keyPassword "Stuket4ksp@blr5"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true

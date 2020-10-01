@@ -43,6 +43,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
+
 
 public class MainActivity extends AppCompatActivity implements SubjectItemAdapter.OnItemListener, SubjectDialog.onInput, DatePickerListener, ExtraClassDialog.OnInput2 {
     private ArrayList<SubjectItem> subjectItems;
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         ImageView logo = view.findViewById(R.id.logo);
         logo.setVisibility(View.INVISIBLE);
         display.setText("Student Pocket");
+
 
         Calendar startDate = Calendar.getInstance();
         startDate.add(Calendar.MONTH, -1);
@@ -148,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         ref.keepSynced(true);
 
         name_target_callDB();
+
         subjectCallDb();
         createExampleList();
         buildRecyclerView();
@@ -195,9 +199,18 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
         checkRef.child("Target").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                dataName = (String) dataSnapshot.getValue();
-                textView2.setText(dataName);
-                minimumAttendance = dataName;
+                if(dataSnapshot.exists()){
+                    dataName = (String) dataSnapshot.getValue();
+                    textView2.setText(dataName);
+                    minimumAttendance = dataName;
+                }
+                else{
+                    Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+                    intent.putExtra("initialTarget", "0");
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    startActivity(intent);
+                    finish();
+                }
             }
 
             @Override
