@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements SubjectItemAdapte
                 }
                 else{
                     Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
-                    intent.putExtra("initialTarget", "0");
+                    intent.putExtra("initialTarget", "75");
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     startActivity(intent);
                     finish();

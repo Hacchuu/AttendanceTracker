@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "953632050290-vlqcpmv944cn5psckdbgjv2gau6hkpd9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.story.mipsa.attendancetracker",
+            "certificate_hash": "cb95b1025a4c52b3bae6ed5c0fd3e38081852155"
+          }
+        },
+        {
           "client_id": "953632050290-to2agi4edg3j1gpn005k75oqm3glf5kr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

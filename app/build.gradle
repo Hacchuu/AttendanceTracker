@@ -7,17 +7,17 @@ android {
         applicationId "com.story.mipsa.attendancetracker"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
         release{
-                storeFile file('F:/Data/AppKey')
+                storeFile file('F:/Data/SampleKey')
                 storePassword "Stuket4ksp@blr5"
-                keyAlias "appKey"
-                keyPassword "Stuket4ksp@blr5"
+                keyAlias "key0"
+                keyPassword "Stuket1ky@blr6"
         }
     }
 
@@ -41,6 +41,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.android.support:recyclerview-v7:28.1.0'
     implementation 'com.android.support:cardview-v7:28.1.0'
+    implementation "androidx.versionedparcelable:versionedparcelable:1.1.0"
     implementation 'com.google.firebase:firebase-database:16.0.4'
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'

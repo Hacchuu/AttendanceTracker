@@ -200,8 +200,13 @@ public class Login extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         user = firebaseAuth.getCurrentUser();
                         if(user.isEmailVerified()){
-                            target_callDB();
                             Toast.makeText(getApplicationContext(),"Succesful",Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+                            progressDialog.dismiss();
+                            intent.putExtra("initialTarget", "75");
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            startActivity(intent);
+                            finish();
                         }
                         else{
                             progressDialog.dismiss();
@@ -240,7 +245,12 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             user = firebaseAuth.getCurrentUser();
-                            target_callDB();
+                            Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
+                            progressDialog.dismiss();
+                            intent.putExtra("initialTarget", "75");
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            startActivity(intent);
+                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             progressDialog.dismiss();
@@ -251,35 +261,4 @@ public class Login extends AppCompatActivity {
                 });
     }
 
-    private void target_callDB() {
-        DatabaseReference checkRef = ref.child("Users").child(user.getUid());
-        //Listener ofr Firebase DB
-        checkRef.child("Target").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                minimumAttendance = (String) dataSnapshot.getValue();
-                if(minimumAttendance != null){
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    progressDialog.dismiss();
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    startActivity(intent);
-                    finish();
-                }
-                else{
-
-                    Intent intent = new Intent(getApplicationContext(), AttendanceTarget.class);
-                    progressDialog.dismiss();
-                    intent.putExtra("initialTarget", "0");
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 }
