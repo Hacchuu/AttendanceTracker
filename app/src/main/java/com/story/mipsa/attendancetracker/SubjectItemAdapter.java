@@ -433,9 +433,11 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                 } else if (holder.temp >= holder.min && holder.attend == 0)
                     holder.bunk++;
             } while (holder.temp > holder.min);
-        } else {
+        }
+        else {
+            holder.attend = 1;
             holder.presentTemp = holder.presentS;
-            do {
+            while(holder.temp <= holder.min) {
                 holder.totalS += 1;
                 holder.presentTemp += 1;
                 holder.temp = ((float) holder.presentTemp / (float) holder.totalS) * 100;
@@ -443,7 +445,7 @@ public class SubjectItemAdapter extends RecyclerView.Adapter<SubjectItemAdapter.
                     holder.attend++;
                 } else if (holder.temp > holder.min && holder.attend == 0)
                     holder.bunk++;
-            } while (holder.temp <= holder.min);
+            }
         }
         currentItem.setAttend(holder.attend);
         currentItem.setBunk(holder.bunk);
